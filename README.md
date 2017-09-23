@@ -11,7 +11,7 @@ There is none, as it doesn't function as intended yet.
 
 ## Contributing
 
-1. Fork it (<>)
+1. Fork it (<https://github.com/BeardlessDev/Twitch-Dev-Company/fork>)
 2. Create your feature branch (`git checkout -b feature/fooBar`)
 3. Commit your changes (`git commit -am 'Add some fooBar'`) See the COMMIT header for more info
 4. Push to the branch (`git push origin feature/fooBar`)
