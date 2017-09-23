@@ -30,6 +30,11 @@ public class FormController : MonoBehaviour
     {
         path = Application.streamingAssetsPath + "/settings.txt";
 
+        GetFormItem("username").text.text = "";
+        GetFormItem("client").text.text = "";
+        GetFormItem("access").text.text = "";
+        GetFormItem("channel").text.text = "";
+
         submit.onClick.AddListener(SubmitOnClick);
         load.onClick.AddListener(LoadOnClick);
     }
@@ -72,10 +77,15 @@ public class FormController : MonoBehaviour
 		{
 			foreach (FormItem item in formItems)
 			{
-				if (item.isComplete == false)
-				{
-					item.text.text = "This field cannot be empty";
-				}
+                if (item.isComplete == false)
+                {
+                    item.text.text = "This field cannot be empty";
+                }
+
+                else
+                {
+                    item.text.text = "";
+                }
 			}
 		}
 	}
@@ -88,7 +98,7 @@ public class FormController : MonoBehaviour
     }
 
 	/// <summary>
-	/// Get a form item with a spceific name
+	/// Get a form item with a specific name
 	/// </summary>
 	/// <param name="formItemName"></param>
 	/// <returns></returns>
@@ -101,7 +111,7 @@ public class FormController : MonoBehaviour
 
 	/// <summary>
 	/// Check how many form items are tagged as not complete
-	/// if there are any, the form is not complete and cannot be submitted
+	/// If there are any, the form is not complete and cannot be submitted
 	/// </summary>
 	/// <returns></returns>
 	private bool IsFormComplete()
@@ -118,6 +128,6 @@ public class FormController : MonoBehaviour
 		public string itemName = string.Empty;
 		public bool isComplete => input.text.Length > 0;
 		public InputField input;
-		public Text text;
+        public Text text;
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using TwitchLib;
@@ -19,6 +20,8 @@ public class TwitchConnection : MonoBehaviour
 
     public void Connect()
     {
+        ServicePointManager.ServerCertificateValidationCallback = CertificateValidationMonoFix;
+
         ConnectionCredentials credentials = new ConnectionCredentials(Settings.username, Settings.accessToken);
 
         TwitchAPI.Settings.ClientId = Settings.clientId;
