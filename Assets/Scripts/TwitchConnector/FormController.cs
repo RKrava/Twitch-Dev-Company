@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,28 +9,7 @@ public class FormController : MonoBehaviour
 {
     TwitchConnection connection;
 
-    [SerializeField]
-    private InputField usernameInput;
-    [SerializeField]
-    private InputField clientIdInput;
-    [SerializeField]
-    private InputField accessTokenInput;
-    [SerializeField]
-    private InputField channelToJoinInput;
-
-    [SerializeField]
-    private Text usernameText;
-    [SerializeField]
-    private Text clientIdText;
-    [SerializeField]
-    private Text accessTokenText;
-    [SerializeField]
-    private Text channelToJoinText;
-
-    private bool usernameCheck;
-    private bool clientIdCheck;
-    private bool accessTokenCheck;
-    private bool channelToJoinCheck;
+	[SerializeField] List<FormItem> formItems = new List<FormItem>();
 
     [SerializeField]
     private Button submit;
@@ -37,15 +18,17 @@ public class FormController : MonoBehaviour
 
     private string path;
 
-    private void Start()
-    {
-        connection = FindObjectOfType<TwitchConnection>();
-        path = Application.streamingAssetsPath + "/settings.txt";
+	/// <summary>
+	/// Fetch references in Awake
+	/// </summary>
+	private void Awake()
+	{
+		connection = FindObjectOfType<TwitchConnection>();
+	}
 
-        usernameText.text = "";
-        clientIdText.text = "";
-        accessTokenText.text = "";
-        channelToJoinText.text = "";
+	private void Start()
+    {
+        path = Application.streamingAssetsPath + "/settings.txt";
 
         submit.onClick.AddListener(SubmitOnClick);
         load.onClick.AddListener(LoadOnClick);
@@ -70,70 +53,71 @@ public class FormController : MonoBehaviour
 
     private void SubmitOnClick()
     {
-        if (usernameInput.text != "")
-        {
-            usernameCheck = true;
-        }
+		if (IsFormComplete() == true)
+		{
+			Settings.username = GetFormItem("username").input.text;
+			Settings.clientId = GetFormItem("client").input.text;
+			Settings.accessToken = GetFormItem("access").input.text;
+			Settings.channelToJoin = GetFormItem("channel").input.text;
 
-        if (clientIdInput.text != "")
-        {
-            clientIdCheck = true;
-        }
+			SaveSettings();
+			connection.Connect();
 
-        if (accessTokenInput.text != "")
-        {
-            accessTokenCheck = true;
-        }
+			foreach (FormItem item in formItems)
+			{
+				item.input.text = string.Empty;
+			}
+		}
+		else
+		{
+			foreach (FormItem item in formItems)
+			{
+				if (item.isComplete == false)
+				{
+					item.text.text = "This field cannot be empty";
+				}
+			}
+		}
+	}
 
-        if (channelToJoinInput.text != "")
-        {
-            channelToJoinCheck = true;
-        }
-
-        if (usernameCheck == true && clientIdCheck == true && accessTokenCheck == true && channelToJoinCheck == true)
-        {
-            Settings.username = usernameInput.text;
-            Settings.clientId = clientIdInput.text;
-            Settings.accessToken = accessTokenInput.text;
-            Settings.channelToJoin = channelToJoinInput.text;
-
-            SaveSettings();
-            connection.Connect();
-
-            usernameInput.text = "";
-            clientIdInput.text = "";
-            accessTokenInput.text = "";
-            channelToJoinInput.text = "";
-        }
-
-        else
-        {
-            if (usernameCheck != true)
-            {
-                usernameText.text = "This field cannot be empty";
-            }
-
-            if (clientIdCheck != true)
-            {
-                clientIdText.text = "This field cannot be empty";
-            }
-
-            if (accessTokenCheck != true)
-            {
-                accessTokenText.text = "This field cannot be empty";
-            }
-
-            if (channelToJoinCheck != true)
-            {
-                channelToJoinText.text = "This field cannot be empty";
-            }
-        }
-    }
-
-    private void LoadOnClick()
+	private void LoadOnClick()
     {
         LoadSettings();
 
         connection.Connect();
     }
+
+	/// <summary>
+	/// Get a form item with a spceific name
+	/// </summary>
+	/// <param name="formItemName"></param>
+	/// <returns></returns>
+	private FormItem GetFormItem(string formItemName)
+	{
+		return formItems
+			.Where(i => i.itemName.Contains(formItemName))
+			.ToList()[0];
+	}
+
+	/// <summary>
+	/// Check how many form items are tagged as not complete
+	/// if there are any, the form is not complete and cannot be submitted
+	/// </summary>
+	/// <returns></returns>
+	private bool IsFormComplete()
+	{
+		return formItems
+			.Where(i => i.isComplete == false)
+			.ToList()
+			.Count == 0;
+	}
+
+	[Serializable]
+	public class FormItem
+	{
+		public string itemName = string.Empty;
+		public bool isComplete => input.text.Length > 0;
+		public InputField input;
+		public Text text;
+	}
 }
