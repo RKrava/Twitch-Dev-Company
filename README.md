@@ -11,6 +11,8 @@ There is none, as it doesn't function as intended yet.
 
 ## Contributing
 
+Pleae refer to the WIKI before/when working on the project. Here I'll keep documentation of my overall plan for the game, such as the roles of certain scripts, etc.
+
 1. Fork it (<https://github.com/BeardlessDev/Twitch-Dev-Company/fork>)
 2. Create your feature branch (`git checkout -b feature/fooBar`)
 3. Commit your changes (`git commit -am 'Add some fooBar'`) See the COMMIT header for more info
