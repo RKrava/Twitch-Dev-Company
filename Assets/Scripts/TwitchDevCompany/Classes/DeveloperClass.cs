@@ -4,7 +4,7 @@ using System.Collections.Generic;
 [Serializable]
 public class DeveloperClass
 {
-    public uint developerID; //Just for the key
+    public uint developerID; //Use this for the key so when someone changes their name, it doesn't reset their developer
     //public UserClass developer;
     public string companyName;
     public List<uint> projectIDs = new List<uint>();

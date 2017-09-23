@@ -19,7 +19,7 @@ public class CompanyClass
     }
     
     public List<uint> founderIDs = new List<uint>();
-    public List<uint> invitedIDs = new List<uint>();
+    //public List<uint> invitedIDs = new List<uint>();
     public int money;
     public List<uint> projectIDs = new List<uint>();
 }

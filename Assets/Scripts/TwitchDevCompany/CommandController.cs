@@ -10,17 +10,15 @@ using UnityEngine;
 
 public class CommandController : MonoBehaviour
 {
-    public TwitchConnection twitchConnection; //How to get it outside of the inspector?
+    private TwitchConnection twitchConnection;
     private TwitchClient client;
 
     private DeveloperClass developer;
-    //Used to get ID from string
+    //Able to get a viewer/developers ID from their username, and vice versa
     public SortedDictionary<int, string> developerIntToString { get; private set; } = new SortedDictionary<int, string>();
     public SortedDictionary<string, int> developerStringToInt { get; private set; } = new SortedDictionary<string, int>();
+    //Developer data
     public SortedDictionary<int, DeveloperClass> developers { get; private set; } = new SortedDictionary<int, DeveloperClass>();
-
-    //!invite Jane
-    //ID
 
     //Company data
     private CompanyClass company;
@@ -29,6 +27,8 @@ public class CommandController : MonoBehaviour
     //Project data
     private ProjectClass project;
     public SortedDictionary<string, ProjectClass> projects { get; private set; } = new SortedDictionary<string, ProjectClass>();
+
+    //Tidy this
 
     //Those who have applied
     private List<uint> projectApply = new List<uint>();
@@ -42,6 +42,7 @@ public class CommandController : MonoBehaviour
 
     public void DelayedStart()
     {
+        twitchConnection = FindObjectOfType<TwitchConnection>();
         client = twitchConnection.client;
 
         client.OnJoinedChannel += ClientOnJoinedChannel;
@@ -49,8 +50,6 @@ public class CommandController : MonoBehaviour
         client.OnWhisperCommandReceived += ClientOnWhisperCommandReceived;
 
         InvokeRepeating("AddDevelopers", 10, 60);
-
-        client.SendWhisper("creativefletcher", "Yep!");
     }
 
     private void ClientOnJoinedChannel(object sender, OnJoinedChannelArgs e)
@@ -74,7 +73,7 @@ public class CommandController : MonoBehaviour
 
         foreach (ChatterFormatted chatter in chatters) //Delay by a second each one
         {
-            await Task.Delay(1000);
+            await Task.Delay(5000);
 
             Debug.Log("Chatter is running.");
 
@@ -299,7 +298,7 @@ public class CommandController : MonoBehaviour
                     if (developerStringToInt.ContainsKey(splitWhisper[1]))
                     {
                         //Add the invite user to a list
-                        company.invitedIDs.Add((uint)(developerStringToInt[splitWhisper[1]]));
+                        //company.invitedIDs.Add((uint)(developerStringToInt[splitWhisper[1]]));
 
                         //Give them 5 minutes to respond
                         //StartCoroutine(ClearInvite(companyName));
@@ -417,7 +416,7 @@ public class CommandController : MonoBehaviour
         yield return new WaitForSeconds(300);
 
         company = companies[companyName];
-        company.invitedIDs.RemoveAt(0);
+        //company.invitedIDs.RemoveAt(0);
 
         //Send Whisper to Founder. Invite ran out.
 
