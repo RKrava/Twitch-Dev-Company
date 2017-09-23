@@ -448,14 +448,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e20c0f9951621c3429c8bd4515e7b1e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  usernameInput: {fileID: 614535068}
-  clientIdInput: {fileID: 911595351}
-  accessTokenInput: {fileID: 1847382358}
-  channelToJoinInput: {fileID: 660759797}
-  usernameText: {fileID: 1411242851}
-  clientIdText: {fileID: 579979641}
-  accessTokenText: {fileID: 813478292}
-  channelToJoinText: {fileID: 1708624852}
+  formItems:
+  - itemName: username
+    input: {fileID: 614535068}
+    text: {fileID: 1411242851}
+  - itemName: secret client id
+    input: {fileID: 911595351}
+    text: {fileID: 579979641}
+  - itemName: access token
+    input: {fileID: 1847382358}
+    text: {fileID: 813478292}
+  - itemName: channel to join
+    input: {fileID: 660759797}
+    text: {fileID: 1708624852}
   submit: {fileID: 282000400}
   load: {fileID: 1529058408}
 --- !u!1 &463243808
@@ -1109,7 +1114,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Padding:
     m_Left: 0
-    m_Right: 240
+    m_Right: 300
     m_Top: 30
     m_Bottom: 0
   m_ChildAlignment: 1
