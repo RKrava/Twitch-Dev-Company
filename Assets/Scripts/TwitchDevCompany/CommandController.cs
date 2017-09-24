@@ -13,21 +13,31 @@ public class CommandController : MonoBehaviour
     private TwitchConnection twitchConnection;
     private TwitchClient client;
 
-    private DeveloperClass developer;
     //Able to get a viewer/developers ID from their username, and vice versa
+	/// <summary>
+	/// 2 Dictionaries so we can track each users Username as well as ID. 
+	/// This is so a name change wont lose a users progress. As the ID stays the same
+	/// </summary>
     public SortedDictionary<string, string> idToUsername { get; private set; } = new SortedDictionary<string, string>();
     public SortedDictionary<string, string> usernameToId { get; private set; } = new SortedDictionary<string, string>();
-    //Developer data
+
+    /// <summary>
+	/// Developers
+	/// </summary>
     public SortedDictionary<string, DeveloperClass> developers { get; private set; } = new SortedDictionary<string, DeveloperClass>();
 
     private Queue<string> idQueue = new Queue<string>();
     private Queue<string> usernameQueue = new Queue<string>();
 
-    //Company data
+    /// <summary>
+	/// Companies
+	/// </summary>
     private CompanyClass company;
     public SortedDictionary<string, CompanyClass> companies { get; private set; } = new SortedDictionary<string, CompanyClass>();
 
-    //Project data
+    /// <summary>
+	/// Projects
+	/// </summary>
     private ProjectClass project;
     public SortedDictionary<string, ProjectClass> projects { get; private set; } = new SortedDictionary<string, ProjectClass>();
 
@@ -78,7 +88,7 @@ public class CommandController : MonoBehaviour
         //Check the user doesn't already have a developer
         if (!developers.ContainsKey(id))
         {
-            developer = new DeveloperClass();
+            DeveloperClass developer = new DeveloperClass();
             developer.developerID = id;
 
             idToUsername.Add(id, username);
@@ -162,7 +172,7 @@ public class CommandController : MonoBehaviour
             else
             {
                 //If they are part of company, check if they are the owner
-                if (companies[companyName].founderIDs[0] == id)
+                if (companies[companyName].IsOwner(id))
                 {
                     Debug.Log(username + " is the Owner of " + companyName);
                     companyOwner = true;
@@ -185,7 +195,7 @@ public class CommandController : MonoBehaviour
                         Debug.Log("No company exists.");
 
                         company = new CompanyClass(companyName);
-                        company.founderIDs.Add(id);
+                        company.AddFounder(id);
                         Debug.Log("Company stuff done.");
                         developers[id].companyName = companyName;
                         Debug.Log("User stuff done.");
@@ -224,7 +234,7 @@ public class CommandController : MonoBehaviour
                     company = companies[companyName];
 
                     //Check the company has less than 3 founders
-                    if (company.founderIDs.Count < 3)
+                    if (company.FounderCount < 3)
                     {
                         Debug.Log("The company has less than 3 founders.");
 
@@ -241,7 +251,7 @@ public class CommandController : MonoBehaviour
                                 Debug.Log(invitedUsername + " is not already part of a company.");
 
                                 //Add the invited user to a list
-                                company.invitedIDs.Add(invitedID);
+                                company.AddInvite(invitedID);
                                 Debug.Log("Invited user has been added to list.");
 
                                 //Give them 5 minutes to respond
@@ -297,14 +307,14 @@ public class CommandController : MonoBehaviour
                         Debug.Log("Company exists.");
 
                         //Check the company has less than 3 founders
-                        if (companies[companyName].founderIDs.Count < 3)
+                        if (companies[companyName].FounderCount < 3)
                         {
                             Debug.Log("Company has less than three founders.");
 
                             company = companies[companyName];
 
                             //Add them to the company
-                            company.founderIDs.Add(id);
+                            company.AddFounder(id);
 
                             //Add company to their details
                             developers[id].companyName = companyName;
@@ -314,7 +324,7 @@ public class CommandController : MonoBehaviour
                             //Doesn't send
 
                             //Get the company founder
-                            string founder = idToUsername[company.founderIDs[0]];
+                            string founder = idToUsername[company.GetOwner];
 
                             //Let the founder know the player has joined the company
                             client.SendWhisper(founder, username + " has become a founder of your company, " + companyName + ".");
@@ -347,7 +357,7 @@ public class CommandController : MonoBehaviour
                 if (companies.ContainsKey(splitWhisper[1]))
                 {
                     //Check the player is part of the company
-                    if (companies[splitWhisper[1]].founderIDs.Contains(id))
+                    if (companies[splitWhisper[1]].IsFounder(id))
                     {
                         //TryParse
                         int money;
@@ -453,6 +463,12 @@ public class CommandController : MonoBehaviour
         //}
     }
 
+	/// <summary>
+	/// Clear the invite and send a whisper letting them know that
+	/// this has occured.
+	/// </summary>
+	/// <param name="companyName"></param>
+	/// <returns></returns>
     IEnumerator ClearInvite(string companyName)
     {
         Debug.Log("Clearing invite.");
@@ -460,13 +476,12 @@ public class CommandController : MonoBehaviour
         yield return new WaitForSeconds(300);
 
         company = companies[companyName];
-        string invitedUsername = company.invitedIDs[0];
-        company.invitedIDs.RemoveAt(0);
+        string invitedUsername = company.GetFirstInvite();
+        company.RemoveFirstInvite();
 
-        //Send whisper to founder that invite ran out
-        string founderUsername = company.founderIDs[0];
+        string founderUsername = company.GetOwner;
 
-        //Doesn't send.
+        // TODO - Currently whispers are broken
         client.SendWhisper(founderUsername, "Your invite to " + invitedUsername + " has run out.");
 
         Debug.Log("Invite ran out.");
