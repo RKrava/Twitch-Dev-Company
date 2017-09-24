@@ -7,16 +7,15 @@ using UnityEngine.UI;
 
 public class FormController : MonoBehaviour
 {
-    TwitchConnection connection;
-
+	[Header("Form Items")]
+	[Tooltip("A list of form items which correspond to an InputField and Text object. Allows us to reference form items by name")]
 	[SerializeField] List<FormItem> formItems = new List<FormItem>();
+	[SerializeField] Button submit;
+	[SerializeField] Button load;
 
-    [SerializeField]
-    private Button submit;
-    [SerializeField]
-    private Button load;
+	TwitchConnection connection;
 
-    private string path;
+	private string path;
 
 	/// <summary>
 	/// Fetch references in Awake
@@ -24,40 +23,82 @@ public class FormController : MonoBehaviour
 	private void Awake()
 	{
 		connection = FindObjectOfType<TwitchConnection>();
+		path = Application.streamingAssetsPath + "/settings.txt";
 	}
 
+	/// <summary>
+	/// If any saved login information exists, load it.
+	/// Set each form items text to an empty string. We only need a message there
+	/// when something has gone wrong
+	/// </summary>
 	private void Start()
-    {
-        path = Application.streamingAssetsPath + "/settings.txt";
+	{
+		if (File.Exists(path) == true)
+		{
+			LoadAndApplySettings();
+		}
 
-        GetFormItem("username").text.text = "";
-        GetFormItem("client").text.text = "";
-        GetFormItem("access").text.text = "";
-        GetFormItem("channel").text.text = "";
+		foreach (FormItem item in formItems)
+		{
+			item.text.text = string.Empty;
+		}
+	}
 
-        submit.onClick.AddListener(SubmitOnClick);
-        load.onClick.AddListener(LoadOnClick);
-    }
+	/// <summary>
+	/// Load the file to get the settings then apply the loaded values
+	/// to the settings class as well as the corresponding form items
+	/// </summary>
+	private void LoadAndApplySettings()
+	{
+		LoginSettings login = LoadSettings();
 
-    private void LoadSettings()
-    {
-        string settingsLoad = File.ReadAllText(path);
-        string[] settingsSplit = settingsLoad.Split('\n');
+		GetFormItem("username").input.text = Settings.username = login.username;
+		GetFormItem("client").input.text = Settings.clientId = login.clientId;
+		GetFormItem("access").input.text = Settings.accessToken = login.accessToken;
+		GetFormItem("channel").input.text = Settings.channelToJoin = login.channelName;
+	}
 
-        Settings.username = settingsSplit[0];
-        Settings.clientId = settingsSplit[1];
-        Settings.accessToken = settingsSplit[2];
-        Settings.channelToJoin = settingsSplit[3];
-    }
+	/// <summary>
+	/// Load the file, split it and return a class containing said values
+	/// </summary>
+	/// <returns></returns>
+	private LoginSettings LoadSettings()
+	{
+		string settingsLoad = File.ReadAllText(path);
+		string[] settings = settingsLoad.Split('\n');
 
-    private void SaveSettings()
-    {
-        string settingsSave = Settings.username + "\n" + Settings.clientId + "\n" + Settings.accessToken + "\n" + Settings.channelToJoin;
-        File.WriteAllText(path, settingsSave);
-    }
+		return new LoginSettings(settings[0], settings[1], settings[2], settings[3]);
+	}
 
-    private void SubmitOnClick()
-    {
+	private void SaveSettings()
+	{
+		string settingsSave = Settings.username + "\n" + Settings.clientId + "\n" + Settings.accessToken + "\n" + Settings.channelToJoin;
+		File.WriteAllText(path, settingsSave);
+	}
+
+	/// <summary>
+	/// When the load button is pressed, see if the settings file exists in StreamingAssets, if it
+	/// does then load it, split it and input it into the form items and settings file
+	/// </summary>
+	public void LoadForm()
+	{
+		if (File.Exists(path) == true)
+		{
+			LoadAndApplySettings();
+		}
+		else
+		{
+			Debug.LogError("[Error] - Settings file does not exist! Therefore, we cannot load any settings!", gameObject);
+		}
+	}
+
+	/// <summary>
+	/// When the submit button is pressed, make sure each field is complete.
+	/// If so, get those values, inputting them into the settings class and attempt to connect to
+	/// Twitch using those settings.
+	/// </summary>
+	public void SubmitForm()
+	{
 		if (IsFormComplete() == true)
 		{
 			Settings.username = GetFormItem("username").input.text;
@@ -77,25 +118,18 @@ public class FormController : MonoBehaviour
 		{
 			foreach (FormItem item in formItems)
 			{
-                if (item.isComplete == false)
-                {
-                    item.text.text = "This field cannot be empty";
-                }
+				if (item.isComplete == false)
+				{
+					item.text.text = "This field cannot be empty";
+				}
 
-                else
-                {
-                    item.text.text = "";
-                }
+				else
+				{
+					item.text.text = "";
+				}
 			}
 		}
 	}
-
-	private void LoadOnClick()
-    {
-        LoadSettings();
-
-        connection.Connect();
-    }
 
 	/// <summary>
 	/// Get a form item with a specific name
@@ -122,12 +156,31 @@ public class FormController : MonoBehaviour
 			.Count == 0;
 	}
 
+	/// <summary>
+	/// To hold the values loaded so that they can be used to set the text on the form and settings file
+	/// </summary>
+	private class LoginSettings
+	{
+		public string username;
+		public string clientId;
+		public string accessToken;
+		public string channelName;
+
+		public LoginSettings(string username, string clientId, string accessToken, string channelName)
+		{
+			this.username = username;
+			this.clientId = clientId;
+			this.accessToken = accessToken;
+			this.channelName = channelName;
+		}
+	}
+
 	[Serializable]
 	public class FormItem
 	{
 		public string itemName = string.Empty;
 		public bool isComplete => input.text.Length > 0;
 		public InputField input;
-        public Text text;
+		public Text text;
 	}
 }
