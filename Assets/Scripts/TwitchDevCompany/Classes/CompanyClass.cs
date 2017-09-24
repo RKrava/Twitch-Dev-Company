@@ -18,8 +18,8 @@ public class CompanyClass
         this.companyName = companyName;
     }
     
-    public List<uint> founderIDs = new List<uint>();
-    public List<uint> invitedIDs = new List<uint>();
+    public List<string> founderIDs = new List<string>();
+    public List<string> invitedIDs = new List<string>();
     public int money;
-    public List<uint> projectIDs = new List<uint>();
+    public List<int> projectIDs = new List<int>();
 }

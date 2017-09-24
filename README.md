@@ -11,24 +11,25 @@ There is none, as it doesn't function as intended yet.
 
 ## Contributing
 
-Pleae refer to the WIKI before/when working on the project. Here I'll keep documentation of my overall plan for the game, such as the roles of certain scripts, etc.
+Refer to the WIKI before/when working on the project. Here we'll keep documentation for the overall plan for the game, such as the roles of certain scripts, etc.
 
 1. Fork it (<https://github.com/BeardlessDev/Twitch-Dev-Company/fork>)
 2. Create your feature branch (`git checkout -b feature/fooBar`)
-3. Commit your changes (`git commit -am 'Add some fooBar'`) See the COMMIT header for more info
+3. Commit your changes (`git commit -am 'Add some fooBar'`) See the COMMIT section for more info
 4. Push to the branch (`git push origin feature/fooBar`)
 5. Create a new Pull Request
 
 ### Commit
 
-'Add some fooBar' - Use when adding something, like a new feature.
+When making commits, use the below formatting.
 
-'Update some fooBar' - Use when making minor changes to a feature, etc.
+`'Add some fooBar'` - Use when adding something, like a new feature.
 
-'Change some fooBar' - Use when making major changes to a feature, etc. These could have an affect on how the feature, etc. is referenced in other scripts.
+`'Update some fooBar'` - Use when making minor changes to a feature, etc.
 
-'Fix some fooBar' - Use when fixing a bug.
+`'Change some fooBar'` - Use when making major changes to a feature, etc. These could have an affect on how the feature, etc. is referenced in other scripts.
 
+`'Fix some fooBar'` - Use when fixing a bug.
 
 ## License
 
