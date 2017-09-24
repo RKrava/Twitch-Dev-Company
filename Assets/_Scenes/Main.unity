@@ -135,7 +135,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 644b2049cbab79e4cbfd3a361f16caaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  twitchConnection: {fileID: 358784849}
 --- !u!4 &141087701
 Transform:
   m_ObjectHideFlags: 0
@@ -2375,7 +2374,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1620994365}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
