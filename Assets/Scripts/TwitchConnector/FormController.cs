@@ -10,6 +10,8 @@ public class FormController : MonoBehaviour
 	[Header("Form Items")]
 	[Tooltip("A list of form items which correspond to an InputField and Text object. Allows us to reference form items by name")]
 	[SerializeField] List<FormItem> formItems = new List<FormItem>();
+	[SerializeField] Button submit;
+	[SerializeField] Button load;
 
 	TwitchConnection connection;
 
