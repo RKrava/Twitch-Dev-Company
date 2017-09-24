@@ -3,10 +3,10 @@
 [Serializable]
 public class ProjectClass
 {
-    public uint projectID;
+    public int projectID;
     public string projectName;
 
-    public ProjectClass(uint projectID, string projectName)
+    public ProjectClass(int projectID, string projectName)
     {
         this.projectID = projectID;
         this.projectName = projectName;

@@ -59,6 +59,7 @@ public class CommandController : MonoBehaviour
         Debug.Log("CommandController has connected.");
     }
 
+    //Will add these once testing has finished
     private void LoadDevelopers()
     {
         //Do something there
@@ -127,29 +128,289 @@ public class CommandController : MonoBehaviour
 
     private void ClientOnWhisperCommandReceived(object sender, OnWhisperCommandReceivedArgs e)
     {
-        Debug.Log(e.Command);
-
-        Debug.Log("I recieved a whisper.");
+        Debug.Log(e.Command + " has been received.");
 
         List<string> splitWhisper = e.ArgumentsAsList;
-
         Debug.Log(splitWhisper[0]);
 
         string id = e.WhisperMessage.UserId;
-        string uID = e.WhisperMessage.UserId;
-        string user = e.WhisperMessage.Username;
+        string username = e.WhisperMessage.DisplayName;
 
-        //if (int.TryParse(e.WhisperMessage.UserId, out id))
-        //{
-        //    //Worked
-        //}
+        //Check they have been added as a developer
+        if (!developers.ContainsKey(id))
+        {
+            client.SendWhisper(username, "You are not a developer yet. Please send a message to chat first.");
+            return;
+        }
 
-        //if (uint.TryParse(e.WhisperMessage.UserId, out uID))
-        //{
-        //    //Worked
-        //}
+        if (string.Compare(e.Command, "company", true) == 0)
+        {
+            //Get the company from the developer data
+            string companyName = developers[id].companyName;
+            Debug.Log("Got the company name.");
 
-        Debug.Log("I did all the parsing stuff.");
+            //Mark as true/false by default to avoid issues
+            bool companyFounder = true;
+            bool companyOwner = false;
+
+            //Check if they are part of a company
+            if (companyName == string.Empty)
+            {
+                companyFounder = false;
+            }
+
+            else
+            {
+                //If they are part of company, check if they are the owner
+                if (companies[companyName].founderIDs[0] == id)
+                {
+                    Debug.Log(username + " is the Owner of " + companyName);
+                    companyOwner = true;
+                }
+            }
+
+            //Start a company
+            if (string.Compare(splitWhisper[0], "start", true) == 0)
+            {
+                Debug.Log("Creating a company.");
+
+                //Check if player is already part of a company
+                if (!companyFounder)
+                {
+                    companyName = splitWhisper[1];
+
+                    //Check if a company exists
+                    if (!companies.ContainsKey(companyName))
+                    {
+                        Debug.Log("No company exists.");
+
+                        company = new CompanyClass(companyName);
+                        company.founderIDs.Add(id);
+                        Debug.Log("Company stuff done.");
+                        developers[id].companyName = companyName;
+                        Debug.Log("User stuff done.");
+
+                        client.SendWhisper(username, "You are now the proud owner of " + companyName + ".");
+
+                        companies.Add(companyName, company);
+
+                        Debug.Log("Company created.");
+                    }
+
+                    else
+                    {
+                        client.SendWhisper(username, "A company already exists with that name. Please choose another.");
+                    }
+                }
+
+                else
+                {
+                    client.SendWhisper(username, "You are already part of a company called " + companyName + ".");
+                }
+            }
+
+            //Invite upto two more people to join the company
+            else if (string.Compare(splitWhisper[0], "invite", true) == 0)
+            {
+                Debug.Log("Inviting someone to join a company.");
+
+                string invitedUsername = splitWhisper[1];
+
+                //Check they are the owner of a company
+                if (companyOwner)
+                {
+                    Debug.Log(username + " is the owner of a company.");
+
+                    company = companies[companyName];
+
+                    //Check the company has less than 3 founders
+                    if (company.founderIDs.Count < 3)
+                    {
+                        Debug.Log("The company has less than 3 founders.");
+
+                        //Check the player is in the system
+                        if (usernameToId.ContainsKey(invitedUsername))
+                        {
+                            Debug.Log(invitedUsername + " is a developer.");
+
+                            string invitedID = usernameToId[invitedUsername];
+
+                            //Check the player is not already part of a company
+                            if (developers[invitedID].companyName == string.Empty)
+                            {
+                                Debug.Log(invitedUsername + " is not already part of a company.");
+
+                                //Add the invited user to a list
+                                company.invitedIDs.Add(invitedID);
+                                Debug.Log("Invited user has been added to list.");
+
+                                //Give them 5 minutes to respond
+                                EnsureMainThread.executeOnMainThread.Enqueue(() => { StartCoroutine(ClearInvite(companyName)); });
+                                Debug.Log("ClearInvite has been started.");
+
+                                //Send the invite via whisper. Keep SendMessage just in case it doesn't work for others.
+                                client.SendWhisper(invitedUsername, "You have been invited by " + username + " to join their company, " + companyName + ". Type !company accept " + companyName + " in the next 5 minutes to join.");
+                                //client.SendMessage(invitedUsername + ", you have been invited to join " + companyName + ". Type !company accept " + companyName + " in the next 5 minutes to join.");
+                                Debug.Log("Invite sent.");
+
+                                //Let the founder know an invite was sent
+                                client.SendWhisper(username, "An invite has been sent to " + invitedUsername + ".");
+                            }
+
+                            else
+                            {
+                                client.SendWhisper(username, invitedUsername + " is already part of another company.");
+                            }
+                        }
+
+                        else
+                        {
+                            client.SendWhisper(username, invitedUsername + " is not a developer. Wait for them to send a message in chat.");
+                        }
+                    }
+
+                    else
+                    {
+                        client.SendWhisper(username, "You are not allowed more than 3 founders in a company.");
+                    }
+                }
+
+                else
+                {
+                    client.SendWhisper(username, "You have to be the owner of the company to invite founders.");
+                }
+            }
+
+            else if (string.Compare(splitWhisper[0], "accept", true) == 0)
+            {
+                Debug.Log("Accepting invite.");
+
+                if (String.IsNullOrEmpty(companyName))
+                {
+                    Debug.Log(username + " is not part of a company.");
+
+                    companyName = splitWhisper[1];
+
+                    //Check the company exists
+                    if (companies.ContainsKey(companyName))
+                    {
+                        Debug.Log("Company exists.");
+
+                        //Check the company has less than 3 founders
+                        if (companies[companyName].founderIDs.Count < 3)
+                        {
+                            Debug.Log("Company has less than three founders.");
+
+                            company = companies[companyName];
+
+                            //Add them to the company
+                            company.founderIDs.Add(id);
+
+                            //Add company to their details
+                            developers[id].companyName = companyName;
+
+                            //Let them now they've joined a company
+                            client.SendWhisper(username, "You are now a founder of " + companyName + ". You can add funds with !deposit " + companyName + " to fund any project made under the company.");
+                            //Doesn't send
+
+                            //Get the company founder
+                            string founder = idToUsername[company.founderIDs[0]];
+
+                            //Let the founder know the player has joined the company
+                            client.SendWhisper(founder, username + " has become a founder of your company, " + companyName + ".");
+                        }
+
+                        else
+                        {
+                            //There are already 3 people
+                            client.SendWhisper(username, companyName + " already has three founders.");
+                        }
+                    }
+
+                    else
+                    {
+                        //Company doesn't exist
+                        client.SendWhisper(username, companyName + " doesn't exist. Check you typed the name correctly.");
+                    }
+                }
+
+                else
+                {
+                    client.SendWhisper(username, "You are already part of another company, " + companyName + ".");
+                }
+            }
+
+            //Add funds to company from player
+            else if (string.Compare(splitWhisper[0], "deposit", true) == 0)
+            {
+                //Check the company exists
+                if (companies.ContainsKey(splitWhisper[1]))
+                {
+                    //Check the player is part of the company
+                    if (companies[splitWhisper[1]].founderIDs.Contains(id))
+                    {
+                        //TryParse
+                        int money;
+
+                        if (int.TryParse(splitWhisper[2], out money))
+                        {
+                            //Check the player has enough funds
+                            if (money <= developers[id].developerMoney)
+                            {
+                                //Transfer funds
+                                int moneyLeft = developers[id].developerMoney - money;
+                                developers[id].developerMoney = moneyLeft;
+
+                                companies[splitWhisper[1]].money += money;
+                            }
+
+                            else
+                            {
+                                client.SendWhisper(username, "You only have " + developers[id].developerMoney + ".");
+                            }
+                        }
+
+                        else
+                        {
+                            //You need to put the amount of money
+                        }
+                    }
+
+                    else
+                    {
+                        client.SendWhisper(username, "Only founders can deposit funds.");
+                    }
+                }
+
+                else
+                {
+                    client.SendWhisper(username, splitWhisper[1] + " doesn't exist. Check you typed the name correctly.");
+                }
+            }
+
+            ////Withdraw funds from a company to player
+            //else if (string.Compare(splitWhisper[0], "withdraw", true) == 0)
+            //{
+
+            //}
+
+            ////Edit company data
+            //else if (string.Compare(splitWhisper[0], "edit", true) == 0)
+            //{
+
+            //}
+
+            ////Delete company if there is only one founder
+            //else if (string.Compare(splitWhisper[0], "delete", true) == 0)
+            //{
+
+            //}
+
+            else
+            {
+                Debug.Log("I can't do my damn job!");
+            }
+        }
 
         //if (string.Compare(e.Command, "project", true) == 0)
         //{
@@ -190,232 +451,34 @@ public class CommandController : MonoBehaviour
         //        }
         //    }
         //}
+    }
 
-        if (string.Compare(e.Command, "company", true) == 0)
-        {
-            //Get the company from the developer data
-            string companyName = developers[id].companyName;
-            Debug.Log("Got the company name.");
+    IEnumerator ClearInvite(string companyName)
+    {
+        Debug.Log("Clearing invite.");
 
-            //Add funds to company from player
-            if (string.Compare(splitWhisper[0], "deposit", true) == 0)
-            {
-                //Check the company exists
-                if (companies.ContainsKey(splitWhisper[1]))
-                {
-                    //Check the player is part of the company
-                    if (companies[splitWhisper[1]].founderIDs.Contains(uID))
-                    {
-                        //TryParse
-                        int money;
+        yield return new WaitForSeconds(300);
 
-                        if (int.TryParse(splitWhisper[2], out money))
-                        {
-                            //Check the player has enough funds
-                            if (money <= developers[id].developerMoney)
-                            {
-                                //Transfer funds
-                                int moneyLeft = developers[id].developerMoney - money;
-                                developers[id].developerMoney = moneyLeft;
+        company = companies[companyName];
+        string invitedUsername = company.invitedIDs[0];
+        company.invitedIDs.RemoveAt(0);
 
-                                companies[splitWhisper[1]].money += money;
-                            }
+        //Send whisper to founder that invite ran out
+        string founderUsername = company.founderIDs[0];
 
-                            else
-                            {
-                                client.SendWhisper(user, "You only have " + developers[id].developerMoney + ".");
-                            }
-                        }
+        //Doesn't send.
+        client.SendWhisper(founderUsername, "Your invite to " + invitedUsername + " has run out.");
 
-                        else
-                        {
-                            //You need to put the amount of money
-                        }
-                    }
-
-                    else
-                    {
-                        client.SendWhisper(user, "Only founders can deposit funds.");
-                    }
-                }
-
-                else
-                {
-                    client.SendWhisper(user, splitWhisper[1] + " doesn't exist. Check you typed the name correctly.");
-                }
-            }
-
-            ////Withdraw funds from a company to player
-            //else if (string.Compare(splitWhisper[0], "withdraw", true) == 0)
-            //{
-
-            //}
-
-            //Start a company
-            else if (string.Compare(splitWhisper[0], "start", true) == 0) //Check they are not part of a company already
-            {
-                Debug.Log("Creating a company.");
-
-                if (!companies.ContainsKey(splitWhisper[1]))
-                {
-                    Debug.Log("No company exists.");
-
-                    company = new CompanyClass(splitWhisper[1]);
-                    company.founderIDs.Add(uID);
-                    Debug.Log("Company stuff done.");
-                    developers[id].companyName = splitWhisper[1];
-                    Debug.Log("User stuff done.");
-
-                    client.SendWhisper(user, "You are now the proud owner of " + splitWhisper[1] + ".");
-
-                    companies.Add(company.companyName, company);
-
-                    Debug.Log("Company created.");
-                }
-
-                else
-                {
-                    client.SendWhisper(user, "A company already exists with that name. Please choose another.");
-                }
-            }
-
-            //Invite upto two more people to join the company
-            else if (string.Compare(splitWhisper[0], "invite", true) == 0) //What happens if they try to invite while they are not part of a company?
-            {
-                //Check the company has less than 3 founders
-                company = companies[companyName];
-
-                if (company.founderIDs.Count < 3)
-                {
-                    //Check the player is in the system
-                    if (usernameToId.ContainsKey(splitWhisper[1]))
-                    {
-                        //Add the invite user to a list
-                        //company.invitedIDs.Add((uint)(developerStringToInt[splitWhisper[1]]));
-
-                        //Give them 5 minutes to respond
-                        //StartCoroutine(ClearInvite(companyName));
-
-                        //Send the invite via whisper
-                        //SendInvite(user, splitWhisper[1], companyName);
-                        //client.SendWhisper(splitWhisper[1], "You have been invited by " + user + " to join their company, " + companyName + ". Type !accept " + companyName + " in the next 5 minutes to join.");
-                        client.SendMessage(splitWhisper[1] + ", you have been invited to join " + companyName + ". Type !company accept " + companyName + " in the next 5 minutes to join.");
-
-                        //Let the founder know an invite was sent
-                        client.SendWhisper(user, "An invite has been sent to " + splitWhisper[1] + ".");
-
-                        Debug.Log("Invite sent.");
-                    }
-
-                    else
-                    {
-                        client.SendWhisper(user, "The player you are trying to invite is not part of the system. Please wait a minute for them to be processed.");
-                    }
-                }
-
-                else
-                {
-                    client.SendWhisper(user, "You are not allowed more than 3 founders in a company.");
-                }
-            }
-
-            else if (string.Compare(splitWhisper[0], "accept", true) == 0)
-            {
-                if (String.IsNullOrEmpty(companyName))
-                {
-                    Debug.Log("Not part of a company.");
-                    //Check the company exists
-                    if (companies.ContainsKey(splitWhisper[1]))
-                    {
-                        Debug.Log("Company exists.");
-                        //Check the company has less than 3 founders
-                        if (companies[splitWhisper[1]].founderIDs.Count < 3)
-                        {
-                            Debug.Log("Company has less than three founders.");
-
-                            company = companies[splitWhisper[1]];
-
-                            //Add them to the company
-                            company.founderIDs.Add(uID);
-
-                            //Add company to their details
-                            developers[id].companyName = companyName;
-
-                            //Let them now they've joined a company
-                            client.SendWhisper(user, "You are now a founder of " + companyName + ". You can add funds with !deposit " + companyName + " to fund any project made under the company.");
-
-                            //Get the company founder
-                            string founder = idToUsername[company.founderIDs[0]];
-
-                            //Let the founder know the player has joined the company
-                            client.SendWhisper(founder, user + " has become a founder of your company, " + companyName + ".");
-                        }
-
-                        else
-                        {
-                            //There are already 3 people
-                            client.SendWhisper(user, companyName + " already has three founders.");
-                        }
-                    }
-
-                    else
-                    {
-                        //Company doesn't exist
-                        client.SendWhisper(user, splitWhisper[1] + " doesn't exist. Check you typed the name correctly.");
-                    }
-                }
-
-                else
-                {
-                    client.SendWhisper(user, "You are already part of another company, " + companyName + ".");
-                }
-            }
-
-            else
-            {
-                Debug.Log("I can't do my damn job!");
-            }
-
-            ////Edit company data
-            //else if (string.Compare(splitWhisper[0], "edit", true) == 0)
-            //{
-
-            //}
-
-            ////Delete company if there is only one founder
-            //else if (string.Compare(splitWhisper[0], "delete", true) == 0)
-            //{
-
-            //}
-        }
+        Debug.Log("Invite ran out.");
     }
 
     void ApplyClose()
     {
         applyOpen = false;
     }
-
-    IEnumerator SendInvite(string founder, string invited, string companyName)
-    {
-        client.SendWhisper(invited, "You have been invited to join " + companyName + ". Type !accept " + companyName + " in the next 5 minutes to join.");
-
-        yield return new WaitForSeconds(1);
-
-        client.SendWhisper(founder, "An invite has been sent to " + invited + ".");
-    }
-
-    IEnumerator ClearInvite(string companyName)
-    {
-        yield return new WaitForSeconds(300);
-
-        company = companies[companyName];
-        //company.invitedIDs.RemoveAt(0);
-
-        //Send Whisper to Founder. Invite ran out.
-
-        Debug.Log("Invite ran out.");
-    }
 }
+
+//Keep all of this until I've added all the project stuff
 
 //if (string.Compare(e.Command.Command, "join", true) == 0)
 //{
