@@ -371,7 +371,7 @@ public class CommandController : MonoBehaviour
                                 int moneyLeft = developers[id].developerMoney - money;
                                 developers[id].developerMoney = moneyLeft;
 
-                                companies[splitWhisper[1]].money += money;
+                                companies[splitWhisper[1]].AddMoney(money);
                             }
 
                             else

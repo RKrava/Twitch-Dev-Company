@@ -31,7 +31,7 @@ public class CompanyClass
 	public string GetFirstInvite() => invitedIDs[0];
 	public void RemoveFirstInvite() => invitedIDs.RemoveAt(0);
 
-	public List<int> projectIDs = new List<int>();
+	List<int> projectIDs = new List<int>();
 	public List<ProjectClass> projects = new List<ProjectClass>();
 	public void AddProject(ProjectClass project) => projects.Add(project);
 	public bool CanAddProject => (ProjectCount < maxConcurrentProjects);
