@@ -18,7 +18,7 @@ public class CompanyClass
         this.companyName = companyName;
     }
     
-    public List<uint> founderIDs = new List<uint>();
+    public List<string> founderIDs = new List<string>();
     //public List<uint> invitedIDs = new List<uint>();
     public int money;
     public List<uint> projectIDs = new List<uint>();

@@ -15,10 +15,13 @@ public class CommandController : MonoBehaviour
 
     private DeveloperClass developer;
     //Able to get a viewer/developers ID from their username, and vice versa
-    public SortedDictionary<int, string> developerIntToString { get; private set; } = new SortedDictionary<int, string>();
-    public SortedDictionary<string, int> developerStringToInt { get; private set; } = new SortedDictionary<string, int>();
+    public SortedDictionary<string, string> idToUsername { get; private set; } = new SortedDictionary<string, string>();
+    public SortedDictionary<string, string> usernameToId { get; private set; } = new SortedDictionary<string, string>();
     //Developer data
-    public SortedDictionary<int, DeveloperClass> developers { get; private set; } = new SortedDictionary<int, DeveloperClass>();
+    public SortedDictionary<string, DeveloperClass> developers { get; private set; } = new SortedDictionary<string, DeveloperClass>();
+
+    private Queue<string> idQueue = new Queue<string>();
+    private Queue<string> usernameQueue = new Queue<string>();
 
     //Company data
     private CompanyClass company;
@@ -46,10 +49,9 @@ public class CommandController : MonoBehaviour
         client = twitchConnection.client;
 
         client.OnJoinedChannel += ClientOnJoinedChannel;
+        client.OnMessageReceived += ClientOnMessageReceived;
         client.OnChatCommandReceived += ClientOnCommandReceived;
         client.OnWhisperCommandReceived += ClientOnWhisperCommandReceived;
-
-        InvokeRepeating("AddDevelopers", 10, 60);
     }
 
     private void ClientOnJoinedChannel(object sender, OnJoinedChannelArgs e)
@@ -67,57 +69,49 @@ public class CommandController : MonoBehaviour
         //Do something here
     }
 
-    private async void AddDevelopers()
+    private void ClientOnMessageReceived(object sender, OnMessageReceivedArgs e)
     {
-        List<ChatterFormatted> chatters = await TwitchAPI.Undocumented.GetChattersAsync(Settings.channelToJoin);
+        string id = e.ChatMessage.UserId;
+        string username = e.ChatMessage.DisplayName;
 
-        foreach (ChatterFormatted chatter in chatters) //Delay by a second each one
+        //Check the user doesn't already have a developer
+        if (!developers.ContainsKey(id))
         {
-            await Task.Delay(5000);
+            developer = new DeveloperClass();
+            developer.developerID = id;
 
-            Debug.Log("Chatter is running.");
+            idToUsername.Add(id, username);
+            usernameToId.Add(username, id);
 
-            var chatterInfo = await TwitchAPI.Users.v3.GetUserFromUsernameAsync(chatter.Username);
-            int chatterID = int.Parse(chatterInfo.Id);
+            developers.Add(id, developer);
 
-            if (!developers.ContainsKey(chatterID))
-            {
-                developer = new DeveloperClass();
-                developer.developerID = (uint)chatterID;
-                Debug.Log(developer.developerID);
-                developer.developerMoney = 5000;
-                developer.companyName = "";
-                Debug.Log(developer.companyName);
+            Debug.Log(username + " has been added as a developer.");
 
-                developerIntToString.Add(chatterID, chatter.Username);
-                developerStringToInt.Add(chatter.Username, chatterID);
-
-                developers.Add(chatterID, developer);
-
-                Debug.Log(chatter.Username + " has been added as a developer.");
-
-                //File.AppendAllText("events.txt", chatter.Username + " has become a developer." + Environment.NewLine);
-            }
-
-            else
-            {
-                //Take ID
-                //Check username
-                //If username is different to saved change
-
-                string developerName = developerIntToString[chatterID];
-
-                if (developerName != chatter.Username)
-                {
-                    developerIntToString[chatterID] = chatter.Username;
-                    developerStringToInt.Remove(developerName);
-                    developerStringToInt.Add(chatter.Username, chatterID);
-
-                    //File.AppendAllText("events.txt", developerName + " has changed their username to " + chatter.Username + "." + Environment.NewLine);
-                }
-            }
+            //Will be using this to keep a history of all the events. Will update when I finally add that system in.
+            //File.AppendAllText("events.txt", chatter.Username + " has become a developer." + Environment.NewLine);
 
             //SaveDevelopers();
+        }
+
+        else
+        {
+            Debug.Log(e.ChatMessage.DisplayName + " already is a developer.");
+
+            string developerName = idToUsername[id];
+
+            if (developerName != username)
+            {
+                //Update idToUsername and usernameToId
+                idToUsername[id] = username;
+
+                usernameToId.Remove(username);
+                usernameToId.Add(username, id);
+
+                //Will be using this to keep a history of all the events. Will update when I finally add that system in.
+                //File.AppendAllText("events.txt", developerName + " has changed their username to " + chatter.Username + "." + Environment.NewLine);
+
+                //SaveDevelopers();
+            }
         }
     }
 
@@ -127,8 +121,7 @@ public class CommandController : MonoBehaviour
 
         if (string.Compare(e.Command.Command, "twitchtycoon", true) == 0)
         {
-            //client.SendMessage("Whisper me to get involved. INFO.");
-            client.SendWhisper("creativefletcher", "Definitely yep!");
+            client.SendMessage("Twitch Dev Tycoon is a Twitch version of games like Game Dev Tycoon and Software Inc. If you'd like to get involved, whisper me '!help'.");
         }
     }
 
@@ -142,19 +135,19 @@ public class CommandController : MonoBehaviour
 
         Debug.Log(splitWhisper[0]);
 
-        int id;
-        uint uID;
+        string id = e.WhisperMessage.UserId;
+        string uID = e.WhisperMessage.UserId;
         string user = e.WhisperMessage.Username;
 
-        if (int.TryParse(e.WhisperMessage.UserId, out id))
-        {
-            //Worked
-        }
+        //if (int.TryParse(e.WhisperMessage.UserId, out id))
+        //{
+        //    //Worked
+        //}
 
-        if (uint.TryParse(e.WhisperMessage.UserId, out uID))
-        {
-            //Worked
-        }
+        //if (uint.TryParse(e.WhisperMessage.UserId, out uID))
+        //{
+        //    //Worked
+        //}
 
         Debug.Log("I did all the parsing stuff.");
 
@@ -295,7 +288,7 @@ public class CommandController : MonoBehaviour
                 if (company.founderIDs.Count < 3)
                 {
                     //Check the player is in the system
-                    if (developerStringToInt.ContainsKey(splitWhisper[1]))
+                    if (usernameToId.ContainsKey(splitWhisper[1]))
                     {
                         //Add the invite user to a list
                         //company.invitedIDs.Add((uint)(developerStringToInt[splitWhisper[1]]));
@@ -352,7 +345,7 @@ public class CommandController : MonoBehaviour
                             client.SendWhisper(user, "You are now a founder of " + companyName + ". You can add funds with !deposit " + companyName + " to fund any project made under the company.");
 
                             //Get the company founder
-                            string founder = developerIntToString[(int)(company.founderIDs[0])];
+                            string founder = idToUsername[company.founderIDs[0]];
 
                             //Let the founder know the player has joined the company
                             client.SendWhisper(founder, user + " has become a founder of your company, " + companyName + ".");
