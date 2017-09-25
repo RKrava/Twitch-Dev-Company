@@ -407,7 +407,22 @@ public class CommandController : MonoBehaviour
                             companies[companyName].SpendMoney(money);
                             developers[id].developerMoney += money; //Make a function
                         }
+
+                        else
+                        {
+                            client.SendWhisper(username, "The company only has " + companies[companyName].money + ".");
+                        }
                     }
+
+                    else
+                    {
+                        client.SendWhisper(username, "To withdraw money, you need to use !command withdraw 1000, etc.");
+                    }
+                }
+
+                else
+                {
+                    client.SendWhisper(username, "You need to be part of a company to withdraw money.");
                 }
             }
 
