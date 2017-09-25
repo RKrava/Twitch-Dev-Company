@@ -197,7 +197,7 @@ public class CommandController : MonoBehaviour
                         company = new CompanyClass(companyName);
                         company.AddFounder(id);
                         Debug.Log("Company stuff done.");
-                        developers[id].companyName = companyName;
+                        developers[id].JoinCompany(companyName);
                         Debug.Log("User stuff done.");
 
                         client.SendWhisper(username, "You are now the proud owner of " + companyName + ".");
@@ -246,7 +246,7 @@ public class CommandController : MonoBehaviour
                             string invitedID = usernameToId[invitedUsername];
 
                             //Check the player is not already part of a company
-                            if (developers[invitedID].companyName == string.Empty)
+                            if (!developers[invitedID].IsFounder)
                             {
                                 Debug.Log(invitedUsername + " is not already part of a company.");
 
@@ -317,7 +317,7 @@ public class CommandController : MonoBehaviour
                             company.AddFounder(id);
 
                             //Add company to their details
-                            developers[id].companyName = companyName;
+                            developers[id].JoinCompany(companyName);
 
                             //Let them now they've joined a company
                             client.SendWhisper(username, "You are now a founder of " + companyName + ". You can add funds with !company deposit 1000, etc. to fund projects, and !project start [NAME] to start projects.");
@@ -361,15 +361,13 @@ public class CommandController : MonoBehaviour
                     if (int.TryParse(splitWhisper[1], out money))
                     {
                         //Check the player has enough funds
-                        if (money <= developers[id].developerMoney)
+                        if (developers[id].HasEnoughMoney(money))
                         {
                             //Transfer funds - Can probably be a function
-                            int moneyLeft = developers[id].developerMoney - money;
-                            developers[id].developerMoney = moneyLeft;
-
+                            developers[id].SpendMoney(money);
                             companies[companyName].AddMoney(money);
 
-                            client.SendWhisper(username, "You have deposited " + money + ". Now " + companyName + " has " + companies[companyName].money + ", and you have " + moneyLeft + " left."); //Can probably write this better, but yeah
+                            client.SendWhisper(username, "You have deposited " + money + ". Now " + companyName + " has " + companies[companyName].money + ", and you have " + developers[id].developerMoney + " left."); //Can probably write this better, but yeah
                         }
 
                         else
@@ -405,7 +403,7 @@ public class CommandController : MonoBehaviour
                         {
                             //Transfer funds
                             companies[companyName].SpendMoney(money);
-                            developers[id].developerMoney += money; //Make a function
+                            developers[id].AddMoney(money);
                         }
 
                         else
@@ -441,7 +439,7 @@ public class CommandController : MonoBehaviour
                     //Change the company name in their developer profiles
                     foreach (string developer in companies[companyName].GetFounders)
                     {
-                        developers[developer].companyName = newName; //Make a function
+                        developers[developer].UpdateCompany(newName); //Make a function
                     }
 
                     client.SendWhisper(username, "You have changed the name of the company to " + newName);
@@ -460,7 +458,7 @@ public class CommandController : MonoBehaviour
                 if (companyFounder)
                 {
                     companies[companyName].RemoveFounder(id);
-                    developers[id].companyName = "";
+                    developers[id].LeaveCompany();
 
                     client.SendWhisper(username, "You have left " + companyName + ".");
                 }
