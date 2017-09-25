@@ -453,11 +453,23 @@ public class CommandController : MonoBehaviour
                 }
             }
 
-            ////Delete company if there is only one founder
-            //else if (string.Compare(splitWhisper[0], "leave", true) == 0)
-            //{
+            //Leave company
+            else if (string.Compare(splitWhisper[0], "leave", true) == 0)
+            {
+                //Check they are in a company
+                if (companyFounder)
+                {
+                    companies[companyName].RemoveFounder(id);
+                    developers[id].companyName = "";
 
-            //}
+                    client.SendWhisper(username, "You have left " + companyName + ".");
+                }
+
+                else
+                {
+                    client.SendWhisper(username, "You cannot leave a company if you are not part of a company. FailFish");
+                }
+            }
 
             else
             {
