@@ -405,20 +405,41 @@ public class CommandController : MonoBehaviour
                         {
                             //Transfer funds
                             companies[companyName].SpendMoney(money);
-                            developers[id].developerMoney += money;
+                            developers[id].developerMoney += money; //Make a function
                         }
                     }
                 }
             }
 
-            ////Edit company data
-            //else if (string.Compare(splitWhisper[0], "edit", true) == 0)
-            //{
+            //Edit company data
+            else if (string.Compare(splitWhisper[0], "edit", true) == 0)
+            {
+                //Check they are the owner of the company
+                if (companyOwner)
+                {
+                    string newName = splitWhisper[1];
 
-            //}
+                    //Change the company name
+                    companies[companyName].ChangeName(newName);
+
+                    //Get all the founders
+                    //Change the company name in their developer profiles
+                    foreach (string developer in companies[companyName].GetFounders)
+                    {
+                        developers[developer].companyName = newName; //Make a function
+                    }
+
+                    client.SendWhisper(username, "You have changed the name of the company to " + newName);
+                }
+
+                else
+                {
+                    client.SendWhisper(username, "You have to be the company owner to change the name.");
+                }
+            }
 
             ////Delete company if there is only one founder
-            //else if (string.Compare(splitWhisper[0], "delete", true) == 0)
+            //else if (string.Compare(splitWhisper[0], "leave", true) == 0)
             //{
 
             //}
