@@ -153,7 +153,12 @@ public class CommandController : MonoBehaviour
             return;
         }
 
-        if (string.Compare(e.Command, "company", true) == 0)
+        if (string.Compare(e.Command, "money", true) == 0)
+        {
+            client.SendWhisper(username, "You have £" + developers[id].developerMoney + ".");
+        }
+
+        else if (string.Compare(e.Command, "company", true) == 0)
         {
             //Get the company from the developer data
             string companyName = developers[id].companyName;
