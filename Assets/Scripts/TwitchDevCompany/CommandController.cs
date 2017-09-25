@@ -217,7 +217,7 @@ public class CommandController : MonoBehaviour
         else if (string.Compare(e.Command, "skills", true) == 0)
         {
             Debug.Log("Beep. Boop.");
-            client.SendWhisper(username, "Lead: " + developers[id].skillLead.skillLevel + "| Design: " + developers[id].skillDesign.skillLevel + "| Develop: " + developers[id].skillDevelop.skillLevel + "| Art: " + developers[id].skillArt.skillLevel + "| Marketing: " + developers[id].skillMarket.skillLevel + ".");
+            client.SendWhisper(username, "Lead: " + developers[id].skillLead.skillLevel + " | Design: " + developers[id].skillDesign.skillLevel + " | Develop: " + developers[id].skillDevelop.skillLevel + " | Art: " + developers[id].skillArt.skillLevel + " | Marketing: " + developers[id].skillMarket.skillLevel + ".");
         }
 
         else if (string.Compare(e.Command, "company", true) == 0)
