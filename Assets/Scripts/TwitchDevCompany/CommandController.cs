@@ -390,11 +390,26 @@ public class CommandController : MonoBehaviour
                 }
             }
 
-            ////Withdraw funds from a company to player
-            //else if (string.Compare(splitWhisper[0], "withdraw", true) == 0)
-            //{
+            //Withdraw funds from a company to player
+            else if (string.Compare(splitWhisper[0], "withdraw", true) == 0)
+            {
+                //Check the player is founder of a company
+                if (companyFounder)
+                {
+                    int money;
 
-            //}
+                    if (int.TryParse(splitWhisper[1], out money))
+                    {
+                        //Check the company has enough funds
+                        if (companies[companyName].HasEnoughMoney(money))
+                        {
+                            //Transfer funds
+                            companies[companyName].SpendMoney(money);
+                            developers[id].developerMoney += money;
+                        }
+                    }
+                }
+            }
 
             ////Edit company data
             //else if (string.Compare(splitWhisper[0], "edit", true) == 0)
