@@ -320,7 +320,7 @@ public class CommandController : MonoBehaviour
                             developers[id].companyName = companyName;
 
                             //Let them now they've joined a company
-                            client.SendWhisper(username, "You are now a founder of " + companyName + ". You can add funds with !deposit " + companyName + " to fund any project made under the company.");
+                            client.SendWhisper(username, "You are now a founder of " + companyName + ". You can add funds with !company deposit 1000, etc. to fund projects, and !project start [NAME] to start projects.");
                             //Doesn't send
 
                             //Get the company founder
@@ -353,48 +353,40 @@ public class CommandController : MonoBehaviour
             //Add funds to company from player
             else if (string.Compare(splitWhisper[0], "deposit", true) == 0)
             {
-                //Check the company exists
-                if (companies.ContainsKey(splitWhisper[1]))
+                //Check the player is part of a company
+                if (companyFounder)
                 {
-                    //Check the player is part of the company
-                    if (companies[splitWhisper[1]].IsFounder(id))
+                    int money;
+
+                    if (int.TryParse(splitWhisper[1], out money))
                     {
-                        //TryParse
-                        int money;
-
-                        if (int.TryParse(splitWhisper[2], out money))
+                        //Check the player has enough funds
+                        if (money <= developers[id].developerMoney)
                         {
-                            //Check the player has enough funds
-                            if (money <= developers[id].developerMoney)
-                            {
-                                //Transfer funds
-                                int moneyLeft = developers[id].developerMoney - money;
-                                developers[id].developerMoney = moneyLeft;
+                            //Transfer funds - Can probably be a function
+                            int moneyLeft = developers[id].developerMoney - money;
+                            developers[id].developerMoney = moneyLeft;
 
-                                companies[splitWhisper[1]].AddMoney(money);
-                            }
+                            companies[companyName].AddMoney(money);
 
-                            else
-                            {
-                                client.SendWhisper(username, "You only have " + developers[id].developerMoney + ".");
-                            }
+                            client.SendWhisper(username, "You have deposited " + money + ". Now " + companyName + " has " + companies[companyName].money + ", and you have " + moneyLeft + " left."); //Can probably write this better, but yeah
                         }
 
                         else
                         {
-                            //You need to put the amount of money
+                            client.SendWhisper(username, "You only have " + developers[id].developerMoney + ".");
                         }
                     }
 
                     else
                     {
-                        client.SendWhisper(username, "Only founders can deposit funds.");
+                        client.SendWhisper(username, "To deposit money, you need to use !command deposit 1000, etc.");
                     }
                 }
 
                 else
                 {
-                    client.SendWhisper(username, splitWhisper[1] + " doesn't exist. Check you typed the name correctly.");
+                    client.SendWhisper(username, "You need to be part of a company to deposit money.");
                 }
             }
 
