@@ -19,10 +19,12 @@ public class CompanyClass
 	/// </summary>
 	List<string> founderIDs = new List<string>();
 	public string GetOwner => founderIDs[0];
-	public bool IsOwner(string userID) => (founderIDs[0] == userID);
+    public List<string> GetFounders => founderIDs;
+    public bool IsOwner(string userID) => (founderIDs[0] == userID);
 	public bool IsFounder(string userID) => founderIDs.Contains(userID);
 	public bool CanAddFounder => (FounderCount < maxFounders);
 	public void AddFounder(string userID) => founderIDs.Add(userID);
+    public void RemoveFounder(string userID) => founderIDs.Remove(userID);
 	public int FounderCount => founderIDs.Count;
 
 	List<string> invitedIDs = new List<string>();
