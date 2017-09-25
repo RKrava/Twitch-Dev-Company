@@ -158,6 +158,11 @@ public class CommandController : MonoBehaviour
             client.SendWhisper(username, "You have £" + developers[id].developerMoney + ".");
         }
 
+        else if (string.Compare(e.Command, "skills", true) == 0)
+        {
+            client.SendWhisper(username, "Lead: " + developers[id].skillLead.skillLevel + "| Design: " + developers[id].skillDesign.skillLevel + "| Develop: " + developers[id].skillDevelop.skillLevel + "| Art: " + developers[id].skillArt.skillLevel + "| Marketing: " + developers[id].skillMarket.skillLevel + ".");
+        }
+
         else if (string.Compare(e.Command, "company", true) == 0)
         {
             //Get the company from the developer data
