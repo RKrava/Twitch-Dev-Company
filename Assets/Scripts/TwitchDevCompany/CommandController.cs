@@ -61,6 +61,7 @@ public class CommandController : MonoBehaviour
         client.OnJoinedChannel += ClientOnJoinedChannel;
         client.OnMessageReceived += ClientOnMessageReceived;
         client.OnChatCommandReceived += ClientOnCommandReceived;
+        client.OnWhisperReceived += ClientOnWhisperReceived;
         client.OnWhisperCommandReceived += ClientOnWhisperCommandReceived;
     }
 
@@ -136,12 +137,63 @@ public class CommandController : MonoBehaviour
         }
     }
 
+    private void ClientOnWhisperReceived(object sender, OnWhisperReceivedArgs e)
+    {
+        string id = e.WhisperMessage.UserId;
+        string username = e.WhisperMessage.DisplayName;
+
+        //Add if they whisper
+        if (!developers.ContainsKey(id))
+        {
+            DeveloperClass developer = new DeveloperClass();
+            developer.developerID = id;
+
+            idToUsername.Add(id, username);
+            usernameToId.Add(username, id);
+
+            developers.Add(id, developer);
+
+            Debug.Log(username + " has been added as a developer.");
+
+            //Will be using this to keep a history of all the events. Will update when I finally add that system in.
+            //File.AppendAllText("events.txt", chatter.Username + " has become a developer." + Environment.NewLine);
+
+            //SaveDevelopers();
+        }
+
+        else
+        {
+            Debug.Log(e.WhisperMessage.DisplayName + " already is a developer.");
+
+            string developerName = idToUsername[id];
+
+            if (developerName != username)
+            {
+                //Update idToUsername and usernameToId
+                idToUsername[id] = username;
+
+                usernameToId.Remove(username);
+                usernameToId.Add(username, id);
+
+                //Will be using this to keep a history of all the events. Will update when I finally add that system in.
+                //File.AppendAllText("events.txt", developerName + " has changed their username to " + chatter.Username + "." + Environment.NewLine);
+
+                //SaveDevelopers();
+            }
+        }
+    }
+
     private void ClientOnWhisperCommandReceived(object sender, OnWhisperCommandReceivedArgs e)
     {
         Debug.Log(e.Command + " has been received.");
 
-        List<string> splitWhisper = e.ArgumentsAsList;
-        Debug.Log(splitWhisper[0]);
+        List<string> splitWhisper = new List<string>();
+
+        if (e.ArgumentsAsList.Count < 0)
+        {
+            splitWhisper = e.ArgumentsAsList;
+            Debug.Log(splitWhisper[0]);
+        }
 
         string id = e.WhisperMessage.UserId;
         string username = e.WhisperMessage.DisplayName;
@@ -153,13 +205,18 @@ public class CommandController : MonoBehaviour
             return;
         }
 
+        Debug.Log("Do I make it here?");
+
         if (string.Compare(e.Command, "money", true) == 0)
         {
+            Debug.Log("Can I fix it?");
             client.SendWhisper(username, "You have £" + developers[id].developerMoney + ".");
+            Debug.Log("Yes I can.");
         }
 
         else if (string.Compare(e.Command, "skills", true) == 0)
         {
+            Debug.Log("Beep. Boop.");
             client.SendWhisper(username, "Lead: " + developers[id].skillLead.skillLevel + "| Design: " + developers[id].skillDesign.skillLevel + "| Develop: " + developers[id].skillDevelop.skillLevel + "| Art: " + developers[id].skillArt.skillLevel + "| Marketing: " + developers[id].skillMarket.skillLevel + ".");
         }
 
@@ -483,6 +540,11 @@ public class CommandController : MonoBehaviour
             {
                 Debug.Log("I can't do my damn job!");
             }
+        }
+
+        else
+        {
+            Debug.Log("Boop!");
         }
 
         //if (string.Compare(e.Command, "project", true) == 0)

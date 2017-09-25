@@ -20,9 +20,9 @@ public class DeveloperClass
     public bool HasEnoughMoney(int amount) => (developerMoney >= amount);
 
     public int developerPay; //How to calculate pay
-    public SkillClass skillLead; //Gained from running projects
-    public SkillClass skillDevelop;
-    public SkillClass skillDesign;
-    public SkillClass skillArt;
-    public SkillClass skillMarket; //Unsure about marketing???
+    public SkillClass skillLead = new SkillClass(); //Gained from running projects
+    public SkillClass skillDevelop = new SkillClass();
+    public SkillClass skillDesign = new SkillClass();
+    public SkillClass skillArt = new SkillClass();
+    public SkillClass skillMarket = new SkillClass(); //Unsure about marketing???
 }
