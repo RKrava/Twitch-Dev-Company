@@ -39,7 +39,7 @@ public class TwitchConnection : MonoBehaviour
     {
         client.SendMessage("I have arrived!");
 
-        EnsureMainThread.executeOnMainThread.Enqueue(() => { FindObjectOfType<Canvas>().gameObject.SetActive(false); });
+        EnsureMainThread.executeOnMainThread.Enqueue(() => { FindObjectOfType<Canvas>()?.gameObject.SetActive(false); });
         EnsureMainThread.executeOnMainThread.Enqueue(() => { commandController.DelayedStart(); });
     }
 
