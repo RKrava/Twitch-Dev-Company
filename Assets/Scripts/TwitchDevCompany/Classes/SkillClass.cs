@@ -3,7 +3,7 @@
 [Serializable]
 public class SkillClass
 {
-    public int skillLevel;
+    public int skillLevel = 1;
     public int skillXP;
 
     private int xpRequired { get { return skillLevel * 50; } }
