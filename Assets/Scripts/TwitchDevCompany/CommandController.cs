@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
+using System.Linq;
 using TwitchLib;
 using TwitchLib.Events.Client;
-using TwitchLib.Models.API.Undocumented.Chatters;
 using UnityEngine;
 
 public class CommandController : MonoBehaviour
@@ -13,19 +11,70 @@ public class CommandController : MonoBehaviour
     private TwitchConnection twitchConnection;
     private TwitchClient client;
 
-    //Able to get a viewer/developers ID from their username, and vice versa
 	/// <summary>
-	/// 2 Dictionaries so we can track each users Username as well as ID. 
-	/// This is so a name change wont lose a users progress. As the ID stays the same
+	/// Store a viewers ID and current Username
+	/// This is so a name change wont lose a users progress. As the ID stays the same.
+	/// Able to get a viewer/developers ID from their username, and vice versa
 	/// </summary>
-    public SortedDictionary<string, string> idToUsername { get; private set; } = new SortedDictionary<string, string>();
-    public SortedDictionary<string, string> usernameToId { get; private set; } = new SortedDictionary<string, string>();
+	List<Viewer> viewers = new List<Viewer>();
 
-    /// <summary>
+	/// <summary>
+	/// Looks through the list of viewers for those that match the ID of the one which was
+	/// passed it. Then return the username of the first in the list.
+	/// (There should never be more than one result as that would mean multiple people have the same ID)
+	/// </summary>
+	public string GetUsername(string id)
+	{
+		return viewers
+			.Where(i => (id == i.id))
+			.ToList()[0].username;
+	}
+
+	/// <summary>
+	/// Pretty much the same as GetUsername except we are comparing the username
+	/// instead of the ID to look for matches
+	/// </summary>
+	public string GetID(string username)
+	{
+		return viewers
+			.Where(i => (username == i.username))
+			.ToList()[0].id;
+	}
+
+	public bool DoesUsernameExist(string username)
+	{
+		return viewers
+			.Where(i => (i.username == username))
+			.ToList()
+			.Count > 0;
+	}
+
+	public bool DoesIDExist(string id)
+	{
+		return viewers
+			.Where(i => (i.id == id))
+			.ToList()
+			.Count > 0;
+	}
+
+	/// <summary>
+	/// Look for a viewer matching the id of what was passed in, get the first result
+	/// and run the ChangeUsername method to change the name to their new one
+	/// </summary>
+	/// <param name="id"></param>
+	/// <param name="username"></param>
+	public void SetUsername(string id, string username)
+	{
+		viewers
+			.Where(i => id == i.id)
+			.ToList()[0]
+			.ChangeUsername(username);
+	}
+
+	/// <summary>
 	/// Developers
 	/// </summary>
-    public SortedDictionary<string, DeveloperClass> developers { get; private set; } = new SortedDictionary<string, DeveloperClass>();
-
+	public SortedDictionary<string, DeveloperClass> developers { get; private set; } = new SortedDictionary<string, DeveloperClass>();
     private Queue<string> idQueue = new Queue<string>();
     private Queue<string> usernameQueue = new Queue<string>();
 
@@ -92,8 +141,10 @@ public class CommandController : MonoBehaviour
             DeveloperClass developer = new DeveloperClass();
             developer.developerID = id;
 
-            idToUsername.Add(id, username);
-            usernameToId.Add(username, id);
+			viewers.Add(new Viewer(username, id));
+
+            //idToUsername.Add(id, username);
+            //usernameToId.Add(username, id);
 
             developers.Add(id, developer);
 
@@ -109,15 +160,13 @@ public class CommandController : MonoBehaviour
         {
             Debug.Log(e.ChatMessage.DisplayName + " already is a developer.");
 
-            string developerName = idToUsername[id];
+            string developerName = GetUsername(id);
 
             if (developerName != username)
             {
-                //Update idToUsername and usernameToId
-                idToUsername[id] = username;
+                // Update their username, it appears it has changes
+                SetUsername(id, username);
 
-                usernameToId.Remove(username);
-                usernameToId.Add(username, id);
 
                 //Will be using this to keep a history of all the events. Will update when I finally add that system in.
                 //File.AppendAllText("events.txt", developerName + " has changed their username to " + chatter.Username + "." + Environment.NewLine);
@@ -148,8 +197,7 @@ public class CommandController : MonoBehaviour
             DeveloperClass developer = new DeveloperClass();
             developer.developerID = id;
 
-            idToUsername.Add(id, username);
-            usernameToId.Add(username, id);
+			viewers.Add(new Viewer(username, id));
 
             developers.Add(id, developer);
 
@@ -165,15 +213,12 @@ public class CommandController : MonoBehaviour
         {
             Debug.Log(e.WhisperMessage.DisplayName + " already is a developer.");
 
-            string developerName = idToUsername[id];
+            string developerName = GetUsername(id);
 
             if (developerName != username)
             {
-                //Update idToUsername and usernameToId
-                idToUsername[id] = username;
-
-                usernameToId.Remove(username);
-                usernameToId.Add(username, id);
+				//Update idToUsername and usernameToId
+				SetUsername(id, username);
 
                 //Will be using this to keep a history of all the events. Will update when I finally add that system in.
                 //File.AppendAllText("events.txt", developerName + " has changed their username to " + chatter.Username + "." + Environment.NewLine);
@@ -187,18 +232,12 @@ public class CommandController : MonoBehaviour
     {
         Debug.Log(e.Command + " has been received.");
 
-        List<string> splitWhisper = new List<string>();
-
-        if (e.ArgumentsAsList.Count < 0)
-        {
-            splitWhisper = e.ArgumentsAsList;
-            Debug.Log(splitWhisper[0]);
-        }
+        List<string> splitWhisper = e.ArgumentsAsList;
 
         string id = e.WhisperMessage.UserId;
         string username = e.WhisperMessage.DisplayName;
 
-        //Check they have been added as a developer
+        // Check they have been added as a developer
         if (!developers.ContainsKey(id))
         {
             client.SendWhisper(username, "You are not a developer yet. Please send a message to chat first.");
@@ -217,7 +256,7 @@ public class CommandController : MonoBehaviour
         else if (string.Compare(e.Command, "skills", true) == 0)
         {
             Debug.Log("Beep. Boop.");
-            client.SendWhisper(username, "Lead: " + developers[id].skillLead.skillLevel + " | Design: " + developers[id].skillDesign.skillLevel + " | Develop: " + developers[id].skillDevelop.skillLevel + " | Art: " + developers[id].skillArt.skillLevel + " | Marketing: " + developers[id].skillMarket.skillLevel + ".");
+            client.SendWhisper(username, "Lead: " + developers[id].GetSkillLevel(SkillTypes.LeaderSkills.Leadership) + " | Design: " + developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Design) + " | Develop: " + developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Development) + " | Art: " + developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Art) + " | Marketing: " + developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Marketing) + ".");
         }
 
         else if (string.Compare(e.Command, "company", true) == 0)
@@ -246,6 +285,8 @@ public class CommandController : MonoBehaviour
                 }
             }
 
+			Debug.Log($"Length of whisper is: {splitWhisper.Count}");
+
             //Start a company
             if (string.Compare(splitWhisper[0], "start", true) == 0)
             {
@@ -259,13 +300,9 @@ public class CommandController : MonoBehaviour
                     //Check if a company exists
                     if (!companies.ContainsKey(companyName))
                     {
-                        Debug.Log("No company exists.");
-
                         company = new CompanyClass(companyName);
                         company.AddFounder(id);
-                        Debug.Log("Company stuff done.");
                         developers[id].JoinCompany(companyName);
-                        Debug.Log("User stuff done.");
 
                         client.SendWhisper(username, "You are now the proud owner of " + companyName + ".");
 
@@ -306,11 +343,11 @@ public class CommandController : MonoBehaviour
                         Debug.Log("The company has less than 3 founders.");
 
                         //Check the player is in the system
-                        if (usernameToId.ContainsKey(invitedUsername))
+                        if (DoesUsernameExist(invitedUsername))
                         {
                             Debug.Log(invitedUsername + " is a developer.");
 
-                            string invitedID = usernameToId[invitedUsername];
+                            string invitedID = GetID(invitedUsername);
 
                             //Check the player is not already part of a company
                             if (!developers[invitedID].IsFounder)
@@ -391,7 +428,7 @@ public class CommandController : MonoBehaviour
                             //Doesn't send
 
                             //Get the company founder
-                            string founder = idToUsername[company.GetOwner];
+                            string founder = GetUsername(company.GetOwner);
 
                             //Let the founder know the player has joined the company
                             client.SendWhisper(founder, username + " has become a founder of your company, " + companyName + ".");

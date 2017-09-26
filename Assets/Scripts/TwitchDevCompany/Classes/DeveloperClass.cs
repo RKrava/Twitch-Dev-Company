@@ -20,9 +20,32 @@ public class DeveloperClass
     public bool HasEnoughMoney(int amount) => (developerMoney >= amount);
 
     public int developerPay; //How to calculate pay
-    public SkillClass skillLead = new SkillClass(); //Gained from running projects
-    public SkillClass skillDevelop = new SkillClass();
-    public SkillClass skillDesign = new SkillClass();
-    public SkillClass skillArt = new SkillClass();
-    public SkillClass skillMarket = new SkillClass(); //Unsure about marketing???
+
+	/// <summary>
+	/// Series of skills that the developer has. Using an enum makes it extremely
+	/// easy to add new skills
+	/// </summary>
+	Dictionary<SkillTypes.DeveloperSkills, SkillClass> developerSkills = new Dictionary<SkillTypes.DeveloperSkills, SkillClass>()
+	{
+		{ SkillTypes.DeveloperSkills.Art, new SkillClass() },
+		{ SkillTypes.DeveloperSkills.Design, new SkillClass() },
+		{ SkillTypes.DeveloperSkills.Development, new SkillClass() },
+		{ SkillTypes.DeveloperSkills.Marketing, new SkillClass() }
+	};
+
+	Dictionary<SkillTypes.LeaderSkills, SkillClass> leaderSkills = new Dictionary<SkillTypes.LeaderSkills, SkillClass>()
+	{
+		{ SkillTypes.LeaderSkills.Leadership, new SkillClass() },
+		{ SkillTypes.LeaderSkills.Motivation, new SkillClass() }
+	};
+
+	/// <summary>
+	/// Give a skill some XP. This also have an overload with the same name
+	/// which takes a leader skill instead and gives it XP.
+	/// </summary>
+	public void AwardXP(SkillTypes.DeveloperSkills skill, int xp) => developerSkills[skill].AddXP(xp);
+	public void AwardXP(SkillTypes.LeaderSkills skill, int xp) => leaderSkills[skill].AddXP(xp);
+
+	public int GetSkillLevel(SkillTypes.DeveloperSkills skill) => developerSkills[skill].skillLevel;
+	public int GetSkillLevel(SkillTypes.LeaderSkills skill) => leaderSkills[skill].skillLevel;
 }
