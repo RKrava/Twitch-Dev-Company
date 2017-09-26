@@ -7,23 +7,14 @@ public class DeveloperClass {
     //public UserClass developer;
     public string companyName { get; set; } = "";
     public bool IsFounder => (companyName != string.Empty);
-
     public void JoinCompany(string name) => companyName = name;
-
     public void UpdateCompany(string name) => companyName = name;
-
     public void LeaveCompany() => companyName = "";
-
     public List<int> projectIDs = new List<int>();
-
     public int developerMoney { get; set; } = 5000;
-
     public void AddMoney(int amount) => developerMoney += amount;
-
     public void SpendMoney(int amount) => developerMoney -= amount;
-
     public bool HasEnoughMoney(int amount) => (developerMoney >= amount);
-
     public int developerPay; //How to calculate pay
 
     /// <summary>
@@ -49,10 +40,7 @@ public class DeveloperClass {
     /// which takes a leader skill instead and gives it XP.
     /// </summary>
     public void AwardXP(SkillTypes.DeveloperSkills skill, int xp) => developerSkills[skill].AddXP(xp);
-
     public void AwardXP(SkillTypes.LeaderSkills skill, int xp) => leaderSkills[skill].AddXP(xp);
-
     public int GetSkillLevel(SkillTypes.DeveloperSkills skill) => developerSkills[skill].skillLevel;
-
     public int GetSkillLevel(SkillTypes.LeaderSkills skill) => leaderSkills[skill].skillLevel;
 }

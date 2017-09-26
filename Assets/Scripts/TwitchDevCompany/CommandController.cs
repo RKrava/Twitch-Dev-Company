@@ -120,11 +120,9 @@ public class CommandController : MonoBehaviour {
 
         LoadDevelopers();
     }
-
     private void ClientOnJoinedChannel(object sender, OnJoinedChannelArgs e) {
         Debug.Log("CommandController has connected.");
     }
-
     //Will add these once testing has finished
     private void LoadDevelopers() {
         if (File.Exists(developerFile) == true) {
@@ -143,7 +141,6 @@ public class CommandController : MonoBehaviour {
             File.CreateText(viewerFile);
         }
     }
-
     private void SaveDevelopers() {
         string developerJson = JsonConvert.SerializeObject(developers, Formatting.Indented);
         File.WriteAllText(developerFile, developerJson);
@@ -151,7 +148,6 @@ public class CommandController : MonoBehaviour {
         string viewerJson = JsonConvert.SerializeObject(viewers, Formatting.Indented);
         File.WriteAllText(viewerFile, viewerJson);
     }
-
     private void ClientOnMessageReceived(object sender, OnMessageReceivedArgs e) {
         string id = e.ChatMessage.UserId;
         string username = e.ChatMessage.DisplayName;
@@ -191,7 +187,6 @@ public class CommandController : MonoBehaviour {
             }
         }
     }
-
     private void ClientOnCommandReceived(object sender, OnChatCommandReceivedArgs e) {
         Debug.Log("I received a message.");
 
@@ -199,11 +194,9 @@ public class CommandController : MonoBehaviour {
             client.SendMessage("Twitch Dev Tycoon is a Twitch version of games like Game Dev Tycoon and Software Inc. If you'd like to get involved, whisper me '!help'.");
         }
     }
-
     private void ClientOnWhisperReceived(object sender, OnWhisperReceivedArgs e) {
         EnsureMainThread.executeOnMainThread.Enqueue(() => { WhisperedMessage(sender, e); });
     }
-
     private void WhisperedMessage(object sender, OnWhisperReceivedArgs e) {
         string id = e.WhisperMessage.UserId;
         string username = e.WhisperMessage.DisplayName;
@@ -240,11 +233,9 @@ public class CommandController : MonoBehaviour {
             }
         }
     }
-
     private void ClientOnWhisperCommandReceived(object sender, OnWhisperCommandReceivedArgs e) {
         EnsureMainThread.executeOnMainThread.Enqueue(() => { WhisperedCommand(sender, e); });
     }
-
     private void WhisperedCommand(object sender, OnWhisperCommandReceivedArgs e) {
         Debug.Log(e.Command + " has been received.");
 
@@ -568,7 +559,6 @@ public class CommandController : MonoBehaviour {
 
         SaveDevelopers();
     }
-
     /// <summary>
     /// Clear the invite and send a whisper letting them know that
     /// this has occured.
@@ -591,7 +581,6 @@ public class CommandController : MonoBehaviour {
 
         Debug.Log("Invite ran out.");
     }
-
     private void ApplyClose() {
         applyOpen = false;
     }
