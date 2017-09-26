@@ -7,16 +7,19 @@ using TwitchLib.Events.Client;
 using TwitchLib.Models.Client;
 using UnityEngine;
 
-public class TwitchConnection : MonoBehaviour {
+public class TwitchConnection : MonoBehaviour
+{
     public TwitchClient client { get; private set; }
 
     private CommandController commandController;
 
-    private void Awake() {
+    private void Awake()
+    {
         commandController = FindObjectOfType<CommandController>();
     }
 
-    public void Connect() {
+    public void Connect()
+    {
         ServicePointManager.ServerCertificateValidationCallback = CertificateValidationMonoFix;
 
         ConnectionCredentials credentials = new ConnectionCredentials(Settings.username, Settings.accessToken);
@@ -34,22 +37,27 @@ public class TwitchConnection : MonoBehaviour {
         //Debug.Log("Connected");
     }
 
-    private void ClientOnJoinedChannel(object sender, OnJoinedChannelArgs e) {
+    private void ClientOnJoinedChannel(object sender, OnJoinedChannelArgs e)
+    {
         client.SendMessage("I have arrived!");
 
         //EnsureMainThread.executeOnMainThread.Enqueue(() => { FindObjectOfType<Canvas>()?.gameObject.SetActive(false); });
         //EnsureMainThread.executeOnMainThread.Enqueue(() => { commandController.DelayedStart(); });
     }
 
-    public bool CertificateValidationMonoFix(System.Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) {
+    public bool CertificateValidationMonoFix(System.Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+    {
         bool isOk = true;
 
-        if (sslPolicyErrors == SslPolicyErrors.None) {
+        if (sslPolicyErrors == SslPolicyErrors.None)
+        {
             return true;
         }
 
-        foreach (X509ChainStatus status in chain.ChainStatus) {
-            if (status.Status == X509ChainStatusFlags.RevocationStatusUnknown) {
+        foreach (X509ChainStatus status in chain.ChainStatus)
+        {
+            if (status.Status == X509ChainStatusFlags.RevocationStatusUnknown)
+            {
                 continue;
             }
 
@@ -60,7 +68,8 @@ public class TwitchConnection : MonoBehaviour {
 
             bool chainIsValid = chain.Build((X509Certificate2) certificate);
 
-            if (!chainIsValid) {
+            if (!chainIsValid)
+            {
                 isOk = false;
             }
         }
