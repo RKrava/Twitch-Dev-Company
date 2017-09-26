@@ -26,17 +26,19 @@ public class TwitchConnection : MonoBehaviour {
 
         client = new TwitchClient(credentials, Settings.channelToJoin);
 
-        client.Connect();
+        //client.Connect();
         client.OnJoinedChannel += ClientOnJoinedChannel;
+        EnsureMainThread.executeOnMainThread.Enqueue(() => { FindObjectOfType<Canvas>()?.gameObject.SetActive(false); });
+        EnsureMainThread.executeOnMainThread.Enqueue(() => { commandController.DelayedStart(); });
 
-        Debug.Log("Connected");
+        //Debug.Log("Connected");
     }
 
     private void ClientOnJoinedChannel(object sender, OnJoinedChannelArgs e) {
         client.SendMessage("I have arrived!");
 
-        EnsureMainThread.executeOnMainThread.Enqueue(() => { FindObjectOfType<Canvas>()?.gameObject.SetActive(false); });
-        EnsureMainThread.executeOnMainThread.Enqueue(() => { commandController.DelayedStart(); });
+        //EnsureMainThread.executeOnMainThread.Enqueue(() => { FindObjectOfType<Canvas>()?.gameObject.SetActive(false); });
+        //EnsureMainThread.executeOnMainThread.Enqueue(() => { commandController.DelayedStart(); });
     }
 
     public bool CertificateValidationMonoFix(System.Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) {

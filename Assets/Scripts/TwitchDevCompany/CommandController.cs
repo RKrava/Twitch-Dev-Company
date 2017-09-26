@@ -116,6 +116,8 @@ public class CommandController : MonoBehaviour {
         developerFile = Application.streamingAssetsPath + "/developers.json";
         viewerFile = Application.streamingAssetsPath + "/viewers.json";
 
+        client.Connect();
+
         LoadDevelopers();
     }
 
@@ -199,6 +201,10 @@ public class CommandController : MonoBehaviour {
     }
 
     private void ClientOnWhisperReceived(object sender, OnWhisperReceivedArgs e) {
+        EnsureMainThread.executeOnMainThread.Enqueue(() => { WhisperedMessage(sender, e); });
+    }
+
+    private void WhisperedMessage(object sender, OnWhisperReceivedArgs e) {
         string id = e.WhisperMessage.UserId;
         string username = e.WhisperMessage.DisplayName;
 
@@ -236,6 +242,10 @@ public class CommandController : MonoBehaviour {
     }
 
     private void ClientOnWhisperCommandReceived(object sender, OnWhisperCommandReceivedArgs e) {
+        EnsureMainThread.executeOnMainThread.Enqueue(() => { WhisperedCommand(sender, e); });
+    }
+
+    private void WhisperedCommand(object sender, OnWhisperCommandReceivedArgs e) {
         Debug.Log(e.Command + " has been received.");
 
         List<string> splitWhisper = e.ArgumentsAsList;
@@ -556,7 +566,7 @@ public class CommandController : MonoBehaviour {
 
         Debug.Log("I got to the end.");
 
-        //SaveDevelopers();
+        SaveDevelopers();
     }
 
     /// <summary>
