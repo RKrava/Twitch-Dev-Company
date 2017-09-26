@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 [Serializable]
 public class CompanyClass
@@ -27,14 +28,12 @@ public class CompanyClass
     public void RemoveFounder(string userID) => founderIDs.Remove(userID);
 	public int FounderCount => founderIDs.Count;
 
-	List<string> invitedIDs = new List<string>();
-	public bool HasPendingInvite(string userID) => invitedIDs.Contains(userID);
-	public void AddInvite(string userID) => invitedIDs.Add(userID);
-	public string GetFirstInvite() => invitedIDs[0];
-	public void RemoveFirstInvite() => invitedIDs.RemoveAt(0);
+	List<CompanyInvite> invites = new List<CompanyInvite>();
+	public void AddInvite(CompanyInvite invite) => invites.Add(invite);
+	public void RemoveInvite(CompanyInvite invite) => invites.Remove(invite);
+	public bool HasPendingInvite(string username) => invites.Where(i => i.invited == username).ToList().Count > 0;
 
-	List<int> projectIDs = new List<int>();
-	public List<ProjectClass> projects = new List<ProjectClass>();
+	List<ProjectClass> projects = new List<ProjectClass>();
 	public void AddProject(ProjectClass project) => projects.Add(project);
 	public bool CanAddProject => (ProjectCount < maxConcurrentProjects);
 	public int ProjectCount => projects.Count;
