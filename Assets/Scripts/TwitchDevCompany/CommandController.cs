@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using TwitchLib;
 using TwitchLib.Events.Client;
@@ -78,6 +80,9 @@ public class CommandController : MonoBehaviour
     private Queue<string> idQueue = new Queue<string>();
     private Queue<string> usernameQueue = new Queue<string>();
 
+    private string developerFile;
+    private string viewerFile;
+
     /// <summary>
 	/// Companies
 	/// </summary>
@@ -112,6 +117,11 @@ public class CommandController : MonoBehaviour
         client.OnChatCommandReceived += ClientOnCommandReceived;
         client.OnWhisperReceived += ClientOnWhisperReceived;
         client.OnWhisperCommandReceived += ClientOnWhisperCommandReceived;
+
+        developerFile = Application.streamingAssetsPath + "/developers.json";
+        viewerFile = Application.streamingAssetsPath + "/viewers.json";
+
+        LoadDevelopers();
     }
 
     private void ClientOnJoinedChannel(object sender, OnJoinedChannelArgs e)
@@ -122,12 +132,20 @@ public class CommandController : MonoBehaviour
     //Will add these once testing has finished
     private void LoadDevelopers()
     {
-        //Do something there
+        string developerJson = File.ReadAllText(developerFile);
+        developers = JsonConvert.DeserializeObject<SortedDictionary<string, DeveloperClass>>(developerJson);
+
+        string viewerJson = File.ReadAllText(viewerFile);
+        viewers = JsonConvert.DeserializeObject<List<Viewer>>(viewerJson);
     }
 
     private void SaveDevelopers()
     {
-        //Do something here
+        string developerJson = JsonConvert.SerializeObject(developers, Formatting.Indented);
+        File.WriteAllText(developerFile, developerJson);
+
+        string viewerJson = JsonConvert.SerializeObject(viewers, Formatting.Indented);
+        File.WriteAllText(viewerFile, viewerJson);
     }
 
     private void ClientOnMessageReceived(object sender, OnMessageReceivedArgs e)
@@ -153,7 +171,7 @@ public class CommandController : MonoBehaviour
             //Will be using this to keep a history of all the events. Will update when I finally add that system in.
             //File.AppendAllText("events.txt", chatter.Username + " has become a developer." + Environment.NewLine);
 
-            //SaveDevelopers();
+            SaveDevelopers();
         }
 
         else
@@ -171,7 +189,7 @@ public class CommandController : MonoBehaviour
                 //Will be using this to keep a history of all the events. Will update when I finally add that system in.
                 //File.AppendAllText("events.txt", developerName + " has changed their username to " + chatter.Username + "." + Environment.NewLine);
 
-                //SaveDevelopers();
+                SaveDevelopers();
             }
         }
     }
@@ -206,7 +224,7 @@ public class CommandController : MonoBehaviour
             //Will be using this to keep a history of all the events. Will update when I finally add that system in.
             //File.AppendAllText("events.txt", chatter.Username + " has become a developer." + Environment.NewLine);
 
-            //SaveDevelopers();
+            SaveDevelopers();
         }
 
         else
@@ -223,7 +241,7 @@ public class CommandController : MonoBehaviour
                 //Will be using this to keep a history of all the events. Will update when I finally add that system in.
                 //File.AppendAllText("events.txt", developerName + " has changed their username to " + chatter.Username + "." + Environment.NewLine);
 
-                //SaveDevelopers();
+                SaveDevelopers();
             }
         }
     }
@@ -623,6 +641,10 @@ public class CommandController : MonoBehaviour
         //        }
         //    }
         //}
+
+        Debug.Log("I got to the end.");
+
+        SaveDevelopers();
     }
 
 	/// <summary>
