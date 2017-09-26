@@ -24,6 +24,7 @@ public class CompanyInvite
 	{
 		if (DateTime.Now >= expiry)
 		{
+			// TODO Send message here to user saying the invite has expired
 			company.RemoveInvite(this);
 			expiryCheck.Dispose();
 		}
