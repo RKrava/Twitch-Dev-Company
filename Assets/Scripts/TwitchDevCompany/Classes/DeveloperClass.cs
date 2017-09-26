@@ -43,13 +43,9 @@ public class DeveloperClass
 	/// Give a skill some XP. This also have an overload with the same name
 	/// which takes a leader skill instead and gives it XP.
 	/// </summary>
-	public void AwardXP(SkillTypes.DeveloperSkills skill, int xp)
-	{
-		developerSkills[skill].AddXP(xp);
-	}
+	public void AwardXP(SkillTypes.DeveloperSkills skill, int xp) => developerSkills[skill].AddXP(xp);
+	public void AwardXP(SkillTypes.LeaderSkills skill, int xp) => leaderSkills[skill].AddXP(xp);
 
-	public void AwardXP(SkillTypes.LeaderSkills skill, int xp)
-	{
-		leaderSkills[skill].AddXP(xp);
-	}
+	public int GetSkillLevel(SkillTypes.DeveloperSkills skill) => developerSkills[skill].skillLevel;
+	public int GetSkillLevel(SkillTypes.LeaderSkills skill) => leaderSkills[skill].skillLevel;
 }

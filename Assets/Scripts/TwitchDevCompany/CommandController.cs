@@ -256,7 +256,7 @@ public class CommandController : MonoBehaviour
         else if (string.Compare(e.Command, "skills", true) == 0)
         {
             Debug.Log("Beep. Boop.");
-            client.SendWhisper(username, "Lead: " + developers[id].skillLead.skillLevel + " | Design: " + developers[id].skillDesign.skillLevel + " | Develop: " + developers[id].skillDevelop.skillLevel + " | Art: " + developers[id].skillArt.skillLevel + " | Marketing: " + developers[id].skillMarket.skillLevel + ".");
+            client.SendWhisper(username, "Lead: " + developers[id].GetSkillLevel(SkillTypes.LeaderSkills.Leadership) + " | Design: " + developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Design) + " | Develop: " + developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Development) + " | Art: " + developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Art) + " | Marketing: " + developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Marketing) + ".");
         }
 
         else if (string.Compare(e.Command, "company", true) == 0)
