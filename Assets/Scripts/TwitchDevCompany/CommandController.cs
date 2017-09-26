@@ -24,7 +24,8 @@ public class CommandController : MonoBehaviour {
     /// passed it. Then return the username of the first in the list.
     /// (There should never be more than one result as that would mean multiple people have the same ID)
     /// </summary>
-    public string GetUsername(string id) {
+    public string GetUsername(string id)
+    {
         return viewers
             .Where(i => (id == i.id))
             .ToList()[0].username;
@@ -34,15 +35,17 @@ public class CommandController : MonoBehaviour {
     /// Pretty much the same as GetUsername except we are comparing the username
     /// instead of the ID to look for matches
     /// </summary>
-    public string GetID(string username) {
+    public string GetID(string username)
+    {
         return viewers
-            .Where(i => (username == i.username))
+            .Where(i => (username.ToLower() == i.username.ToLower()))
             .ToList()[0].id;
     }
 
-    public bool DoesUsernameExist(string username) {
+    public bool DoesUsernameExist(string username)
+    {
         return viewers
-            .Where(i => (i.username == username))
+            .Where(i => (i.username.ToLower() == username.ToLower()))
             .ToList()
             .Count > 0;
     }
@@ -73,9 +76,9 @@ public class CommandController : MonoBehaviour {
     public SortedDictionary<string, DeveloperClass> developers { get; private set; } = new SortedDictionary<string, DeveloperClass>();
     private Queue<string> idQueue = new Queue<string>();
     private Queue<string> usernameQueue = new Queue<string>();
-
     private string developerFile;
     private string viewerFile;
+    private string companiesFile;
 
     /// <summary>
 	/// Companies
@@ -88,7 +91,6 @@ public class CommandController : MonoBehaviour {
 	/// </summary>
     private ProjectClass project;
     public SortedDictionary<string, ProjectClass> projects { get; private set; } = new SortedDictionary<string, ProjectClass>();
-
     //Tidy this
 
     //Those who have applied
@@ -115,22 +117,27 @@ public class CommandController : MonoBehaviour {
 
         developerFile = Application.streamingAssetsPath + "/developers.json";
         viewerFile = Application.streamingAssetsPath + "/viewers.json";
+        companiesFile = Application.streamingAssetsPath + "/companies.json";
 
         client.Connect();
 
-        LoadDevelopers();
+        Load();
     }
-    private void ClientOnJoinedChannel(object sender, OnJoinedChannelArgs e) {
+
+    private void ClientOnJoinedChannel(object sender, OnJoinedChannelArgs e)
+    {
         Debug.Log("CommandController has connected.");
     }
+
     //Will add these once testing has finished
-    private void LoadDevelopers() {
+    private void Load()
+    {
         if (File.Exists(developerFile) == true) {
             string developerJson = File.ReadAllText(developerFile);
             developers = JsonConvert.DeserializeObject<SortedDictionary<string, DeveloperClass>>(developerJson);
         }
         else {
-            File.CreateText(developerFile);
+            File.CreateText(developerFile).Dispose();
         }
 
         if (File.Exists(viewerFile) == true) {
@@ -138,17 +145,33 @@ public class CommandController : MonoBehaviour {
             viewers = JsonConvert.DeserializeObject<List<Viewer>>(viewerJson);
         }
         else {
-            File.CreateText(viewerFile);
+            File.CreateText(viewerFile).Dispose();
+        }
+
+        if (File.Exists(companiesFile) == true)
+        {
+            string companiesJson = File.ReadAllText(companiesFile);
+            companies = JsonConvert.DeserializeObject<SortedDictionary<string, CompanyClass>>(companiesJson);
+        }
+        else {
+            File.CreateText(companiesFile).Dispose();
         }
     }
-    private void SaveDevelopers() {
+
+    private void Save()
+    {
         string developerJson = JsonConvert.SerializeObject(developers, Formatting.Indented);
         File.WriteAllText(developerFile, developerJson);
 
         string viewerJson = JsonConvert.SerializeObject(viewers, Formatting.Indented);
         File.WriteAllText(viewerFile, viewerJson);
+
+        string companiesJson = JsonConvert.SerializeObject(companies, Formatting.Indented);
+        File.WriteAllText(companiesFile, companiesJson);
     }
-    private void ClientOnMessageReceived(object sender, OnMessageReceivedArgs e) {
+
+    private void ClientOnMessageReceived(object sender, OnMessageReceivedArgs e)
+    {
         string id = e.ChatMessage.UserId;
         string username = e.ChatMessage.DisplayName;
 
@@ -169,7 +192,7 @@ public class CommandController : MonoBehaviour {
             //Will be using this to keep a history of all the events. Will update when I finally add that system in.
             //File.AppendAllText("events.txt", chatter.Username + " has become a developer." + Environment.NewLine);
 
-            SaveDevelopers();
+            Save();
         }
         else {
             Debug.Log(e.ChatMessage.DisplayName + " already is a developer.");
@@ -183,21 +206,27 @@ public class CommandController : MonoBehaviour {
                 //Will be using this to keep a history of all the events. Will update when I finally add that system in.
                 //File.AppendAllText("events.txt", developerName + " has changed their username to " + chatter.Username + "." + Environment.NewLine);
 
-                SaveDevelopers();
+                Save();
             }
         }
     }
-    private void ClientOnCommandReceived(object sender, OnChatCommandReceivedArgs e) {
+
+    private void ClientOnCommandReceived(object sender, OnChatCommandReceivedArgs e)
+    {
         Debug.Log("I received a message.");
 
         if (string.Compare(e.Command.Command, "twitchtycoon", true) == 0) {
             client.SendMessage("Twitch Dev Tycoon is a Twitch version of games like Game Dev Tycoon and Software Inc. If you'd like to get involved, whisper me '!help'.");
         }
     }
-    private void ClientOnWhisperReceived(object sender, OnWhisperReceivedArgs e) {
+
+    private void ClientOnWhisperReceived(object sender, OnWhisperReceivedArgs e)
+    {
         EnsureMainThread.executeOnMainThread.Enqueue(() => { WhisperedMessage(sender, e); });
     }
-    private void WhisperedMessage(object sender, OnWhisperReceivedArgs e) {
+
+    private void WhisperedMessage(object sender, OnWhisperReceivedArgs e)
+    {
         string id = e.WhisperMessage.UserId;
         string username = e.WhisperMessage.DisplayName;
 
@@ -215,7 +244,7 @@ public class CommandController : MonoBehaviour {
             //Will be using this to keep a history of all the events. Will update when I finally add that system in.
             //File.AppendAllText("events.txt", chatter.Username + " has become a developer." + Environment.NewLine);
 
-            SaveDevelopers();
+            Save();
         }
         else {
             Debug.Log(e.WhisperMessage.DisplayName + " already is a developer.");
@@ -229,14 +258,18 @@ public class CommandController : MonoBehaviour {
                 //Will be using this to keep a history of all the events. Will update when I finally add that system in.
                 //File.AppendAllText("events.txt", developerName + " has changed their username to " + chatter.Username + "." + Environment.NewLine);
 
-                SaveDevelopers();
+                Save();
             }
         }
     }
-    private void ClientOnWhisperCommandReceived(object sender, OnWhisperCommandReceivedArgs e) {
+
+    private void ClientOnWhisperCommandReceived(object sender, OnWhisperCommandReceivedArgs e)
+    {
         EnsureMainThread.executeOnMainThread.Enqueue(() => { WhisperedCommand(sender, e); });
     }
-    private void WhisperedCommand(object sender, OnWhisperCommandReceivedArgs e) {
+
+    private void WhisperedCommand(object sender, OnWhisperCommandReceivedArgs e)
+    {
         Debug.Log(e.Command + " has been received.");
 
         List<string> splitWhisper = e.ArgumentsAsList;
@@ -322,53 +355,59 @@ public class CommandController : MonoBehaviour {
                 //Check they are the owner of a company
                 if (companyOwner) {
                     Debug.Log(username + " is the owner of a company.");
-
-                    company = companies[companyName];
-
-                    //Check the company has less than 3 founders
-                    if (company.FounderCount < 3) {
-                        Debug.Log("The company has less than 3 founders.");
-
-                        //Check the player is in the system
-                        if (DoesUsernameExist(invitedUsername)) {
-                            Debug.Log(invitedUsername + " is a developer.");
-
-                            string invitedID = GetID(invitedUsername);
-
-                            //Check the player is not already part of a company
-                            if (!developers[invitedID].IsFounder) {
-                                Debug.Log(invitedUsername + " is not already part of a company.");
-
-                                //Add the invited user to a list
-                                company.AddInvite(invitedID);
-                                Debug.Log("Invited user has been added to list.");
-
-                                //Give them 5 minutes to respond
-                                EnsureMainThread.executeOnMainThread.Enqueue(() => { StartCoroutine(ClearInvite(companyName)); });
-                                Debug.Log("ClearInvite has been started.");
-
-                                //Send the invite via whisper. Keep SendMessage just in case it doesn't work for others.
-                                client.SendWhisper(invitedUsername, "You have been invited by " + username + " to join their company, " + companyName + ". Type !company accept " + companyName + " in the next 5 minutes to join.");
-                                //client.SendMessage(invitedUsername + ", you have been invited to join " + companyName + ". Type !company accept " + companyName + " in the next 5 minutes to join.");
-                                Debug.Log("Invite sent.");
-
-                                //Let the founder know an invite was sent
-                                client.SendWhisper(username, "An invite has been sent to " + invitedUsername + ".");
-                            }
-                            else {
-                                client.SendWhisper(username, invitedUsername + " is already part of another company.");
-                            }
-                        }
-                        else {
-                            client.SendWhisper(username, invitedUsername + " is not a developer. Wait for them to send a message in chat.");
-                        }
-                    }
-                    else {
-                        client.SendWhisper(username, "You are not allowed more than 3 founders in a company.");
-                    }
                 }
                 else {
                     client.SendWhisper(username, "You have to be the owner of the company to invite founders.");
+                    return;
+                }
+                company = companies[companyName];
+                //Check the company has less than 3 founders
+                if (company.FounderCount < 3) {
+                    Debug.Log("The company has less than 3 founders.");
+                }
+                else {
+                    client.SendWhisper(username, "You are not allowed more than 3 founders in a company.");
+                    return;
+                }
+
+                //Check the player is in the system
+                if (DoesUsernameExist(invitedUsername)) {
+                    Debug.Log(invitedUsername + " is a developer.");
+                }
+                else {
+                    client.SendWhisper(username, invitedUsername + " is not a developer. Wait for them to send a message in chat.");
+                    return;
+                }
+
+                if(username.ToLower() == invitedUsername.ToLower())
+                {
+                    client.SendWhisper(username, "You cannot invite yourself to your company, silly.");
+                    return;
+                }
+
+
+                string invitedID = GetID(invitedUsername);
+
+                //Check the player is not already part of a company
+                if (developers[invitedID].IsFounder == false) {
+                    Debug.Log(invitedUsername + " is not already part of a company.");
+
+                    //Add the invited user to a list
+                    company.AddInvite(invitedID);
+                    Debug.Log("Invited user has been added to list.");
+                    //Give them 5 minutes to respond
+                    EnsureMainThread.executeOnMainThread.Enqueue(() => { StartCoroutine(ClearInvite(companyName)); });
+                    Debug.Log("ClearInvite has been started.");
+                    //Send the invite via whisper. Keep SendMessage just in case it doesn't work for others.
+                    client.SendWhisper(invitedUsername, "You have been invited by " + username + " to join their company, " + companyName + ". Type !company accept " + companyName + " in the next 5 minutes to join.");
+                    //client.SendMessage(invitedUsername + ", you have been invited to join " + companyName + ". Type !company accept " + companyName + " in the next 5 minutes to join.");
+                    Debug.Log("Invite sent.");
+                    //Let the founder know an invite was sent
+                    client.SendWhisper(username, "An invite has been sent to " + invitedUsername + ".");
+                    Save();
+                }
+                else {
+                    client.SendWhisper(username, invitedUsername + " is already part of another company.");
                 }
             }
             else if (string.Compare(splitWhisper[0], "accept", true) == 0) {
@@ -485,7 +524,7 @@ public class CommandController : MonoBehaviour {
 
                     //Get all the founders
                     //Change the company name in their developer profiles
-                    foreach (string developer in companies[companyName].GetFounders) {
+                    foreach (string developer in companies[companyName].founderIDs) {
                         developers[developer].UpdateCompany(newName); //Make a function
                     }
 
@@ -557,15 +596,17 @@ public class CommandController : MonoBehaviour {
 
         Debug.Log("I got to the end.");
 
-        SaveDevelopers();
+        Save();
     }
+
     /// <summary>
     /// Clear the invite and send a whisper letting them know that
     /// this has occured.
     /// </summary>
     /// <param name="companyName"></param>
     /// <returns></returns>
-    private IEnumerator ClearInvite(string companyName) {
+    private IEnumerator ClearInvite(string companyName)
+    {
         Debug.Log("Clearing invite.");
 
         yield return new WaitForSeconds(300);
@@ -581,7 +622,9 @@ public class CommandController : MonoBehaviour {
 
         Debug.Log("Invite ran out.");
     }
-    private void ApplyClose() {
+
+    private void ApplyClose()
+    {
         applyOpen = false;
     }
 }
