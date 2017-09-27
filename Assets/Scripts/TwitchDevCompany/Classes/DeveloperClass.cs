@@ -21,7 +21,7 @@ public class DeveloperClass {
     /// Series of skills that the developer has. Using an enum makes it extremely
     /// easy to add new skills
     /// </summary>
-    private Dictionary<SkillTypes.DeveloperSkills, SkillClass> developerSkills = new Dictionary<SkillTypes.DeveloperSkills, SkillClass>()
+    public Dictionary<SkillTypes.DeveloperSkills, SkillClass> developerSkills = new Dictionary<SkillTypes.DeveloperSkills, SkillClass>()
     {
         { SkillTypes.DeveloperSkills.Art, new SkillClass() },
         { SkillTypes.DeveloperSkills.Design, new SkillClass() },
@@ -29,7 +29,7 @@ public class DeveloperClass {
         { SkillTypes.DeveloperSkills.Marketing, new SkillClass() }
     };
 
-    private Dictionary<SkillTypes.LeaderSkills, SkillClass> leaderSkills = new Dictionary<SkillTypes.LeaderSkills, SkillClass>()
+    public Dictionary<SkillTypes.LeaderSkills, SkillClass> leaderSkills = new Dictionary<SkillTypes.LeaderSkills, SkillClass>()
     {
         { SkillTypes.LeaderSkills.Leadership, new SkillClass() },
         { SkillTypes.LeaderSkills.Motivation, new SkillClass() }
