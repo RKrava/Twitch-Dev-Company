@@ -31,6 +31,7 @@ public class CompanyClass
 	List<CompanyInvite> invites = new List<CompanyInvite>();
 	public void AddInvite(CompanyInvite invite) => invites.Add(invite);
 	public void RemoveInvite(CompanyInvite invite) => invites.Remove(invite);
+	public bool HasPendingInvite(string userID) => invites.Where(i => i.invitedID == userID).ToList().Count > 0;
 
 	List<ProjectClass> projects = new List<ProjectClass>();
 	public void AddProject(ProjectClass project) => projects.Add(project);
