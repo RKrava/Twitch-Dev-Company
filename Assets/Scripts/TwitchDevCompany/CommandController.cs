@@ -354,12 +354,13 @@ public class CommandController : MonoBehaviour
                             {
                                 Debug.Log(invitedUsername + " is not already part of a company.");
 
+								company.AddInvite(new CompanyInvite(company, invitedID, invitedUsername, username, TimeSpan.FromMinutes(2)));
                                 //Add the invited user to a list
-                                company.AddInvite(invitedID);
+                                // company.AddInvite(invitedID);
                                 Debug.Log("Invited user has been added to list.");
 
                                 //Give them 5 minutes to respond
-                                EnsureMainThread.executeOnMainThread.Enqueue(() => { StartCoroutine(ClearInvite(companyName)); });
+                                // EnsureMainThread.executeOnMainThread.Enqueue(() => { StartCoroutine(ClearInvite(companyName)); });
                                 Debug.Log("ClearInvite has been started.");
 
                                 //Send the invite via whisper. Keep SendMessage just in case it doesn't work for others.
@@ -623,30 +624,6 @@ public class CommandController : MonoBehaviour
         //        }
         //    }
         //}
-    }
-
-	/// <summary>
-	/// Clear the invite and send a whisper letting them know that
-	/// this has occured.
-	/// </summary>
-	/// <param name="companyName"></param>
-	/// <returns></returns>
-    IEnumerator ClearInvite(string companyName)
-    {
-        Debug.Log("Clearing invite.");
-
-        yield return new WaitForSeconds(300);
-
-        company = companies[companyName];
-        string invitedUsername = company.GetFirstInvite();
-        company.RemoveFirstInvite();
-
-        string founderUsername = company.GetOwner;
-
-        // TODO - Currently whispers are broken
-        client.SendWhisper(founderUsername, "Your invite to " + invitedUsername + " has run out.");
-
-        Debug.Log("Invite ran out.");
     }
 
     void ApplyClose()
