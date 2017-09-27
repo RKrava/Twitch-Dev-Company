@@ -354,7 +354,7 @@ public class CommandController : MonoBehaviour
                             {
                                 Debug.Log(invitedUsername + " is not already part of a company.");
 
-								company.AddInvite(new CompanyInvite(company, invitedID, username, TimeSpan.FromMinutes(2)));
+								company.AddInvite(new CompanyInvite(company, invitedID, invitedUsername, username, TimeSpan.FromMinutes(2)));
                                 //Add the invited user to a list
                                 // company.AddInvite(invitedID);
                                 Debug.Log("Invited user has been added to list.");
