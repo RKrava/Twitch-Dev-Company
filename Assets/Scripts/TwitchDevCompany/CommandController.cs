@@ -369,7 +369,7 @@ public class CommandController : MonoBehaviour {
                     client.SendWhisper(username, "You are not allowed more than 3 founders in a company.");
                     return;
                 }
-
+              
                 //Check the player is in the system
                 if (DoesUsernameExist(invitedUsername)) {
                     Debug.Log(invitedUsername + " is a developer.");
@@ -379,34 +379,41 @@ public class CommandController : MonoBehaviour {
                     return;
                 }
 
-                if(username.ToLower() == invitedUsername.ToLower())
+                //Check the player isn't trying to invite themselves
+              if(username.ToLower() == invitedUsername.ToLower())
                 {
                     client.SendWhisper(username, "You cannot invite yourself to your company, silly.");
                     return;
                 }
 
-
                 string invitedID = GetID(invitedUsername);
 
                 //Check the player is not already part of a company
-                if (developers[invitedID].IsFounder == false) {
+                if (developers[invitedID].IsFounder == false)
+                {
                     Debug.Log(invitedUsername + " is not already part of a company.");
 
+								    company.AddInvite(new CompanyInvite(company, invitedID, invitedUsername, username, TimeSpan.FromMinutes(5)));
                     //Add the invited user to a list
-                    company.AddInvite(invitedID);
+                    // company.AddInvite(invitedID);
                     Debug.Log("Invited user has been added to list.");
+
                     //Give them 5 minutes to respond
-                    EnsureMainThread.executeOnMainThread.Enqueue(() => { StartCoroutine(ClearInvite(companyName)); });
+                    // EnsureMainThread.executeOnMainThread.Enqueue(() => { StartCoroutine(ClearInvite(companyName)); });
                     Debug.Log("ClearInvite has been started.");
+
                     //Send the invite via whisper. Keep SendMessage just in case it doesn't work for others.
                     client.SendWhisper(invitedUsername, "You have been invited by " + username + " to join their company, " + companyName + ". Type !company accept " + companyName + " in the next 5 minutes to join.");
                     //client.SendMessage(invitedUsername + ", you have been invited to join " + companyName + ". Type !company accept " + companyName + " in the next 5 minutes to join.");
                     Debug.Log("Invite sent.");
+
                     //Let the founder know an invite was sent
                     client.SendWhisper(username, "An invite has been sent to " + invitedUsername + ".");
                     Save();
                 }
-                else {
+              
+                else
+                {
                     client.SendWhisper(username, invitedUsername + " is already part of another company.");
                 }
             }
@@ -598,31 +605,7 @@ public class CommandController : MonoBehaviour {
 
         Save();
     }
-
-    /// <summary>
-    /// Clear the invite and send a whisper letting them know that
-    /// this has occured.
-    /// </summary>
-    /// <param name="companyName"></param>
-    /// <returns></returns>
-    private IEnumerator ClearInvite(string companyName)
-    {
-        Debug.Log("Clearing invite.");
-
-        yield return new WaitForSeconds(300);
-
-        company = companies[companyName];
-        string invitedUsername = company.GetFirstInvite();
-        company.RemoveFirstInvite();
-
-        string founderUsername = company.GetOwner;
-
-        // TODO - Currently whispers are broken
-        client.SendWhisper(founderUsername, "Your invite to " + invitedUsername + " has run out.");
-
-        Debug.Log("Invite ran out.");
-    }
-
+  
     private void ApplyClose()
     {
         applyOpen = false;
