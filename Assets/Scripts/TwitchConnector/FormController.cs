@@ -8,30 +8,30 @@ using UnityEngine.UI;
 public class FormController : MonoBehaviour
 {
 	[Header("Form Items")]
-	[Tooltip("A list of form items which correspond to an InputField and Text object. Allows us to reference form items by name")]
+	[Tooltip("A list of form items which correspond to an InputField and Text object. Allows us to reference form items by name.")]
 	[SerializeField] List<FormItem> formItems = new List<FormItem>();
 
 	TwitchConnection connection;
 
-	private string path;
+	private string settingsPath;
 
 	/// <summary>
-	/// Fetch references in Awake
+	/// Fetch references in Awake.
 	/// </summary>
 	private void Awake()
 	{
 		connection = FindObjectOfType<TwitchConnection>();
-		path = Application.streamingAssetsPath + "/settings.txt";
+		settingsPath = Application.streamingAssetsPath + "/settings.txt";
 	}
 
 	/// <summary>
 	/// If any saved login information exists, load it.
-	/// Set each form items text to an empty string. We only need a message there
-	/// when something has gone wrong
+	/// Set each form items text to an empty string.
+    /// We only need a message there when something has gone wrong.
 	/// </summary>
 	private void Start()
 	{
-		if (File.Exists(path) == true)
+		if (File.Exists(settingsPath) == true)
 		{
 			LoadAndApplySettings();
 		}
@@ -43,8 +43,8 @@ public class FormController : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Load the file to get the settings then apply the loaded values
-	/// to the settings class as well as the corresponding form items
+	/// Load the file to get the settings. Apply the loaded values
+	/// to the Settings class, as well as the corresponding form items.
 	/// </summary>
 	private void LoadAndApplySettings()
 	{
@@ -57,12 +57,12 @@ public class FormController : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Load the file, split it and return a class containing said values
+	/// Load the file, split it, and return a class containing said values.
 	/// </summary>
 	/// <returns></returns>
 	private LoginSettings LoadSettings()
 	{
-		string settingsLoad = File.ReadAllText(path);
+		string settingsLoad = File.ReadAllText(settingsPath);
 		string[] settings = settingsLoad.Split('\n');
 
 		return new LoginSettings(settings[0], settings[1], settings[2], settings[3]);
@@ -71,16 +71,16 @@ public class FormController : MonoBehaviour
 	private void SaveSettings()
 	{
 		string settingsSave = Settings.username + "\n" + Settings.clientId + "\n" + Settings.accessToken + "\n" + Settings.channelToJoin;
-		File.WriteAllText(path, settingsSave);
+		File.WriteAllText(settingsPath, settingsSave);
 	}
 
 	/// <summary>
-	/// When the load button is pressed, see if the settings file exists in StreamingAssets, if it
-	/// does then load it, split it and input it into the form items and settings file
+	/// When the load button is pressed, see if the settings file exists in StreamingAssets.
+    /// If it does then load it, split it and input it into the form items and Settings class.
 	/// </summary>
 	public void LoadForm()
 	{
-		if (File.Exists(path) == true)
+		if (File.Exists(settingsPath) == true)
 		{
 			LoadAndApplySettings();
 		}
@@ -92,8 +92,8 @@ public class FormController : MonoBehaviour
 
 	/// <summary>
 	/// When the submit button is pressed, make sure each field is complete.
-	/// If so, get those values, inputting them into the settings class and attempt to connect to
-	/// Twitch using those settings.
+	/// If so, get those values, input them into the Settings class,
+    /// and attempt to connect to Twitch using those settings.
 	/// </summary>
 	public void SubmitForm()
 	{
@@ -130,7 +130,7 @@ public class FormController : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Get a form item with a specific name
+	/// Get a form item with a specific name.
 	/// </summary>
 	/// <param name="formItemName"></param>
 	/// <returns></returns>
@@ -142,8 +142,8 @@ public class FormController : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Check how many form items are tagged as not complete
-	/// If there are any, the form is not complete and cannot be submitted
+	/// Check how many form items are tagged as not complete.
+	/// If there are any, the form is not complete and cannot be submitted.
 	/// </summary>
 	/// <returns></returns>
 	private bool IsFormComplete()
@@ -155,7 +155,7 @@ public class FormController : MonoBehaviour
 	}
 
 	/// <summary>
-	/// To hold the values loaded so that they can be used to set the text on the form and settings file
+	/// To keep the values loaded so that they can be used to set the text on the form and settings file.
 	/// </summary>
 	private class LoginSettings
 	{
