@@ -45,7 +45,7 @@ public class CompanyClass
 	public bool CanAddProject => (ProjectCount < maxConcurrentProjects);
 	public int ProjectCount => projects.Count;
 
-	public int money { get; private set; }
+	public int money { get; set; }
 	public void AddMoney(int amount) => money += amount;
 	public void SpendMoney(int amount) => money -= amount;
 	public bool HasEnoughMoney(int amount) => (money >= amount);
