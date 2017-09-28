@@ -6,7 +6,7 @@ using System.Linq;
 public class CompanyClass
 {
 	//public uint companyID { get; private set; }
-	public string companyName { get; private set; }
+	public string companyName { get; set; }
 
 	const int maxFounders = 3;
 	const int maxConcurrentProjects = 5;
@@ -18,21 +18,28 @@ public class CompanyClass
 	/// IsOwner/IsFounder - Check if the specified ID exists in the list
 	/// As just a few examples
 	/// </summary>
-	List<string> founderIDs = new List<string>();
+	public List<string> founderIDs = new List<string>();
 	public string GetOwner => founderIDs[0];
-    public List<string> GetFounders => founderIDs;
+    //public List<string> GetFounders => founderIDs;
     public bool IsOwner(string userID) => (founderIDs[0] == userID);
 	public bool IsFounder(string userID) => founderIDs.Contains(userID);
 	public bool CanAddFounder => (FounderCount < maxFounders);
 	public void AddFounder(string userID) => founderIDs.Add(userID);
     public void RemoveFounder(string userID) => founderIDs.Remove(userID);
 	public int FounderCount => founderIDs.Count;
+  
+  //public List<string> invitedIDs = new List<string>();
+	//public bool HasPendingInvite(string userID) => invitedIDs.Contains(userID);
+	//public void AddInvite(string userID) => invitedIDs.Add(userID);
+	//public string GetFirstInvite() => invitedIDs[0];
+	//public void RemoveFirstInvite() => invitedIDs.RemoveAt(0);
 
 	List<CompanyInvite> invites = new List<CompanyInvite>();
 	public void AddInvite(CompanyInvite invite) => invites.Add(invite);
 	public void RemoveInvite(CompanyInvite invite) => invites.Remove(invite);
 	public bool HasPendingInvite(string userID) => invites.Where(i => i.invitedID == userID).ToList().Count > 0;
 
+  //public List<int> projectIDs = new List<int>();
 	List<ProjectClass> projects = new List<ProjectClass>();
 	public void AddProject(ProjectClass project) => projects.Add(project);
 	public bool CanAddProject => (ProjectCount < maxConcurrentProjects);
