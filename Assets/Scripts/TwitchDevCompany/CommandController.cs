@@ -535,6 +535,13 @@ public class CommandController : MonoBehaviour {
                         developers[developer].UpdateCompany(newName); //Make a function
                     }
 
+                    //Create a new CompanyClass
+                    company = companies[companyName];
+
+                    //Remove the old company and add the new one to update the Key
+                    companies.Remove(companyName);
+                    companies.Add(newName, company);
+
                     client.SendWhisper(username, "You have changed the name of the company to " + newName);
                 }
                 else {
