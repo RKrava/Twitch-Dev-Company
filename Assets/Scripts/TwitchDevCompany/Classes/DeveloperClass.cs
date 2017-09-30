@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 
 [Serializable]
-public class DeveloperClass {
+public class DeveloperClass
+{
     public string developerID; //Use this for the key so when someone changes their name, it doesn't reset their developer
     //public UserClass developer;
     public string companyName { get; set; } = "";
@@ -15,7 +16,8 @@ public class DeveloperClass {
     public void AddMoney(int amount) => developerMoney += amount;
     public void SpendMoney(int amount) => developerMoney -= amount;
     public bool HasEnoughMoney(int amount) => (developerMoney >= amount);
-    public int developerPay; //How to calculate pay
+
+	public DeveloperPay developerPay = new DeveloperPay(4);
 
     /// <summary>
     /// Series of skills that the developer has. Using an enum makes it extremely
