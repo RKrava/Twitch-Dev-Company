@@ -39,7 +39,7 @@ public class TwitchConnection : MonoBehaviour
 
     private void ClientOnJoinedChannel(object sender, OnJoinedChannelArgs e)
     {
-        client.SendMessage("I have arrived!");
+        client.SendWhisper(Settings.channelToJoin, "I have arrived.");
 
         //EnsureMainThread.executeOnMainThread.Enqueue(() => { FindObjectOfType<Canvas>()?.gameObject.SetActive(false); });
         //EnsureMainThread.executeOnMainThread.Enqueue(() => { commandController.DelayedStart(); });
