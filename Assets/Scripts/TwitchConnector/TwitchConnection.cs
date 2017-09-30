@@ -45,6 +45,11 @@ public class TwitchConnection : MonoBehaviour
         //EnsureMainThread.executeOnMainThread.Enqueue(() => { commandController.DelayedStart(); });
     }
 
+    private void OnApplicationQuit()
+    {
+        client.Disconnect();
+    }
+
     public bool CertificateValidationMonoFix(System.Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
     {
         bool isOk = true;
