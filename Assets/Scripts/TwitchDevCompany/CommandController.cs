@@ -17,7 +17,7 @@ public class CommandController : MonoBehaviour {
     /// This is so a name change wont lose a users progress. As the ID stays the same.
     /// Able to get a viewer/developers ID from their username, and vice versa
     /// </summary>
-    private List<Viewer> viewers = new List<Viewer>();
+    public static List<Viewer> viewers = new List<Viewer>();
 
     /// <summary>
     /// Looks through the list of viewers for those that match the ID of the one which was
@@ -73,24 +73,24 @@ public class CommandController : MonoBehaviour {
     /// <summary>
     /// Developers
     /// </summary>
-    public SortedDictionary<string, DeveloperClass> developers { get; private set; } = new SortedDictionary<string, DeveloperClass>();
+    public static SortedDictionary<string, DeveloperClass> developers { get; set; } = new SortedDictionary<string, DeveloperClass>();
     private Queue<string> idQueue = new Queue<string>();
     private Queue<string> usernameQueue = new Queue<string>();
-    private string developerFile;
-    private string viewerFile;
-    private string companiesFile;
+    //private string developerFile;
+    //private string viewerFile;
+    //private string companiesFile;
 
     /// <summary>
 	/// Companies
 	/// </summary>
     private CompanyClass company;
-    public SortedDictionary<string, CompanyClass> companies { get; private set; } = new SortedDictionary<string, CompanyClass>();
+    public static SortedDictionary<string, CompanyClass> companies { get; set; } = new SortedDictionary<string, CompanyClass>();
 
     /// <summary>
 	/// Projects
 	/// </summary>
     private ProjectClass project;
-    public SortedDictionary<string, ProjectClass> projects { get; private set; } = new SortedDictionary<string, ProjectClass>();
+    public static SortedDictionary<string, ProjectClass> projects { get; set; } = new SortedDictionary<string, ProjectClass>();
     //Tidy this
 
     //Those who have applied
@@ -115,13 +115,16 @@ public class CommandController : MonoBehaviour {
         client.OnWhisperReceived += ClientOnWhisperReceived;
         client.OnWhisperCommandReceived += ClientOnWhisperCommandReceived;
 
-        developerFile = Application.streamingAssetsPath + "/developers.json";
-        viewerFile = Application.streamingAssetsPath + "/viewers.json";
-        companiesFile = Application.streamingAssetsPath + "/companies.json";
+        //developerFile = Application.streamingAssetsPath + "/developers.json";
+        //viewerFile = Application.streamingAssetsPath + "/viewers.json";
+        //companiesFile = Application.streamingAssetsPath + "/companies.json";
 
         client.Connect();
 
-        Load();
+        SaveLoad saveLoad = FindObjectOfType<SaveLoad>();
+        saveLoad.DelayedStart();
+
+        //Load();
     }
 
     private void ClientOnJoinedChannel(object sender, OnJoinedChannelArgs e)
@@ -129,46 +132,46 @@ public class CommandController : MonoBehaviour {
         Debug.Log("CommandController has connected.");
     }
 
-    //Will add these once testing has finished
-    private void Load()
-    {
-        if (File.Exists(developerFile) == true) {
-            string developerJson = File.ReadAllText(developerFile);
-            developers = JsonConvert.DeserializeObject<SortedDictionary<string, DeveloperClass>>(developerJson);
-        }
-        else {
-            File.CreateText(developerFile).Dispose();
-        }
+    ////Will add these once testing has finished
+    //private void Load()
+    //{
+    //    if (File.Exists(developerFile) == true) {
+    //        string developerJson = File.ReadAllText(developerFile);
+    //        developers = JsonConvert.DeserializeObject<SortedDictionary<string, DeveloperClass>>(developerJson);
+    //    }
+    //    else {
+    //        File.CreateText(developerFile).Dispose();
+    //    }
 
-        if (File.Exists(viewerFile) == true) {
-            string viewerJson = File.ReadAllText(viewerFile);
-            viewers = JsonConvert.DeserializeObject<List<Viewer>>(viewerJson);
-        }
-        else {
-            File.CreateText(viewerFile).Dispose();
-        }
+    //    if (File.Exists(viewerFile) == true) {
+    //        string viewerJson = File.ReadAllText(viewerFile);
+    //        viewers = JsonConvert.DeserializeObject<List<Viewer>>(viewerJson);
+    //    }
+    //    else {
+    //        File.CreateText(viewerFile).Dispose();
+    //    }
 
-        if (File.Exists(companiesFile) == true)
-        {
-            string companiesJson = File.ReadAllText(companiesFile);
-            companies = JsonConvert.DeserializeObject<SortedDictionary<string, CompanyClass>>(companiesJson);
-        }
-        else {
-            File.CreateText(companiesFile).Dispose();
-        }
-    }
+    //    if (File.Exists(companiesFile) == true)
+    //    {
+    //        string companiesJson = File.ReadAllText(companiesFile);
+    //        companies = JsonConvert.DeserializeObject<SortedDictionary<string, CompanyClass>>(companiesJson);
+    //    }
+    //    else {
+    //        File.CreateText(companiesFile).Dispose();
+    //    }
+    //}
 
-    private void Save()
-    {
-        string developerJson = JsonConvert.SerializeObject(developers, Formatting.Indented);
-        File.WriteAllText(developerFile, developerJson);
+    //private void Save()
+    //{
+    //    string developerJson = JsonConvert.SerializeObject(developers, Formatting.Indented);
+    //    File.WriteAllText(developerFile, developerJson);
 
-        string viewerJson = JsonConvert.SerializeObject(viewers, Formatting.Indented);
-        File.WriteAllText(viewerFile, viewerJson);
+    //    string viewerJson = JsonConvert.SerializeObject(viewers, Formatting.Indented);
+    //    File.WriteAllText(viewerFile, viewerJson);
 
-        string companiesJson = JsonConvert.SerializeObject(companies, Formatting.Indented);
-        File.WriteAllText(companiesFile, companiesJson);
-    }
+    //    string companiesJson = JsonConvert.SerializeObject(companies, Formatting.Indented);
+    //    File.WriteAllText(companiesFile, companiesJson);
+    //}
 
     private void ClientOnMessageReceived(object sender, OnMessageReceivedArgs e)
     {
@@ -192,7 +195,7 @@ public class CommandController : MonoBehaviour {
             //Will be using this to keep a history of all the events. Will update when I finally add that system in.
             //File.AppendAllText("events.txt", chatter.Username + " has become a developer." + Environment.NewLine);
 
-            Save();
+            //Save();
         }
         else {
             Debug.Log(e.ChatMessage.DisplayName + " already is a developer.");
@@ -206,7 +209,7 @@ public class CommandController : MonoBehaviour {
                 //Will be using this to keep a history of all the events. Will update when I finally add that system in.
                 //File.AppendAllText("events.txt", developerName + " has changed their username to " + chatter.Username + "." + Environment.NewLine);
 
-                Save();
+                //Save();
             }
         }
     }
@@ -244,7 +247,7 @@ public class CommandController : MonoBehaviour {
             //Will be using this to keep a history of all the events. Will update when I finally add that system in.
             //File.AppendAllText("events.txt", chatter.Username + " has become a developer." + Environment.NewLine);
 
-            Save();
+            //Save();
         }
         else {
             Debug.Log(e.WhisperMessage.DisplayName + " already is a developer.");
@@ -258,7 +261,7 @@ public class CommandController : MonoBehaviour {
                 //Will be using this to keep a history of all the events. Will update when I finally add that system in.
                 //File.AppendAllText("events.txt", developerName + " has changed their username to " + chatter.Username + "." + Environment.NewLine);
 
-                Save();
+                //Save();
             }
         }
     }
@@ -406,7 +409,7 @@ public class CommandController : MonoBehaviour {
 
                     //Let the founder know an invite was sent
                     client.SendWhisper(username, WhisperMessages.companyInviteSent1(invitedUsername));
-                    Save();
+                    //Save();
                 }
               
                 else
@@ -608,7 +611,7 @@ public class CommandController : MonoBehaviour {
 
         Debug.Log("I got to the end.");
 
-        Save();
+        //Save();
     }
   
     private void ApplyClose()
