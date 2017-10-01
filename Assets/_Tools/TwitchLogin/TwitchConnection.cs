@@ -49,6 +49,9 @@ public class TwitchConnection : MonoBehaviour
     private void OnApplicationQuit()
     {
         client.Disconnect();
+
+        SaveLoad saveLoad = FindObject.saveLoad;
+        saveLoad.EmergencySave();
     }
 
     public bool CertificateValidationMonoFix(System.Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)

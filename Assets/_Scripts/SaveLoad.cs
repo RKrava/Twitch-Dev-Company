@@ -71,4 +71,13 @@ public class SaveLoad : MonoBehaviour
         string companiesJson = JsonConvert.SerializeObject(CommandController.companies, Formatting.Indented);
         File.WriteAllText(companiesFile, companiesJson);
     }
+
+    //Don't have to worry about potential save clashes when quitting application
+    public void EmergencySave()
+    {
+        Debug.Log("Emergency Save");
+
+        CancelInvoke();
+        Save();
+    }
 }
