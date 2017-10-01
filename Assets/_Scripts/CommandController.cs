@@ -50,7 +50,8 @@ public class CommandController : MonoBehaviour {
             .Count > 0;
     }
 
-    public bool DoesIDExist(string id) {
+    public bool DoesIDExist(string id)
+    {
         return viewers
             .Where(i => (i.id == id))
             .ToList()
@@ -63,7 +64,8 @@ public class CommandController : MonoBehaviour {
     /// </summary>
     /// <param name="id"></param>
     /// <param name="username"></param>
-    public void SetUsername(string id, string username) {
+    public void SetUsername(string id, string username)
+    {
         viewers
             .Where(i => id == i.id)
             .ToList()[0]
@@ -76,9 +78,6 @@ public class CommandController : MonoBehaviour {
     public static SortedDictionary<string, DeveloperClass> developers { get; set; } = new SortedDictionary<string, DeveloperClass>();
     private Queue<string> idQueue = new Queue<string>();
     private Queue<string> usernameQueue = new Queue<string>();
-    //private string developerFile;
-    //private string viewerFile;
-    //private string companiesFile;
 
     /// <summary>
 	/// Companies
@@ -105,7 +104,8 @@ public class CommandController : MonoBehaviour {
     //Are applications open?
     private bool applyOpen;
 
-    public void DelayedStart() {
+    public void DelayedStart()
+    {
         twitchConnection = FindObjectOfType<TwitchConnection>();
         client = twitchConnection.client;
 
@@ -115,16 +115,10 @@ public class CommandController : MonoBehaviour {
         client.OnWhisperReceived += ClientOnWhisperReceived;
         client.OnWhisperCommandReceived += ClientOnWhisperCommandReceived;
 
-        //developerFile = Application.streamingAssetsPath + "/developers.json";
-        //viewerFile = Application.streamingAssetsPath + "/viewers.json";
-        //companiesFile = Application.streamingAssetsPath + "/companies.json";
-
         client.Connect();
 
         SaveLoad saveLoad = FindObjectOfType<SaveLoad>();
         saveLoad.DelayedStart();
-
-        //Load();
     }
 
     private void ClientOnJoinedChannel(object sender, OnJoinedChannelArgs e)
@@ -132,84 +126,34 @@ public class CommandController : MonoBehaviour {
         Debug.Log("CommandController has connected.");
     }
 
-    ////Will add these once testing has finished
-    //private void Load()
-    //{
-    //    if (File.Exists(developerFile) == true) {
-    //        string developerJson = File.ReadAllText(developerFile);
-    //        developers = JsonConvert.DeserializeObject<SortedDictionary<string, DeveloperClass>>(developerJson);
-    //    }
-    //    else {
-    //        File.CreateText(developerFile).Dispose();
-    //    }
-
-    //    if (File.Exists(viewerFile) == true) {
-    //        string viewerJson = File.ReadAllText(viewerFile);
-    //        viewers = JsonConvert.DeserializeObject<List<Viewer>>(viewerJson);
-    //    }
-    //    else {
-    //        File.CreateText(viewerFile).Dispose();
-    //    }
-
-    //    if (File.Exists(companiesFile) == true)
-    //    {
-    //        string companiesJson = File.ReadAllText(companiesFile);
-    //        companies = JsonConvert.DeserializeObject<SortedDictionary<string, CompanyClass>>(companiesJson);
-    //    }
-    //    else {
-    //        File.CreateText(companiesFile).Dispose();
-    //    }
-    //}
-
-    //private void Save()
-    //{
-    //    string developerJson = JsonConvert.SerializeObject(developers, Formatting.Indented);
-    //    File.WriteAllText(developerFile, developerJson);
-
-    //    string viewerJson = JsonConvert.SerializeObject(viewers, Formatting.Indented);
-    //    File.WriteAllText(viewerFile, viewerJson);
-
-    //    string companiesJson = JsonConvert.SerializeObject(companies, Formatting.Indented);
-    //    File.WriteAllText(companiesFile, companiesJson);
-    //}
-
     private void ClientOnMessageReceived(object sender, OnMessageReceivedArgs e)
     {
         string id = e.ChatMessage.UserId;
         string username = e.ChatMessage.DisplayName;
 
         //Check the user doesn't already have a developer
-        if (!developers.ContainsKey(id)) {
+        if (!developers.ContainsKey(id))
+        {
             DeveloperClass developer = new DeveloperClass();
             developer.developerID = id;
 
             viewers.Add(new Viewer(username, id));
 
-            //idToUsername.Add(id, username);
-            //usernameToId.Add(username, id);
-
             developers.Add(id, developer);
 
             Debug.Log(username + " has been added as a developer.");
-
-            //Will be using this to keep a history of all the events. Will update when I finally add that system in.
-            //File.AppendAllText("events.txt", chatter.Username + " has become a developer." + Environment.NewLine);
-
-            //Save();
         }
-        else {
+
+        else
+        {
             Debug.Log(e.ChatMessage.DisplayName + " already is a developer.");
 
             string developerName = GetUsername(id);
 
-            if (developerName != username) {
+            if (developerName != username)
+            {
                 // Update their username, it appears it has changes
                 SetUsername(id, username);
-
-                //Will be using this to keep a history of all the events. Will update when I finally add that system in.
-                //File.AppendAllText("events.txt", developerName + " has changed their username to " + chatter.Username + "." + Environment.NewLine);
-
-                //Save();
             }
         }
     }
@@ -218,7 +162,8 @@ public class CommandController : MonoBehaviour {
     {
         Debug.Log("I received a message.");
 
-        if (string.Compare(e.Command.Command, "twitchtycoon", true) == 0) {
+        if (string.Compare(e.Command.Command, "twitchtycoon", true) == 0)
+        {
             client.SendMessage("Twitch Dev Tycoon is a Twitch version of games like Game Dev Tycoon and Software Inc. If you'd like to get involved, whisper me '!help'.");
         }
     }
@@ -234,7 +179,8 @@ public class CommandController : MonoBehaviour {
         string username = e.WhisperMessage.DisplayName;
 
         //Add if they whisper
-        if (!developers.ContainsKey(id)) {
+        if (!developers.ContainsKey(id))
+        {
             DeveloperClass developer = new DeveloperClass();
             developer.developerID = id;
 
@@ -243,25 +189,18 @@ public class CommandController : MonoBehaviour {
             developers.Add(id, developer);
 
             Debug.Log(username + " has been added as a developer.");
-
-            //Will be using this to keep a history of all the events. Will update when I finally add that system in.
-            //File.AppendAllText("events.txt", chatter.Username + " has become a developer." + Environment.NewLine);
-
-            //Save();
         }
-        else {
+
+        else
+        {
             Debug.Log(e.WhisperMessage.DisplayName + " already is a developer.");
 
             string developerName = GetUsername(id);
 
-            if (developerName != username) {
+            if (developerName != username)
+            {
                 //Update idToUsername and usernameToId
                 SetUsername(id, username);
-
-                //Will be using this to keep a history of all the events. Will update when I finally add that system in.
-                //File.AppendAllText("events.txt", developerName + " has changed their username to " + chatter.Username + "." + Environment.NewLine);
-
-                //Save();
             }
         }
     }
@@ -281,20 +220,26 @@ public class CommandController : MonoBehaviour {
         string username = e.WhisperMessage.DisplayName;
 
         // Check they have been added as a developer
-        if (!developers.ContainsKey(id)) {
+        if (!developers.ContainsKey(id))
+        {
             client.SendWhisper(username, WhisperMessages.notDeveloper);
             return;
         }
 
         Debug.Log("Do I make it here?");
 
-        if (string.Compare(e.Command, "money", true) == 0) {
+        if (string.Compare(e.Command, "money", true) == 0)
+        {
             client.SendWhisper(username, WhisperMessages.money(developers[id].developerMoney));
         }
-        else if (string.Compare(e.Command, "skills", true) == 0) {
+
+        else if (string.Compare(e.Command, "skills", true) == 0)
+        {
             client.SendWhisper(username, WhisperMessages.skills(developers[id].GetSkillLevel(SkillTypes.LeaderSkills.Leadership), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Design), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Development), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Art), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Marketing)));
         }
-        else if (string.Compare(e.Command, "company", true) == 0) {
+
+        else if (string.Compare(e.Command, "company", true) == 0)
+        {
             //Get the company from the developer data
             string companyName = developers[id].companyName;
             Debug.Log("Got the company name.");
@@ -304,12 +249,16 @@ public class CommandController : MonoBehaviour {
             bool companyOwner = false;
 
             //Check if they are part of a company
-            if (companyName == string.Empty) {
+            if (companyName == string.Empty)
+            {
                 companyFounder = false;
             }
-            else {
+
+            else
+            {
                 //If they are part of company, check if they are the owner
-                if (companies[companyName].IsOwner(id)) {
+                if (companies[companyName].IsOwner(id))
+                {
                     Debug.Log(username + " is the Owner of " + companyName);
                     companyOwner = true;
                 }
@@ -318,15 +267,18 @@ public class CommandController : MonoBehaviour {
             Debug.Log($"Length of whisper is: {splitWhisper.Count}");
 
             //Start a company
-            if (string.Compare(splitWhisper[0], "start", true) == 0) {
+            if (string.Compare(splitWhisper[0], "start", true) == 0)
+            {
                 Debug.Log("Creating a company.");
 
                 //Check if player is already part of a company
-                if (!companyFounder) {
+                if (!companyFounder)
+                {
                     companyName = splitWhisper[1];
 
                     //Check if a company exists
-                    if (!companies.ContainsKey(companyName)) {
+                    if (!companies.ContainsKey(companyName))
+                    {
                         company = new CompanyClass(companyName);
                         company.AddFounder(id);
                         developers[id].JoinCompany(companyName);
@@ -337,50 +289,66 @@ public class CommandController : MonoBehaviour {
 
                         Debug.Log("Company created.");
                     }
-                    else {
+
+                    else
+                    {
                         client.SendWhisper(username, WhisperMessages.companyStartExists);
                     }
                 }
-                else {
+
+                else
+                {
                     client.SendWhisper(username, WhisperMessages.companyStartOwner(companyName));
                 }
             }
 
             //Invite upto two more people to join the company
-            else if (string.Compare(splitWhisper[0], "invite", true) == 0) {
+            else if (string.Compare(splitWhisper[0], "invite", true) == 0)
+            {
                 Debug.Log("Inviting someone to join a company.");
 
                 string invitedUsername = splitWhisper[1];
 
                 //Check they are the owner of a company
-                if (companyOwner) {
+                if (companyOwner)
+                {
                     Debug.Log(username + " is the owner of a company.");
                 }
-                else {
+
+                else
+                {
                     client.SendWhisper(username, WhisperMessages.companyInviteOwner);
                     return;
                 }
+
                 company = companies[companyName];
+
                 //Check the company has less than 3 founders
-                if (company.FounderCount < 3) {
+                if (company.FounderCount < 3)
+                {
                     Debug.Log("The company has less than 3 founders.");
                 }
-                else {
+
+                else
+                {
                     client.SendWhisper(username, WhisperMessages.companyInviteMax);
                     return;
                 }
               
                 //Check the player is in the system
-                if (DoesUsernameExist(invitedUsername)) {
+                if (DoesUsernameExist(invitedUsername))
+                {
                     Debug.Log(invitedUsername + " is a developer.");
                 }
-                else {
+
+                else
+                {
                     client.SendWhisper(username, WhisperMessages.companyInviteNotDeveloper(invitedUsername));
                     return;
                 }
 
                 //Check the player isn't trying to invite themselves
-              if(username.ToLower() == invitedUsername.ToLower())
+                if(username.ToLower() == invitedUsername.ToLower())
                 {
                     client.SendWhisper(username, WhisperMessages.companyInviteSelf);
                     return;
@@ -393,7 +361,7 @@ public class CommandController : MonoBehaviour {
                 {
                     Debug.Log(invitedUsername + " is not already part of a company.");
 
-								    company.AddInvite(new CompanyInvite(company, invitedID, invitedUsername, username, TimeSpan.FromMinutes(5)));
+					company.AddInvite(new CompanyInvite(company, invitedID, invitedUsername, username, TimeSpan.FromMinutes(5)));
                     //Add the invited user to a list
                     // company.AddInvite(invitedID);
                     Debug.Log("Invited user has been added to list.");
@@ -417,20 +385,25 @@ public class CommandController : MonoBehaviour {
                     client.SendWhisper(username, WhisperMessages.companyInviteSent2(invitedUsername));
                 }
             }
-            else if (string.Compare(splitWhisper[0], "accept", true) == 0) {
+
+            else if (string.Compare(splitWhisper[0], "accept", true) == 0)
+            {
                 Debug.Log("Accepting invite.");
 
-                if (String.IsNullOrEmpty(companyName)) {
+                if (String.IsNullOrEmpty(companyName))
+                {
                     Debug.Log(username + " is not part of a company.");
 
                     companyName = splitWhisper[1];
 
                     //Check the company exists
-                    if (companies.ContainsKey(companyName)) {
+                    if (companies.ContainsKey(companyName))
+                    {
                         Debug.Log("Company exists.");
 
                         //Check the company has less than 3 founders
-                        if (companies[companyName].FounderCount < 3) {
+                        if (companies[companyName].FounderCount < 3)
+                        {
                             Debug.Log("Company has less than three founders.");
 
                             company = companies[companyName];
@@ -443,7 +416,6 @@ public class CommandController : MonoBehaviour {
 
                             //Let them now they've joined a company
                             client.SendWhisper(username, WhisperMessages.companyAcceptFounder1(companyName));
-                            //Doesn't send
 
                             //Get the company founder
                             string founder = GetUsername(company.GetOwner);
@@ -451,80 +423,108 @@ public class CommandController : MonoBehaviour {
                             //Let the founder know the player has joined the company
                             client.SendWhisper(founder, WhisperMessages.companyAcceptFounder2(username));
                         }
-                        else {
+
+                        else
+                        {
                             //There are already 3 people
                             client.SendWhisper(username, WhisperMessages.companyAcceptMax(companyName));
                         }
                     }
-                    else {
+
+                    else
+                    {
                         //Company doesn't exist
                         client.SendWhisper(username, WhisperMessages.companyAcceptExist(companyName));
                     }
                 }
-                else {
+
+                else
+                {
                     client.SendWhisper(username, WhisperMessages.companyAcceptCompany(companyName));
                 }
             }
 
             //Add funds to company from player
-            else if (string.Compare(splitWhisper[0], "deposit", true) == 0) {
+            else if (string.Compare(splitWhisper[0], "deposit", true) == 0)
+            {
                 //Check the player is part of a company
-                if (companyFounder) {
+                if (companyFounder)
+                {
                     int money;
 
-                    if (int.TryParse(splitWhisper[1], out money)) {
+                    if (int.TryParse(splitWhisper[1], out money))
+                    {
                         //Check the player has enough funds
-                        if (developers[id].HasEnoughMoney(money)) {
+                        if (developers[id].HasEnoughMoney(money))
+                        {
                             //Transfer funds - Can probably be a function
                             developers[id].SpendMoney(money);
                             companies[companyName].AddMoney(money);
 
-                            client.SendWhisper(username, WhisperMessages.companyDepositSuccess(money, companyName, companies[companyName].money, developers[id].developerMoney)); //Can probably write this better, but yeah
+                            client.SendWhisper(username, WhisperMessages.companyDepositSuccess(money, companyName, companies[companyName].money, developers[id].developerMoney));
                         }
-                        else {
+
+                        else
+                        {
                             client.SendWhisper(username, WhisperMessages.companyDepositNotEnough(developers[id].developerMoney));
                         }
                     }
-                    else {
+
+                    else
+                    {
                         client.SendWhisper(username, WhisperMessages.companyDepositSyntax);
                     }
                 }
-                else {
+
+                else
+                {
                     client.SendWhisper(username, WhisperMessages.companyDepositPermissions);
                 }
             }
 
             //Withdraw funds from a company to player
-            else if (string.Compare(splitWhisper[0], "withdraw", true) == 0) {
+            else if (string.Compare(splitWhisper[0], "withdraw", true) == 0)
+            {
                 //Check the player is founder of a company
-                if (companyFounder) {
+                if (companyFounder)
+                {
                     int money;
 
-                    if (int.TryParse(splitWhisper[1], out money)) {
+                    if (int.TryParse(splitWhisper[1], out money))
+                    {
                         //Check the company has enough funds
-                        if (companies[companyName].HasEnoughMoney(money)) {
+                        if (companies[companyName].HasEnoughMoney(money))
+                        {
                             //Transfer funds
                             companies[companyName].SpendMoney(money);
                             developers[id].AddMoney(money);
                             client.SendWhisper(username, WhisperMessages.companyWithdrawSuccess(money, companyName, developers[id].developerMoney, companies[companyName].money));
                         }
-                        else {
+
+                        else
+                        {
                             client.SendWhisper(username, WhisperMessages.companyWithdrawNotEnough(companies[companyName].money));
                         }
                     }
-                    else {
+
+                    else
+                    {
                         client.SendWhisper(username, WhisperMessages.companyWithdrawSyntax);
                     }
                 }
-                else {
+
+                else
+                {
                     client.SendWhisper(username, WhisperMessages.companyWithdrawPermissions);
                 }
             }
 
             //Edit company data
-            else if (string.Compare(splitWhisper[0], "edit", true) == 0) {
+            else if (string.Compare(splitWhisper[0], "edit", true) == 0)
+            {
                 //Check they are the owner of the company
-                if (companyOwner) {
+                if (companyOwner)
+                {
                     string newName = splitWhisper[1];
 
                     //Change the company name
@@ -532,7 +532,8 @@ public class CommandController : MonoBehaviour {
 
                     //Get all the founders
                     //Change the company name in their developer profiles
-                    foreach (string developer in companies[companyName].founderIDs) {
+                    foreach (string developer in companies[companyName].founderIDs)
+                    {
                         developers[developer].UpdateCompany(newName); //Make a function
                     }
 
@@ -545,29 +546,39 @@ public class CommandController : MonoBehaviour {
 
                     client.SendWhisper(username, WhisperMessages.companyEditSuccess(newName));
                 }
-                else {
+
+                else
+                {
                     client.SendWhisper(username, WhisperMessages.companyEditFail);
                 }
             }
 
             //Leave company
-            else if (string.Compare(splitWhisper[0], "leave", true) == 0) {
+            else if (string.Compare(splitWhisper[0], "leave", true) == 0)
+            {
                 //Check they are in a company
-                if (companyFounder) {
+                if (companyFounder)
+                {
                     companies[companyName].RemoveFounder(id);
                     developers[id].LeaveCompany();
 
                     client.SendWhisper(username, WhisperMessages.companyLeaveSuccess(companyName));
                 }
-                else {
+
+                else
+                {
                     client.SendWhisper(username, WhisperMessages.companyLeaveFail);
                 }
             }
-            else {
+
+            else
+            {
                 Debug.Log("I can't do my damn job!");
             }
         }
-        else {
+
+        else
+        {
             Debug.Log("Boop!");
         }
 
