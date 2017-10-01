@@ -15,8 +15,5 @@ public class FindObject : MonoBehaviour
         formController = FindObjectOfType<FormController>();
         commandController = FindObjectOfType<CommandController>();
         saveLoad = FindObjectOfType<SaveLoad>();
-
-        formController.DelayedAwake();
-        twitchConnection.DelayedAwake();
     }
 }
