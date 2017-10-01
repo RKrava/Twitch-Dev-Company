@@ -15,7 +15,8 @@ public class TwitchConnection : MonoBehaviour
 
     private void Awake()
     {
-        commandController = FindObjectOfType<CommandController>();
+        commandController = FindObject.commandController;
+        //commandController = FindObjectOfType<CommandController>();
     }
 
     public void Connect()
