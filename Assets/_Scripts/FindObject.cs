@@ -4,16 +4,58 @@ using UnityEngine;
 [Serializable]
 public class FindObject : MonoBehaviour
 {
-    public static TwitchConnection twitchConnection;
-    public static FormController formController;
-    public static CommandController commandController;
-    public static SaveLoad saveLoad;
-
-    private void Awake()
+    private static TwitchConnection _twitchConnection;
+    public static TwitchConnection twitchConnection
     {
-        twitchConnection = FindObjectOfType<TwitchConnection>();
-        formController = FindObjectOfType<FormController>();
-        commandController = FindObjectOfType<CommandController>();
-        saveLoad = FindObjectOfType<SaveLoad>();
+        get
+        {
+            if (_twitchConnection == null)
+            {
+                _twitchConnection = FindObjectOfType<TwitchConnection>();
+            }
+
+            return _twitchConnection;
+        }
+    }
+
+    private static FormController _formController;
+    public static FormController formController
+    {
+        get
+        {
+            if (_formController == null)
+            {
+                _formController = FindObjectOfType<FormController>();
+            }
+
+            return _formController;
+        }
+    }
+
+    private static CommandController _commandController;
+    public static CommandController commandController
+    {
+        get
+        {
+            if (_commandController == null)
+            {
+                _commandController = FindObjectOfType<CommandController>();
+            }
+
+            return _commandController;
+        }
+    }
+
+    private static SaveLoad _saveLoad;
+    public static SaveLoad saveLoad
+    {
+        get
+        {
+            if (_saveLoad == null)
+            {
+                _saveLoad = FindObjectOfType<SaveLoad>();
+            }
+
+            return _saveLoad;
     }
 }
