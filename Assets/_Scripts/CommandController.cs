@@ -107,7 +107,8 @@ public class CommandController : MonoBehaviour
 
     public void DelayedStart()
     {
-        twitchConnection = FindObjectOfType<TwitchConnection>();
+        twitchConnection = FindObject.twitchConnection;
+        //twitchConnection = FindObjectOfType<TwitchConnection>();
         client = twitchConnection.client;
 
         client.OnJoinedChannel += ClientOnJoinedChannel;
@@ -118,7 +119,8 @@ public class CommandController : MonoBehaviour
 
         client.Connect();
 
-        SaveLoad saveLoad = FindObjectOfType<SaveLoad>();
+        SaveLoad saveLoad = FindObject.saveLoad;
+        //SaveLoad saveLoad = FindObjectOfType<SaveLoad>();
         saveLoad.DelayedStart();
     }
 
