@@ -21,8 +21,6 @@ public class CompanyManager : MonoBehaviour
         string companyName = CommandController.developers[id].companyName;
         Debug.Log("Got the company name.");
 
-        client.SendWhisper(username, WhisperMessages.money(1000));
-
         //Mark as true/false by default to avoid issues
         bool companyFounder = true;
         bool companyOwner = false;
@@ -50,33 +48,36 @@ public class CompanyManager : MonoBehaviour
             Debug.Log("Creating a company.");
 
             //Check if player is already part of a company
+
+
             if (!companyFounder)
             {
                 companyName = splitWhisper[1];
-
-                //Check if a company exists
-                if (!CommandController.companies.ContainsKey(companyName))
-                {
-                    company = new CompanyClass(companyName);
-                    company.AddFounder(id);
-                    CommandController.developers[id].JoinCompany(companyName);
-
-                    client.SendWhisper(username, WhisperMessages.companyStartNew(companyName));
-
-                    CommandController.companies.Add(companyName, company);
-
-                        Debug.Log("Company created.");
-                }
-
-                else
-                {
-                    client.SendWhisper(username, WhisperMessages.companyStartExists);
-                }
             }
 
             else
             {
                 client.SendWhisper(username, WhisperMessages.companyStartOwner(companyName));
+                return;
+            }
+
+            //Check if a company exists
+            if (!CommandController.companies.ContainsKey(companyName))
+            {
+                company = new CompanyClass(companyName);
+                company.AddFounder(id);
+                CommandController.developers[id].JoinCompany(companyName);
+
+                client.SendWhisper(username, WhisperMessages.companyStartNew(companyName));
+
+                CommandController.companies.Add(companyName, company);
+
+                Debug.Log("Company created.");
+            }
+
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.companyStartExists);
             }
         }
 
@@ -174,126 +175,141 @@ public class CompanyManager : MonoBehaviour
 
                 companyName = splitWhisper[1];
 
-                //Check the company exists
-                if (CommandController.companies.ContainsKey(companyName))
-                {
-                    Debug.Log("Company exists.");
-
-                    //Check the company has less than 3 founders
-                    if (CommandController.companies[companyName].FounderCount < 3)
-                    {
-                        Debug.Log("Company has less than three founders.");
-
-                        company = CommandController.companies[companyName];
-
-                        //Add them to the company
-                        company.AddFounder(id);
-
-                        //Add company to their details
-                        CommandController.developers[id].JoinCompany(companyName);
-
-                        //Let them now they've joined a company
-                        client.SendWhisper(username, WhisperMessages.companyAcceptFounder1(companyName));
-
-                        //Get the company founder
-                        string founder = CommandController.GetUsername(company.GetOwner);
-
-                        //Let the founder know the player has joined the company
-                        client.SendWhisper(founder, WhisperMessages.companyAcceptFounder2(username));
-                    }
-
-                    else
-                    {
-                        //There are already 3 people
-                        client.SendWhisper(username, WhisperMessages.companyAcceptMax(companyName));
-                    }
-                }
-
-                else
-                {
-                    //Company doesn't exist
-                    client.SendWhisper(username, WhisperMessages.companyAcceptExist(companyName));
-                }
             }
 
             else
             {
                 client.SendWhisper(username, WhisperMessages.companyAcceptCompany(companyName));
+                return;
+            }
+
+            //Check the company exists
+            if (CommandController.companies.ContainsKey(companyName))
+            {
+                Debug.Log("Company exists.");
+            }
+
+            else
+            {
+                //Company doesn't exist
+                client.SendWhisper(username, WhisperMessages.companyAcceptExist(companyName));
+                return;
+            }
+
+            //Check the company has less than 3 founders
+            if (CommandController.companies[companyName].FounderCount < 3)
+            {
+                Debug.Log("Company has less than three founders.");
+
+                company = CommandController.companies[companyName];
+
+                //Add them to the company
+                company.AddFounder(id);
+
+                //Add company to their details
+                CommandController.developers[id].JoinCompany(companyName);
+
+                //Let them now they've joined a company
+                client.SendWhisper(username, WhisperMessages.companyAcceptFounder1(companyName));
+
+                //Get the company founder
+                string founder = CommandController.GetUsername(company.GetOwner);
+
+                //Let the founder know the player has joined the company
+                client.SendWhisper(founder, WhisperMessages.companyAcceptFounder2(username));
+            }
+
+            else
+            {
+                //There are already 3 people
+                client.SendWhisper(username, WhisperMessages.companyAcceptMax(companyName));
             }
         }
 
         //Add funds to company from player
         else if (string.Compare(splitWhisper[0], "deposit", true) == 0)
         {
+            int money;
+
             //Check the player is part of a company
             if (companyFounder)
             {
-                int money;
-
-                if (int.TryParse(splitWhisper[1], out money))
-                {
-                    //Check the player has enough funds
-                    if (CommandController.developers[id].HasEnoughMoney(money))
-                    {
-                        //Transfer funds - Can probably be a function
-                        CommandController.developers[id].SpendMoney(money);
-                        CommandController.companies[companyName].AddMoney(money);
-
-                        client.SendWhisper(username, WhisperMessages.companyDepositSuccess(money, companyName, CommandController.companies[companyName].money, CommandController.developers[id].developerMoney));
-                    }
-
-                    else
-                    {
-                        client.SendWhisper(username, WhisperMessages.companyDepositNotEnough(CommandController.developers[id].developerMoney));
-                    }
-                }
-
-                else
-                {
-                    client.SendWhisper(username, WhisperMessages.companyDepositSyntax);
-                }
+                Debug.Log("Is a Company Founder.");
             }
 
             else
             {
                 client.SendWhisper(username, WhisperMessages.companyDepositPermissions);
+                return;
+            }
+
+            if (int.TryParse(splitWhisper[1], out money))
+            {
+                Debug.Log("Correct syntax.");
+            }
+
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.companyDepositSyntax);
+                return;
+            }
+
+            //Check the player has enough funds
+            if (CommandController.developers[id].HasEnoughMoney(money))
+            {
+                //Transfer funds - Can probably be a function
+                CommandController.developers[id].SpendMoney(money);
+                CommandController.companies[companyName].AddMoney(money);
+
+                client.SendWhisper(username, WhisperMessages.companyDepositSuccess(money, companyName, CommandController.companies[companyName].money, CommandController.developers[id].developerMoney));
+            }
+
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.companyDepositNotEnough(CommandController.developers[id].developerMoney));
             }
         }
 
         //Withdraw funds from a company to player
         else if (string.Compare(splitWhisper[0], "withdraw", true) == 0)
         {
+            int money;
+
             //Check the player is founder of a company
             if (companyFounder)
             {
-                int money;
-
-                if (int.TryParse(splitWhisper[1], out money))
-                {
-                    //Check the company has enough funds
-                    if (CommandController.companies[companyName].HasEnoughMoney(money))
-                    {
-                        //Transfer funds
-                        CommandController.companies[companyName].SpendMoney(money);
-                        CommandController.developers[id].AddMoney(money);
-                        client.SendWhisper(username, WhisperMessages.companyWithdrawSuccess(money, companyName, CommandController.developers[id].developerMoney, CommandController.companies[companyName].money));
-                    }
-
-                    else
-                    {
-                        client.SendWhisper(username, WhisperMessages.companyWithdrawNotEnough(CommandController.companies[companyName].money));
-                    }
-                }
-
-                else
-                {
-                    client.SendWhisper(username, WhisperMessages.companyWithdrawSyntax);
-                }
+                Debug.Log("Is a CompanyFounder.");
             }
 
             else
             {
                 client.SendWhisper(username, WhisperMessages.companyWithdrawPermissions);
+                return;
+            }
+
+            if (int.TryParse(splitWhisper[1], out money))
+            {
+                Debug.Log("Correct syntax.");
+            }
+
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.companyWithdrawSyntax);
+                return;
+            }
+
+            //Check the company has enough funds
+            if (CommandController.companies[companyName].HasEnoughMoney(money))
+            {
+                //Transfer funds
+                CommandController.companies[companyName].SpendMoney(money);
+                CommandController.developers[id].AddMoney(money);
+                client.SendWhisper(username, WhisperMessages.companyWithdrawSuccess(money, companyName, CommandController.developers[id].developerMoney, CommandController.companies[companyName].money));
+            }
+
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.companyWithdrawNotEnough(CommandController.companies[companyName].money));
             }
         }
 
