@@ -52,7 +52,12 @@ public class TwitchConnection : MonoBehaviour
 	public void SendMessage(string recipient, string message) => client.SendMessage($"{recipient} - {message}");
 	public void SendMessage(string message) => client.SendMessage(message);
 
-	public void SendWhisper(string recipient, string message) => client.SendWhisper(recipient, message);
+    public void SendWhisper(string recipient, string message)
+    {
+        //Leave debug to allow us to test delay when the game is complete
+        Debug.Log("TwitchConnection: " + Time.time);
+        client.SendWhisper(recipient, message);
+    }
 
 	/// <summary>
 	/// Ensure we are only connected once

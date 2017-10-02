@@ -169,7 +169,7 @@ public class CommandController : MonoBehaviour
 
         if (string.Compare(e.Command.Command, "twitchtycoon", true) == 0)
         {
-			TwitchConnection.Instance.SendMessage("Twitch Dev Tycoon is a Twitch version of games like Game Dev Tycoon and Software Inc. If you'd like to get involved, whisper me '!help'.");
+			client.SendMessage("Twitch Dev Tycoon is a Twitch version of games like Game Dev Tycoon and Software Inc. If you'd like to get involved, whisper me '!help'.");
         }
     }
 
@@ -227,7 +227,7 @@ public class CommandController : MonoBehaviour
         // Check they have been added as a developer
         if (!developers.ContainsKey(id))
         {
-			TwitchConnection.Instance.SendWhisper(username, WhisperMessages.notDeveloper);
+			client.SendWhisper(username, WhisperMessages.notDeveloper);
             return;
         }
 
@@ -235,12 +235,12 @@ public class CommandController : MonoBehaviour
 
         if (string.Compare(e.Command, "money", true) == 0)
         {
-			TwitchConnection.Instance.SendWhisper(username, WhisperMessages.money(developers[id].developerMoney));
+			client.SendWhisper(username, WhisperMessages.money(developers[id].developerMoney));
         }
 
         else if (string.Compare(e.Command, "skills", true) == 0)
         {
-			TwitchConnection.Instance.SendWhisper(username, WhisperMessages.skills(developers[id].GetSkillLevel(SkillTypes.LeaderSkills.Leadership), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Design), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Development), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Art), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Marketing)));
+			client.SendWhisper(username, WhisperMessages.skills(developers[id].GetSkillLevel(SkillTypes.LeaderSkills.Leadership), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Design), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Development), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Art), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Marketing)));
         }
 
         else if (string.Compare(e.Command, "company", true) == 0)
