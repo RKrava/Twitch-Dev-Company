@@ -11,7 +11,6 @@ using UnityEngine;
 public class CommandController : MonoBehaviour
 {
     private TwitchConnection twitchConnection;
-    private TwitchClient client;
 
     /// <summary>
     /// Store a viewers ID and current Username
@@ -114,15 +113,11 @@ public class CommandController : MonoBehaviour
 
     public void DelayedStart()
     {
-        //twitchConnection = FindObject.twitchConnection;
-        //twitchConnection = FindObjectOfType<TwitchConnection>();
-        client = FindObject.twitchClient;
-
-        client.OnJoinedChannel += ClientOnJoinedChannel;
-        client.OnMessageReceived += ClientOnMessageReceived;
-        client.OnChatCommandReceived += ClientOnCommandReceived;
-        client.OnWhisperReceived += ClientOnWhisperReceived;
-        client.OnWhisperCommandReceived += ClientOnWhisperCommandReceived;
+        TwitchConnection.Instance.client.OnJoinedChannel += ClientOnJoinedChannel;
+		TwitchConnection.Instance.client.OnMessageReceived += ClientOnMessageReceived;
+		TwitchConnection.Instance.client.OnChatCommandReceived += ClientOnCommandReceived;
+		TwitchConnection.Instance.client.OnWhisperReceived += ClientOnWhisperReceived;
+		TwitchConnection.Instance.client.OnWhisperCommandReceived += ClientOnWhisperCommandReceived;
 
         //client.Connect();
 
@@ -174,7 +169,7 @@ public class CommandController : MonoBehaviour
 
         if (string.Compare(e.Command.Command, "twitchtycoon", true) == 0)
         {
-            client.SendMessage("Twitch Dev Tycoon is a Twitch version of games like Game Dev Tycoon and Software Inc. If you'd like to get involved, whisper me '!help'.");
+			TwitchConnection.Instance.SendMessage("Twitch Dev Tycoon is a Twitch version of games like Game Dev Tycoon and Software Inc. If you'd like to get involved, whisper me '!help'.");
         }
     }
 
@@ -232,7 +227,7 @@ public class CommandController : MonoBehaviour
         // Check they have been added as a developer
         if (!developers.ContainsKey(id))
         {
-            client.SendWhisper(username, WhisperMessages.notDeveloper);
+			TwitchConnection.Instance.SendWhisper(username, WhisperMessages.notDeveloper);
             return;
         }
 
@@ -240,12 +235,12 @@ public class CommandController : MonoBehaviour
 
         if (string.Compare(e.Command, "money", true) == 0)
         {
-            client.SendWhisper(username, WhisperMessages.money(developers[id].developerMoney));
+			TwitchConnection.Instance.SendWhisper(username, WhisperMessages.money(developers[id].developerMoney));
         }
 
         else if (string.Compare(e.Command, "skills", true) == 0)
         {
-            client.SendWhisper(username, WhisperMessages.skills(developers[id].GetSkillLevel(SkillTypes.LeaderSkills.Leadership), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Design), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Development), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Art), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Marketing)));
+			TwitchConnection.Instance.SendWhisper(username, WhisperMessages.skills(developers[id].GetSkillLevel(SkillTypes.LeaderSkills.Leadership), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Design), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Development), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Art), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Marketing)));
         }
 
         else if (string.Compare(e.Command, "company", true) == 0)

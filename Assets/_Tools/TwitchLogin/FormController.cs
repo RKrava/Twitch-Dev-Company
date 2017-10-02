@@ -11,8 +11,6 @@ public class FormController : MonoBehaviour
 	[Tooltip("A list of form items which correspond to an InputField and Text object. Allows us to reference form items by name.")]
 	[SerializeField] List<FormItem> formItems = new List<FormItem>();
 
-	TwitchConnection connection;
-
 	private string settingsPath;
 
 	/// <summary>
@@ -20,7 +18,6 @@ public class FormController : MonoBehaviour
 	/// </summary>
 	private void Awake()
 	{
-        connection = FindObject.twitchConnection;
 		//connection = FindObjectOfType<TwitchConnection>();
 		settingsPath = Application.streamingAssetsPath + "/settings.txt";
 	}
@@ -106,7 +103,7 @@ public class FormController : MonoBehaviour
 			Settings.channelToJoin = GetFormItem("channel").input.text;
 
 			SaveSettings();
-			connection.Connect();
+			TwitchConnection.Instance.Connect();
 
 			foreach (FormItem item in formItems)
 			{
