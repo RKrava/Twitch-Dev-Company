@@ -107,9 +107,9 @@ public class CommandController : MonoBehaviour
 
     public void DelayedStart()
     {
-        twitchConnection = FindObject.twitchConnection;
+        //twitchConnection = FindObject.twitchConnection;
         //twitchConnection = FindObjectOfType<TwitchConnection>();
-        client = twitchConnection.client;
+        client = FindObject.twitchClient;
 
         client.OnJoinedChannel += ClientOnJoinedChannel;
         client.OnMessageReceived += ClientOnMessageReceived;
