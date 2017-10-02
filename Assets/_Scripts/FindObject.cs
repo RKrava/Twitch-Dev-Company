@@ -79,4 +79,18 @@ public class FindObject : MonoBehaviour
             return _saveLoad;
         }
     }
+
+    private static CompanyManager _companyManager;
+    public static CompanyManager companyManager
+    {
+        get
+        {
+            if (_companyManager == null)
+            {
+                _companyManager = FindObjectOfType<CompanyManager>();
+            }
+
+            return _companyManager;
+        }
+    }
 }

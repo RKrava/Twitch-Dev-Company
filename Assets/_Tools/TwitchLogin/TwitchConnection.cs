@@ -30,7 +30,8 @@ public class TwitchConnection : MonoBehaviour
 
         client = new TwitchClient(credentials, Settings.channelToJoin);
 
-        //client.Connect();
+        client.Connect();
+
         client.OnJoinedChannel += ClientOnJoinedChannel;
         EnsureMainThread.executeOnMainThread.Enqueue(() => { FindObjectOfType<Canvas>()?.gameObject.SetActive(false); });
         EnsureMainThread.executeOnMainThread.Enqueue(() => { commandController.DelayedStart(); });
