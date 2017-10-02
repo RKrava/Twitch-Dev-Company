@@ -31,6 +31,9 @@ public class WhisperMessages
     public static string companyAcceptMax(string companyName) => companyName + " already has three founders.";
     public static string companyAcceptExist(string companyName) => companyName + " doesn't exist. Check you typed the name correctly.";
     public static string companyAcceptCompany(string companyName) => "You are already part of another company, " + companyName + ".";
+    //- Money
+    public static string companyMoneySuccess(string companyName, int companyMoney) => companyName + " has £" + companyMoney + " in the bank.";
+    public static string companyMoneyFail = "You need to be part of a company to check how much money a company has.";
     //- Deposit
     public static string companyDepositSuccess(int money, string companyName, int companyMoney, int developerMoney) => "You have deposited " + money + ". Now " + companyName + " has £" + companyMoney + ", and you have £" + developerMoney + " left.";
     public static string companyDepositNotEnough(int developerMoney) => "You only have " + developerMoney + ".";
