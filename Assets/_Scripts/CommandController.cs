@@ -119,10 +119,7 @@ public class CommandController : MonoBehaviour
 		TwitchConnection.Instance.client.OnWhisperReceived += ClientOnWhisperReceived;
 		TwitchConnection.Instance.client.OnWhisperCommandReceived += ClientOnWhisperCommandReceived;
 
-        //client.Connect();
-
         SaveLoad saveLoad = FindObject.saveLoad;
-        //SaveLoad saveLoad = FindObjectOfType<SaveLoad>();
         saveLoad.DelayedStart();
     }
 
@@ -248,9 +245,4 @@ public class CommandController : MonoBehaviour
             companyManager.SendWhisper(id, username, splitWhisper);
         }
     }
-  
-    //private void ApplyClose()
-    //{
-    //    applyOpen = false;
-    //}
 }

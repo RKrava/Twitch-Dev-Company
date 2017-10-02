@@ -18,7 +18,6 @@ public class FormController : MonoBehaviour
 	/// </summary>
 	private void Awake()
 	{
-		//connection = FindObjectOfType<TwitchConnection>();
 		settingsPath = Application.streamingAssetsPath + "/settings.txt";
 	}
 

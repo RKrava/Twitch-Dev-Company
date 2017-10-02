@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using TwitchLib;
 using UnityEngine;
 
 public class CompanyManager : MonoBehaviour
@@ -42,8 +40,6 @@ public class CompanyManager : MonoBehaviour
             Debug.Log("Creating a company.");
 
             //Check if player is already part of a company
-
-
             if (!companyFounder)
             {
                 companyName = splitWhisper[1];
@@ -134,23 +130,17 @@ public class CompanyManager : MonoBehaviour
             {
                 Debug.Log(invitedUsername + " is not already part of a company.");
 
-                company.AddInvite(new CompanyInvite(company, invitedID, invitedUsername, username, TimeSpan.FromMinutes(5)));
                 //Add the invited user to a list
-                // company.AddInvite(invitedID);
+                company.AddInvite(new CompanyInvite(company, invitedID, invitedUsername, username, TimeSpan.FromMinutes(5)));
                 Debug.Log("Invited user has been added to list.");
 
-                //Give them 5 minutes to respond
-                // EnsureMainThread.executeOnMainThread.Enqueue(() => { StartCoroutine(ClearInvite(companyName)); });
-                Debug.Log("ClearInvite has been started.");
 
 				//Send the invite via whisper. Keep SendMessage just in case it doesn't work for others.
 				client.SendWhisper(invitedUsername, WhisperMessages.companyInviteInvited(username, companyName));
-                //client.SendMessage(invitedUsername + ", you have been invited to join " + companyName + ". Type !company accept " + companyName + " in the next 5 minutes to join.");
                 Debug.Log("Invite sent.");
 
 				//Let the founder know an invite was sent
 				client.SendWhisper(username, WhisperMessages.companyInviteSent1(invitedUsername));
-                //Save();
             }
 
             else
@@ -168,7 +158,6 @@ public class CompanyManager : MonoBehaviour
                 Debug.Log(username + " is not part of a company.");
 
                 companyName = splitWhisper[1];
-
             }
 
             else
