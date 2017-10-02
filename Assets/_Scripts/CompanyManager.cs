@@ -17,6 +17,7 @@ public class CompanyManager : MonoBehaviour
         //Mark as true/false by default to avoid issues
         bool companyFounder = true;
         bool companyOwner = false;
+        int money;
 
         //Check if they are part of a company
         if (companyName == string.Empty)
@@ -219,11 +220,23 @@ public class CompanyManager : MonoBehaviour
             }
         }
 
+        else if (string.Compare(splitWhisper[0], "money", true) == 0)
+        {
+            if (companyFounder)
+            {
+                client.SendWhisper(username, WhisperMessages.companyMoneySuccess(companyName, CommandController.companies[companyName].money));
+            }
+
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.companyMoneyFail);
+                return;
+            }
+        }
+
         //Add funds to company from player
         else if (string.Compare(splitWhisper[0], "deposit", true) == 0)
         {
-            int money;
-
             //Check the player is part of a company
             if (companyFounder)
             {
@@ -266,8 +279,6 @@ public class CompanyManager : MonoBehaviour
         //Withdraw funds from a company to player
         else if (string.Compare(splitWhisper[0], "withdraw", true) == 0)
         {
-            int money;
-
             //Check the player is founder of a company
             if (companyFounder)
             {
