@@ -6,17 +6,10 @@ using UnityEngine;
 
 public class CompanyManager : MonoBehaviour
 {
-    private TwitchClient client;
-
     private CompanyClass company;
 
     public void SendWhisper(string id, string username, List<string> splitWhisper)
     {
-        if (client == null)
-        {
-            client = FindObject.twitchClient;
-        }
-
         //Get the company from the developer data
         string companyName = CommandController.developers[id].companyName;
         Debug.Log("Got the company name.");
@@ -57,7 +50,7 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-                client.SendWhisper(username, WhisperMessages.companyStartOwner(companyName));
+                TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyStartOwner(companyName));
                 return;
             }
 
@@ -68,7 +61,7 @@ public class CompanyManager : MonoBehaviour
                 company.AddFounder(id);
                 CommandController.developers[id].JoinCompany(companyName);
 
-                client.SendWhisper(username, WhisperMessages.companyStartNew(companyName));
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyStartNew(companyName));
 
                 CommandController.companies.Add(companyName, company);
 
@@ -77,7 +70,7 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-                client.SendWhisper(username, WhisperMessages.companyStartExists);
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyStartExists);
             }
         }
 
@@ -96,7 +89,7 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-                client.SendWhisper(username, WhisperMessages.companyInviteOwner);
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyInviteOwner);
                 return;
             }
 
@@ -110,7 +103,7 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-                client.SendWhisper(username, WhisperMessages.companyInviteMax);
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyInviteMax);
                 return;
             }
 
@@ -122,14 +115,14 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-                client.SendWhisper(username, WhisperMessages.companyInviteNotDeveloper(invitedUsername));
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyInviteNotDeveloper(invitedUsername));
                 return;
             }
 
             //Check the player isn't trying to invite themselves
             if (username.ToLower() == invitedUsername.ToLower())
             {
-                client.SendWhisper(username, WhisperMessages.companyInviteSelf);
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyInviteSelf);
                 return;
             }
 
@@ -149,19 +142,19 @@ public class CompanyManager : MonoBehaviour
                 // EnsureMainThread.executeOnMainThread.Enqueue(() => { StartCoroutine(ClearInvite(companyName)); });
                 Debug.Log("ClearInvite has been started.");
 
-                //Send the invite via whisper. Keep SendMessage just in case it doesn't work for others.
-                client.SendWhisper(invitedUsername, WhisperMessages.companyInviteInvited(username, companyName));
+				//Send the invite via whisper. Keep SendMessage just in case it doesn't work for others.
+				TwitchConnection.Instance.SendWhisper(invitedUsername, WhisperMessages.companyInviteInvited(username, companyName));
                 //client.SendMessage(invitedUsername + ", you have been invited to join " + companyName + ". Type !company accept " + companyName + " in the next 5 minutes to join.");
                 Debug.Log("Invite sent.");
 
-                //Let the founder know an invite was sent
-                client.SendWhisper(username, WhisperMessages.companyInviteSent1(invitedUsername));
+				//Let the founder know an invite was sent
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyInviteSent1(invitedUsername));
                 //Save();
             }
 
             else
             {
-                client.SendWhisper(username, WhisperMessages.companyInviteSent2(invitedUsername));
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyInviteSent2(invitedUsername));
             }
         }
 
@@ -179,7 +172,7 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-                client.SendWhisper(username, WhisperMessages.companyAcceptCompany(companyName));
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyAcceptCompany(companyName));
                 return;
             }
 
@@ -191,8 +184,8 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-                //Company doesn't exist
-                client.SendWhisper(username, WhisperMessages.companyAcceptExist(companyName));
+				//Company doesn't exist
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyAcceptExist(companyName));
                 return;
             }
 
@@ -209,20 +202,20 @@ public class CompanyManager : MonoBehaviour
                 //Add company to their details
                 CommandController.developers[id].JoinCompany(companyName);
 
-                //Let them now they've joined a company
-                client.SendWhisper(username, WhisperMessages.companyAcceptFounder1(companyName));
+				//Let them now they've joined a company
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyAcceptFounder1(companyName));
 
                 //Get the company founder
                 string founder = CommandController.GetUsername(company.GetOwner);
 
-                //Let the founder know the player has joined the company
-                client.SendWhisper(founder, WhisperMessages.companyAcceptFounder2(username));
+				//Let the founder know the player has joined the company
+				TwitchConnection.Instance.SendWhisper(founder, WhisperMessages.companyAcceptFounder2(username));
             }
 
             else
             {
-                //There are already 3 people
-                client.SendWhisper(username, WhisperMessages.companyAcceptMax(companyName));
+				//There are already 3 people
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyAcceptMax(companyName));
             }
         }
 
@@ -239,7 +232,7 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-                client.SendWhisper(username, WhisperMessages.companyDepositPermissions);
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyDepositPermissions);
                 return;
             }
 
@@ -250,7 +243,7 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-                client.SendWhisper(username, WhisperMessages.companyDepositSyntax);
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyDepositSyntax);
                 return;
             }
 
@@ -261,12 +254,12 @@ public class CompanyManager : MonoBehaviour
                 CommandController.developers[id].SpendMoney(money);
                 CommandController.companies[companyName].AddMoney(money);
 
-                client.SendWhisper(username, WhisperMessages.companyDepositSuccess(money, companyName, CommandController.companies[companyName].money, CommandController.developers[id].developerMoney));
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyDepositSuccess(money, companyName, CommandController.companies[companyName].money, CommandController.developers[id].developerMoney));
             }
 
             else
             {
-                client.SendWhisper(username, WhisperMessages.companyDepositNotEnough(CommandController.developers[id].developerMoney));
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyDepositNotEnough(CommandController.developers[id].developerMoney));
             }
         }
 
@@ -283,7 +276,7 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-                client.SendWhisper(username, WhisperMessages.companyWithdrawPermissions);
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyWithdrawPermissions);
                 return;
             }
 
@@ -294,7 +287,7 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-                client.SendWhisper(username, WhisperMessages.companyWithdrawSyntax);
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyWithdrawSyntax);
                 return;
             }
 
@@ -304,12 +297,12 @@ public class CompanyManager : MonoBehaviour
                 //Transfer funds
                 CommandController.companies[companyName].SpendMoney(money);
                 CommandController.developers[id].AddMoney(money);
-                client.SendWhisper(username, WhisperMessages.companyWithdrawSuccess(money, companyName, CommandController.developers[id].developerMoney, CommandController.companies[companyName].money));
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyWithdrawSuccess(money, companyName, CommandController.developers[id].developerMoney, CommandController.companies[companyName].money));
             }
 
             else
             {
-                client.SendWhisper(username, WhisperMessages.companyWithdrawNotEnough(CommandController.companies[companyName].money));
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyWithdrawNotEnough(CommandController.companies[companyName].money));
             }
         }
 
@@ -338,12 +331,12 @@ public class CompanyManager : MonoBehaviour
                 CommandController.companies.Remove(companyName);
                 CommandController.companies.Add(newName, company);
 
-                client.SendWhisper(username, WhisperMessages.companyEditSuccess(newName));
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyEditSuccess(newName));
             }
 
             else
             {
-                client.SendWhisper(username, WhisperMessages.companyEditFail);
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyEditFail);
             }
         }
 
@@ -356,12 +349,12 @@ public class CompanyManager : MonoBehaviour
                 CommandController.companies[companyName].RemoveFounder(id);
                 CommandController.developers[id].LeaveCompany();
 
-                client.SendWhisper(username, WhisperMessages.companyLeaveSuccess(companyName));
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyLeaveSuccess(companyName));
             }
 
             else
             {
-                client.SendWhisper(username, WhisperMessages.companyLeaveFail);
+				TwitchConnection.Instance.SendWhisper(username, WhisperMessages.companyLeaveFail);
             }
         }
 

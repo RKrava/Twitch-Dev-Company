@@ -5,39 +5,6 @@ using UnityEngine;
 [Serializable]
 public class FindObject : MonoBehaviour
 {
-    private static TwitchClient _twitchClient;
-    public static TwitchClient twitchClient
-    {
-        get
-        {
-            if (_twitchClient == null)
-            {
-                if (_twitchConnection == null)
-                {
-                    _twitchConnection = FindObjectOfType<TwitchConnection>();
-                }
-
-                _twitchClient = _twitchConnection.client;
-            }
-
-            return _twitchClient;
-        }
-    }
-
-    private static TwitchConnection _twitchConnection;
-    public static TwitchConnection twitchConnection
-    {
-        get
-        {
-            if (_twitchConnection == null)
-            {
-                _twitchConnection = FindObjectOfType<TwitchConnection>();
-            }
-
-            return _twitchConnection;
-        }
-    }
-
     private static FormController _formController;
     public static FormController formController
     {

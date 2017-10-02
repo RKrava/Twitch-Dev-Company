@@ -7,20 +7,67 @@ using TwitchLib.Events.Client;
 using TwitchLib.Models.Client;
 using UnityEngine;
 
+/*
+ * GameObjects have a method called SendMessage, therefor I need to supress the message
+ * saying that my method matches the same name
+ */ 
+#pragma warning disable CS0108
+
 public class TwitchConnection : MonoBehaviour
 {
-    public TwitchClient client { get; private set; }
+	public static TwitchConnection Instance;
 
+	/// <summary>
+	/// This is only public so we can attach the OnMessageRecieved events in CommandController
+	/// probably a better way but this will do for now
+	/// </summary>
+	public TwitchClient client { get; private set; }
     private CommandController commandController;
 
     private void Awake()
     {
+		EnsureSingleton();
         commandController = FindObject.commandController;
-        //commandController = FindObjectOfType<CommandController>();
     }
 
-    public void Connect()
+	private void EnsureSingleton()
+	{
+		if (Instance != null && Instance != this)
+		{
+			Destroy(gameObject);
+		}
+
+		Instance = this;
+		DontDestroyOnLoad(gameObject);
+	}
+
+	/// <summary>
+	/// A method used to send message to ensure consistency between messages
+	/// 
+	/// These methods are because we dont need to expose the entire TwitchClient to all scripts,
+	/// simply the ability to send messages/whispers needs to be exposed.
+	/// </summary>
+	/// <param name="recipient">User who the message is targetted at</param>
+	/// <param name="message">Message for them to see</param>
+	public void SendMessage(string recipient, string message) => client.SendMessage($"{recipient} - {message}");
+	public void SendMessage(string message) => client.SendMessage(message);
+
+	public void SendWhisper(string recipient, string message) => client.SendWhisper(recipient, message);
+
+	/// <summary>
+	/// Ensure we are only connected once
+	/// </summary>
+	public void Connect()
     {
+		if (client != null)
+		{
+			if (client.IsConnected == true)
+			{
+				Debug.LogError("TwitchClient is already connected!");
+				return;
+			}
+		}
+		
         ServicePointManager.ServerCertificateValidationCallback = CertificateValidationMonoFix;
 
         ConnectionCredentials credentials = new ConnectionCredentials(Settings.username, Settings.accessToken);
@@ -49,8 +96,14 @@ public class TwitchConnection : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        client.Disconnect();
-
+		if(client != null)
+		{
+			if (client.IsConnected == true)
+			{
+				client.Disconnect();
+			}
+		}
+        
         SaveLoad saveLoad = FindObject.saveLoad;
         saveLoad.EmergencySave();
     }
