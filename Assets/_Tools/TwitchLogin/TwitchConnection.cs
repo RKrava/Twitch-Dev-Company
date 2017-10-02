@@ -15,7 +15,8 @@ public class TwitchConnection : MonoBehaviour
 
     private void Awake()
     {
-        commandController = FindObjectOfType<CommandController>();
+        commandController = FindObject.commandController;
+        //commandController = FindObjectOfType<CommandController>();
     }
 
     public void Connect()
@@ -29,7 +30,8 @@ public class TwitchConnection : MonoBehaviour
 
         client = new TwitchClient(credentials, Settings.channelToJoin);
 
-        //client.Connect();
+        client.Connect();
+
         client.OnJoinedChannel += ClientOnJoinedChannel;
         EnsureMainThread.executeOnMainThread.Enqueue(() => { FindObjectOfType<Canvas>()?.gameObject.SetActive(false); });
         EnsureMainThread.executeOnMainThread.Enqueue(() => { commandController.DelayedStart(); });
@@ -39,7 +41,7 @@ public class TwitchConnection : MonoBehaviour
 
     private void ClientOnJoinedChannel(object sender, OnJoinedChannelArgs e)
     {
-        client.SendMessage("I have arrived!");
+        client.SendWhisper(Settings.channelToJoin, "I have arrived.");
 
         //EnsureMainThread.executeOnMainThread.Enqueue(() => { FindObjectOfType<Canvas>()?.gameObject.SetActive(false); });
         //EnsureMainThread.executeOnMainThread.Enqueue(() => { commandController.DelayedStart(); });
@@ -48,6 +50,9 @@ public class TwitchConnection : MonoBehaviour
     private void OnApplicationQuit()
     {
         client.Disconnect();
+
+        SaveLoad saveLoad = FindObject.saveLoad;
+        saveLoad.EmergencySave();
     }
 
     public bool CertificateValidationMonoFix(System.Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
