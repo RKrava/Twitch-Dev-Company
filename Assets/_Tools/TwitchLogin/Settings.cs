@@ -8,4 +8,5 @@ public class Settings : MonoBehaviour
     public static string clientId;
     public static string accessToken;
     public static string channelToJoin;
+    public static string channelToJoinID;
 }

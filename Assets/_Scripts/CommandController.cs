@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using TwitchLib;
 using TwitchLib.Events.Client;
 using UnityEngine;
@@ -120,13 +121,50 @@ public class CommandController : MonoBehaviour
 		TwitchConnection.Instance.client.OnWhisperReceived += ClientOnWhisperReceived;
 		TwitchConnection.Instance.client.OnWhisperCommandReceived += ClientOnWhisperCommandReceived;
 
+        GetChannelID();
+
         //SaveLoad saveLoad = FindObject.saveLoad;
         //saveLoad.DelayedStart();
+    }
+
+    private async void GetChannelID()
+    {
+        Debug.Log("Getting Channel ID: " + Time.time);
+
+        //TODO - Max 1 API call
+        var channel = await TwitchAPI.Channels.v3.GetChannelByNameAsync(Settings.channelToJoin);
+
+        Debug.Log("Got Channel ID: " + Time.time);
+
+        Settings.channelToJoinID = channel.Id;
     }
 
     private void ClientOnJoinedChannel(object sender, OnJoinedChannelArgs e)
     {
         Debug.Log("CommandController has connected.");
+    }
+
+    public void AddDeveloper(string username, string id)
+    {
+        DeveloperClass developer = new DeveloperClass();
+        developer.developerID = id;
+
+        viewers.Add(new Viewer(username, id));
+
+        developers.Add(id, developer);
+
+        Debug.Log(username + " has been added as a developer.");
+    }
+
+    public void ChangeDeveloperName(string username, string id)
+    {
+        string developerName = GetUsername(id);
+
+        if (developerName != username)
+        {
+            // Update their username, it appears it has changes
+            SetUsername(id, username);
+        }
     }
 
     private void ClientOnMessageReceived(object sender, OnMessageReceivedArgs e)
@@ -137,27 +175,29 @@ public class CommandController : MonoBehaviour
         //Check the user doesn't already have a developer
         if (!developers.ContainsKey(id))
         {
-            DeveloperClass developer = new DeveloperClass();
-            developer.developerID = id;
+            AddDeveloper(username, id);
+            //DeveloperClass developer = new DeveloperClass();
+            //developer.developerID = id;
 
-            viewers.Add(new Viewer(username, id));
+            //viewers.Add(new Viewer(username, id));
 
-            developers.Add(id, developer);
+            //developers.Add(id, developer);
 
-            Debug.Log(username + " has been added as a developer.");
+            //Debug.Log(username + " has been added as a developer.");
         }
 
         else
         {
-            Debug.Log(e.ChatMessage.DisplayName + " already is a developer.");
+            ChangeDeveloperName(username, id);
+            //Debug.Log(e.ChatMessage.DisplayName + " already is a developer.");
 
-            string developerName = GetUsername(id);
+            //string developerName = GetUsername(id);
 
-            if (developerName != username)
-            {
-                // Update their username, it appears it has changes
-                SetUsername(id, username);
-            }
+            //if (developerName != username)
+            //{
+            //    // Update their username, it appears it has changes
+            //    SetUsername(id, username);
+            //}
         }
     }
 
@@ -184,27 +224,29 @@ public class CommandController : MonoBehaviour
         //Add if they whisper
         if (!developers.ContainsKey(id))
         {
-            DeveloperClass developer = new DeveloperClass();
-            developer.developerID = id;
+            AddDeveloper(username, id);
+            //DeveloperClass developer = new DeveloperClass();
+            //developer.developerID = id;
 
-            viewers.Add(new Viewer(username, id));
+            //viewers.Add(new Viewer(username, id));
 
-            developers.Add(id, developer);
+            //developers.Add(id, developer);
 
-            Debug.Log(username + " has been added as a developer.");
+            //Debug.Log(username + " has been added as a developer.");
         }
 
         else
         {
-            Debug.Log(e.WhisperMessage.DisplayName + " already is a developer.");
+            ChangeDeveloperName(username, id);
+            //Debug.Log(e.ChatMessage.DisplayName + " already is a developer.");
 
-            string developerName = GetUsername(id);
+            //string developerName = GetUsername(id);
 
-            if (developerName != username)
-            {
-                //Update idToUsername and usernameToId
-                SetUsername(id, username);
-            }
+            //if (developerName != username)
+            //{
+            //    // Update their username, it appears it has changes
+            //    SetUsername(id, username);
+            //}
         }
     }
 
