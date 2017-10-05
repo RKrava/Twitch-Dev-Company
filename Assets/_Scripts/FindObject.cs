@@ -60,4 +60,18 @@ public class FindObject : MonoBehaviour
             return _companyManager;
         }
     }
+
+    private static TwitchEvents _twitchEvents;
+    public static TwitchEvents twitchEvents
+    {
+        get
+        {
+            if (_twitchEvents == null)
+            {
+                _twitchEvents = FindObjectOfType<TwitchEvents>();
+            }
+
+            return _twitchEvents;
+        }
+    }
 }

@@ -23,11 +23,13 @@ public class TwitchConnection : MonoBehaviour
 	/// </summary>
 	public TwitchClient client { get; private set; }
     private CommandController commandController;
+    private TwitchEvents twitchEvents;
 
     private void Awake()
     {
 		EnsureSingleton();
         commandController = FindObject.commandController;
+        twitchEvents = FindObject.twitchEvents;
     }
 
 	private void EnsureSingleton()
@@ -85,13 +87,15 @@ public class TwitchConnection : MonoBehaviour
         client.Connect();
 
         client.OnJoinedChannel += ClientOnJoinedChannel;
+        
         EnsureMainThread.executeOnMainThread.Enqueue(() => { FindObjectOfType<Canvas>()?.gameObject.SetActive(false); });
-        EnsureMainThread.executeOnMainThread.Enqueue(() => { commandController.DelayedStart(); });
+        //EnsureMainThread.executeOnMainThread.Enqueue(() => { commandController.DelayedStart(); });
     }
 
     private void ClientOnJoinedChannel(object sender, OnJoinedChannelArgs e)
     {
         client.SendWhisper(Settings.channelToJoin, "I have arrived.");;
+        EnsureMainThread.executeOnMainThread.Enqueue(() => { twitchEvents.StartCustomEvents(); });
     }
 
     private void OnApplicationQuit()

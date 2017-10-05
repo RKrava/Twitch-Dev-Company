@@ -10,7 +10,12 @@ public class SaveLoad : MonoBehaviour
     private string viewerFile;
     private string companiesFile;
 
-    public void DelayedStart()
+    public void Awake()
+    {
+        TwitchEvents.DelayedAwake += DelayedAwake;
+    }
+
+    public void DelayedAwake()
     {
         developerFile = Application.streamingAssetsPath + "/developers.json";
         viewerFile = Application.streamingAssetsPath + "/viewers.json";

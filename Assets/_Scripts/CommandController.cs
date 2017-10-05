@@ -108,10 +108,11 @@ public class CommandController : MonoBehaviour
 
     private void Awake()
     {
+        TwitchEvents.DelayedAwake += DelayedAwake;
         companyManager = FindObject.companyManager;
     }
 
-    public void DelayedStart()
+    public void DelayedAwake()
     {
         TwitchConnection.Instance.client.OnJoinedChannel += ClientOnJoinedChannel;
 		TwitchConnection.Instance.client.OnMessageReceived += ClientOnMessageReceived;
@@ -119,8 +120,8 @@ public class CommandController : MonoBehaviour
 		TwitchConnection.Instance.client.OnWhisperReceived += ClientOnWhisperReceived;
 		TwitchConnection.Instance.client.OnWhisperCommandReceived += ClientOnWhisperCommandReceived;
 
-        SaveLoad saveLoad = FindObject.saveLoad;
-        saveLoad.DelayedStart();
+        //SaveLoad saveLoad = FindObject.saveLoad;
+        //saveLoad.DelayedStart();
     }
 
     private void ClientOnJoinedChannel(object sender, OnJoinedChannelArgs e)
