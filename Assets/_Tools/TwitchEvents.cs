@@ -23,8 +23,12 @@ public class TwitchEvents : MonoBehaviour
         Debug.Log("About to Invoke DelayedStart: " + Time.time);
         yield return new WaitForFixedUpdate();
 
-        //No-one is subscribed to it
-        //TwitchEvents.DelayedStart.Invoke();
+        while (TwitchEvents.DelayedStart == null)
+        {
+            Debug.Log("FML");
+        }
+
+        TwitchEvents.DelayedStart.Invoke();
         Debug.Log("Invoked DelayedStart: " + Time.time);
     }
 }

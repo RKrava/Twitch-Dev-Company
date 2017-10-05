@@ -74,4 +74,18 @@ public class FindObject : MonoBehaviour
             return _twitchEvents;
         }
     }
+
+    private static ModTools _modTools;
+    public static ModTools modTools
+    {
+        get
+        {
+            if (_modTools == null)
+            {
+                _modTools = FindObjectOfType<ModTools>();
+            }
+
+            return _modTools;
+        }
+    }
 }
