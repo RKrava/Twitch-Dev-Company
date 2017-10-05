@@ -10,9 +10,16 @@ public class SaveLoad : MonoBehaviour
     private string viewerFile;
     private string companiesFile;
 
+    private bool loaded;
+
     public void Awake()
     {
         TwitchEvents.DelayedAwake += DelayedAwake;
+    }
+
+    private void Start()
+    {
+        loaded = false;
     }
 
     public void DelayedAwake()
@@ -60,6 +67,7 @@ public class SaveLoad : MonoBehaviour
             File.CreateText(companiesFile).Dispose();
         }
 
+        loaded = true;
         Debug.Log("Loaded.");
     }
 
@@ -83,6 +91,12 @@ public class SaveLoad : MonoBehaviour
         Debug.Log("Emergency Save");
 
         CancelInvoke();
+
+        if (!loaded)
+        {
+            Load();
+        }
+
         Save();
     }
 }
