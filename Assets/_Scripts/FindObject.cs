@@ -60,4 +60,60 @@ public class FindObject : MonoBehaviour
             return _companyManager;
         }
     }
+
+    private static TwitchEvents _twitchEvents;
+    public static TwitchEvents twitchEvents
+    {
+        get
+        {
+            if (_twitchEvents == null)
+            {
+                _twitchEvents = FindObjectOfType<TwitchEvents>();
+            }
+
+            return _twitchEvents;
+        }
+    }
+
+    private static ModTools _modTools;
+    public static ModTools modTools
+    {
+        get
+        {
+            if (_modTools == null)
+            {
+                _modTools = FindObjectOfType<ModTools>();
+            }
+
+            return _modTools;
+        }
+    }
+
+    private static ProjectManager _projectManager;
+    public static ProjectManager projectManager
+    {
+        get
+        {
+            if (_projectManager == null)
+            {
+                _projectManager = FindObjectOfType<ProjectManager>();
+            }
+
+            return _projectManager;
+        }
+    }
+
+    private static Canvas _loginCanvas;
+    public static Canvas loginCanvas
+    {
+        get
+        {
+            if (_loginCanvas == null)
+            {
+                _loginCanvas = GameObject.FindGameObjectWithTag("Login").GetComponent<Canvas>();
+            }
+
+            return _loginCanvas;
+        }
+    }
 }

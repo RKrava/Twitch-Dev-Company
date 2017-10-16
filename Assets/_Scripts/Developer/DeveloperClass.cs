@@ -7,11 +7,12 @@ public class DeveloperClass
     public string developerID; //Use this for the key so when someone changes their name, it doesn't reset their developer
     //public UserClass developer;
     public string companyName { get; set; } = "";
+    public bool mod;
     public bool IsFounder => (companyName != string.Empty);
     public void JoinCompany(string name) => companyName = name;
     public void UpdateCompany(string name) => companyName = name;
     public void LeaveCompany() => companyName = "";
-    public List<int> projectIDs = new List<int>();
+    public List<ProjectClass> projects = new List<ProjectClass>();
     public int developerMoney { get; set; } = 5000;
     public void AddMoney(int amount) => developerMoney += amount;
     public void SpendMoney(int amount) => developerMoney -= amount;

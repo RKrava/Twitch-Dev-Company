@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class CompanyManager : MonoBehaviour
 {
-    private CompanyClass company;
+    public static CompanyClass company;
+    private Message message;
 
     public void SendWhisper(string id, string username, List<string> splitWhisper)
     {
@@ -47,7 +48,7 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-                client.SendWhisper(username, WhisperMessages.companyStartOwner(companyName));
+                client.SendWhisper(username, WhisperMessages.Company.alreadyFounder(companyName));
                 return;
             }
 
@@ -58,7 +59,7 @@ public class CompanyManager : MonoBehaviour
                 company.AddFounder(id);
                 CommandController.developers[id].JoinCompany(companyName);
 
-				client.SendWhisper(username, WhisperMessages.companyStartNew(companyName));
+				client.SendWhisper(username, WhisperMessages.Company.Start.success(companyName));
 
                 CommandController.companies.Add(companyName, company);
 
@@ -67,7 +68,7 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-				client.SendWhisper(username, WhisperMessages.companyStartExists);
+				client.SendWhisper(username, WhisperMessages.Company.Start.alreadyExists);
             }
         }
 
@@ -86,7 +87,7 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-				client.SendWhisper(username, WhisperMessages.companyInviteOwner);
+				client.SendWhisper(username, WhisperMessages.Company.notOwner);
                 return;
             }
 
@@ -100,7 +101,7 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-				client.SendWhisper(username, WhisperMessages.companyInviteMax);
+				client.SendWhisper(username, WhisperMessages.Company.Invite.maxFounders);
                 return;
             }
 
@@ -112,14 +113,14 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-				client.SendWhisper(username, WhisperMessages.companyInviteNotDeveloper(invitedUsername));
+				client.SendWhisper(username, WhisperMessages.Company.Invite.notDeveloper(invitedUsername));
                 return;
             }
 
             //Check the player isn't trying to invite themselves
             if (username.ToLower() == invitedUsername.ToLower())
             {
-				client.SendWhisper(username, WhisperMessages.companyInviteSelf);
+				client.SendWhisper(username, WhisperMessages.Company.Invite.self);
                 return;
             }
 
@@ -131,21 +132,20 @@ public class CompanyManager : MonoBehaviour
                 Debug.Log(invitedUsername + " is not already part of a company.");
 
                 //Add the invited user to a list
-                company.AddInvite(new CompanyInvite(company, invitedID, invitedUsername, username, TimeSpan.FromMinutes(5)));
+                //company.AddInvite(new CompanyInvite(company, invitedID, invitedUsername, username));
                 Debug.Log("Invited user has been added to list.");
 
-
 				//Send the invite via whisper. Keep SendMessage just in case it doesn't work for others.
-				client.SendWhisper(invitedUsername, WhisperMessages.companyInviteInvited(username, companyName));
+				client.SendWhisper(invitedUsername, WhisperMessages.Company.Invite.received(username, companyName), Timers.CompanyInvite); //Timer attached to
                 Debug.Log("Invite sent.");
 
 				//Let the founder know an invite was sent
-				client.SendWhisper(username, WhisperMessages.companyInviteSent1(invitedUsername));
+				client.SendWhisper(username, WhisperMessages.Company.Invite.sent(invitedUsername));
             }
 
             else
             {
-				client.SendWhisper(username, WhisperMessages.companyInviteSent2(invitedUsername));
+				client.SendWhisper(username, WhisperMessages.Company.Invite.anotherCompany(invitedUsername));
             }
         }
 
@@ -162,7 +162,7 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-				client.SendWhisper(username, WhisperMessages.companyAcceptCompany(companyName));
+				client.SendWhisper(username, WhisperMessages.Company.Accept.anotherCompany(companyName));
                 return;
             }
 
@@ -175,7 +175,7 @@ public class CompanyManager : MonoBehaviour
             else
             {
 				//Company doesn't exist
-				client.SendWhisper(username, WhisperMessages.companyAcceptExist(companyName));
+				client.SendWhisper(username, WhisperMessages.Company.Accept.noExist(companyName));
                 return;
             }
 
@@ -193,19 +193,19 @@ public class CompanyManager : MonoBehaviour
                 CommandController.developers[id].JoinCompany(companyName);
 
 				//Let them now they've joined a company
-				client.SendWhisper(username, WhisperMessages.companyAcceptFounder1(companyName));
+				client.SendWhisper(username, WhisperMessages.Company.Accept.joined(companyName));
 
                 //Get the company founder
                 string founder = CommandController.GetUsername(company.GetOwner);
 
 				//Let the founder know the player has joined the company
-				client.SendWhisper(founder, WhisperMessages.companyAcceptFounder2(username));
+				client.SendWhisper(founder, WhisperMessages.Company.Accept.accepted(username));
             }
 
             else
             {
 				//There are already 3 people
-				client.SendWhisper(username, WhisperMessages.companyAcceptMax(companyName));
+				client.SendWhisper(username, WhisperMessages.Company.Accept.maxFounders(companyName));
             }
         }
 
@@ -214,13 +214,13 @@ public class CompanyManager : MonoBehaviour
             //Leave debugs to allow us to test delay when the game is complete
             if (companyFounder)
             {
-                client.SendWhisper(username, WhisperMessages.companyMoneySuccess(companyName, CommandController.companies[companyName].money));
+                client.SendWhisper(username, WhisperMessages.Company.Money.success(companyName, CommandController.companies[companyName].money));
                 Debug.Log("Sent: " + Time.time);
             }
 
             else
             {
-                client.SendWhisper(username, WhisperMessages.companyMoneyFail);
+                client.SendWhisper(username, WhisperMessages.Company.notFounder);
                 Debug.Log("Sent: " + Time.time);
                 return;
             }
@@ -237,7 +237,7 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-				client.SendWhisper(username, WhisperMessages.companyDepositPermissions);
+				client.SendWhisper(username, WhisperMessages.Company.notFounder);
                 return;
             }
 
@@ -248,7 +248,7 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-				client.SendWhisper(username, WhisperMessages.companyDepositSyntax);
+				client.SendWhisper(username, WhisperMessages.Company.Deposit.syntax);
                 return;
             }
 
@@ -259,12 +259,12 @@ public class CompanyManager : MonoBehaviour
                 CommandController.developers[id].SpendMoney(money);
                 CommandController.companies[companyName].AddMoney(money);
 
-				client.SendWhisper(username, WhisperMessages.companyDepositSuccess(money, companyName, CommandController.companies[companyName].money, CommandController.developers[id].developerMoney));
+				client.SendWhisper(username, WhisperMessages.Company.Deposit.success(money, companyName, CommandController.companies[companyName].money, CommandController.developers[id].developerMoney));
             }
 
             else
             {
-				client.SendWhisper(username, WhisperMessages.companyDepositNotEnough(CommandController.developers[id].developerMoney));
+				client.SendWhisper(username, WhisperMessages.Company.Deposit.notEnough(CommandController.developers[id].developerMoney));
             }
         }
 
@@ -279,7 +279,7 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-				client.SendWhisper(username, WhisperMessages.companyWithdrawPermissions);
+				client.SendWhisper(username, WhisperMessages.Company.notFounder);
                 return;
             }
 
@@ -290,7 +290,7 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-				client.SendWhisper(username, WhisperMessages.companyWithdrawSyntax);
+				client.SendWhisper(username, WhisperMessages.Company.Withdraw.syntax);
                 return;
             }
 
@@ -300,12 +300,12 @@ public class CompanyManager : MonoBehaviour
                 //Transfer funds
                 CommandController.companies[companyName].SpendMoney(money);
                 CommandController.developers[id].AddMoney(money);
-				client.SendWhisper(username, WhisperMessages.companyWithdrawSuccess(money, companyName, CommandController.developers[id].developerMoney, CommandController.companies[companyName].money));
+				client.SendWhisper(username, WhisperMessages.Company.Withdraw.success(money, companyName, CommandController.developers[id].developerMoney, CommandController.companies[companyName].money));
             }
 
             else
             {
-				client.SendWhisper(username, WhisperMessages.companyWithdrawNotEnough(CommandController.companies[companyName].money));
+				client.SendWhisper(username, WhisperMessages.Company.Withdraw.notEnough(CommandController.companies[companyName].money));
             }
         }
 
@@ -334,12 +334,12 @@ public class CompanyManager : MonoBehaviour
                 CommandController.companies.Remove(companyName);
                 CommandController.companies.Add(newName, company);
 
-				client.SendWhisper(username, WhisperMessages.companyEditSuccess(newName));
+				client.SendWhisper(username, WhisperMessages.Company.Edit.success(newName));
             }
 
             else
             {
-				client.SendWhisper(username, WhisperMessages.companyEditFail);
+				client.SendWhisper(username, WhisperMessages.Company.Edit.fail);
             }
         }
 
@@ -352,12 +352,12 @@ public class CompanyManager : MonoBehaviour
                 CommandController.companies[companyName].RemoveFounder(id);
                 CommandController.developers[id].LeaveCompany();
 
-				client.SendWhisper(username, WhisperMessages.companyLeaveSuccess(companyName));
+				client.SendWhisper(username, WhisperMessages.Company.Leave.success(companyName));
             }
 
             else
             {
-				client.SendWhisper(username, WhisperMessages.companyLeaveFail);
+				client.SendWhisper(username, WhisperMessages.Company.Leave.fail);
             }
         }
 

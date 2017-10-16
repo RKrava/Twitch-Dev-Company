@@ -10,7 +10,19 @@ public class SaveLoad : MonoBehaviour
     private string viewerFile;
     private string companiesFile;
 
-    public void DelayedStart()
+    private bool loaded;
+
+    public void Awake()
+    {
+        TwitchEvents.DelayedAwake += DelayedAwake;
+    }
+
+    private void Start()
+    {
+        loaded = false;
+    }
+
+    public void DelayedAwake()
     {
         developerFile = Application.streamingAssetsPath + "/developers.json";
         viewerFile = Application.streamingAssetsPath + "/viewers.json";
@@ -55,6 +67,7 @@ public class SaveLoad : MonoBehaviour
             File.CreateText(companiesFile).Dispose();
         }
 
+        loaded = true;
         Debug.Log("Loaded.");
     }
 
@@ -78,6 +91,12 @@ public class SaveLoad : MonoBehaviour
         Debug.Log("Emergency Save");
 
         CancelInvoke();
+
+        if (!loaded)
+        {
+            Load();
+        }
+
         Save();
     }
 }
