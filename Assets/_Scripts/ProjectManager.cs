@@ -1,151 +1,326 @@
-﻿//Keep all of this until I've added all the project stuff
+﻿using PasteBin;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
 
-//if (string.Compare(e.Command, "project", true) == 0)
-//{
-//    //List<string> splitWhisper = e.ArgumentsAsList;
+public class ProjectManager : MonoBehaviour
+{
+    public static ProjectClass project;
 
-//    if (!startProject)
-//    {
-//        if (string.Compare(splitWhisper[0], "start", true) == 0)
-//        {
-//            //Is the player part of a company?
-//            //If yes continue
-//            //If not, tell them they need to be part of a company
+    private bool startProject;
 
-//            uint projectID = (uint)(projects.Count + 1);
-//            project = new ProjectClass(projectID, splitWhisper[1]);
+    private void Start()
+    {
+        startProject = false;
+    }
 
-//            //Add the player to the project team
-//            //Find the company the player is part of ???
-//            //Add the projectID to the player
-//            //Add the projectID to the company
+    public static void SendApplicants()
+    {
+        Debug.Log("Sending applicants.");
 
-//            startProject = true;
-//            applyOpen = true;
-//            Invoke("ApplyClose", 120);
-//        }
-//    }
+        //Get the projectlead
+        string projectLead = project.projectLead;
 
-//    if (applyOpen)
-//    {
-//        if (string.Compare(splitWhisper[0], "apply", true) == 0)
-//        {
-//        }
+        //Get the string of applicants
+        Dictionary<string, DeveloperPosition> applicants = project.applicants;
 
-//        if (string.Compare(splitWhisper[0], "accept", true) == 0)
-//        {
-//        }
-//    }
-//}
+        List<string> pastebinList = new List<string>();
+        string pastebin;
 
-//if (string.Compare(e.Command.Command, "join", true) == 0)
-//{
-//    developer = new DeveloperClass();
-//    developer.developerID = (uint)(developers.Count + 1);
-//    developer.developer.userName = e.Command.ChatMessage.DisplayName;
-//    developer.developer.userId = e.Command.ChatMessage.UserId;
+        //Add that to a pastebin
+        foreach (string applicant in applicants.Keys)
+        {
+            Debug.Log($"Adding {applicant}");
+            string applicantID = CommandController.GetID(applicant);
+            DeveloperClass developer = CommandController.developers[applicantID];
+            pastebin = $"{applicant}: ";
 
-//}
+            DeveloperPosition developerPosition = applicants[applicant];
 
-//string dev = e.Command.ChatMessage.Username;
-//uint devID = developers[dev].developerID;
+            if (developerPosition == DeveloperPosition.Designer) {pastebin += $"Design - {developer.GetSkillLevel(SkillTypes.DeveloperSkills.Design)}";}
+            else if (developerPosition == DeveloperPosition.Developer) {pastebin += $"Develop - {developer.GetSkillLevel(SkillTypes.DeveloperSkills.Development)}";}
+            else if (developerPosition == DeveloperPosition.Artist) {pastebin += $"Art - {developer.GetSkillLevel(SkillTypes.DeveloperSkills.Art)}";}
+            else
+            {
+                Debug.Log("How the F did I get here?");
+            }
 
-//if (string.Compare(e.Command.Command, "project", true) == 0)
-//{
-//    List<string> splitCommand = e.Command.ArgumentsAsList;
+            pastebinList.Add(pastebin);
+            Debug.Log(pastebin);
+        }
 
-//    if (!startProject)
-//    {
-//        if (string.Compare(splitCommand[0], "start", true) == 0)
-//        {
-//            //Project has been started
-//            startProject = true;
+        pastebin = String.Join(Environment.NewLine, pastebinList);
+        Debug.Log("All joined together.");
+        Debug.Log(pastebin);
 
-//            //Create the project
-//            uint projectID = (uint)(projects.Count + 1);
-//            project = new ProjectClass(projectID, splitCommand[1]);
+        //Move into another script probably
+        string apiKey = Settings.pastebinAPI;
+        var pasteClient = new PasteBinClient(apiKey);
 
-//            //Add the project to the developer resume
-//            developers[dev].projectIDs.Add(projectID);
+        //Send it
+        var entry = new PasteBinEntry
+        {
+            Title = "Project Applications",
+            Text = pastebin,
+            Expiration = PasteBinExpiration.TenMinutes,
+            Private = false,
+            Format = "text"
+        };
 
-//            //Add the developers to the project list
-//            projectTeam.Add(devID);
+        string pasteUrl = (pasteClient.Paste(entry));
 
-//            //Open applications
-//            applyProject = true;
-//            Invoke("ApplicationsClosed", 120);
-//        }
-//    }
+        Debug.Log(pasteUrl);
 
-//    if (applyProject)
-//    {
-//        if (string.Compare(splitCommand[0], "apply", true) == 0)
-//        {
-//            //Add developer to application list
-//            projectApply.Add(devID);
+        client.SendWhisper(projectLead, WhisperMessages.Project.Accept.applicantsList(pasteUrl));
 
-//            //Get the developer info
-//            developer = developers[dev];
+        //client.SendWhisper(projectLead, $"Here are all the applicants: {pasteUrl}");
+    }
 
-//            //Send the message of info to chat
-//            client.SendMessage(dev + " has applied to join the dev team. Their skills are Design: " + developer.skillDesign + " | Develop: " + developer.skillDevelop + " | Art: " + developer.skillArt + " | Marketing: " + developer.skillMarket + ". They cost £" + developer.developerPay + " a minute.");
-//        }
+    public static void RunProject()
+    {
 
-//        if (string.Compare(splitCommand[0], "accept", true) == 0)
-//        {
-//            //Get their ID
-//            uint applicantID = developers[splitCommand[1]].developerID;
+    }
 
-//            //Check they are not already part of the team & they have applied
-//            if (!projectTeam.Contains(applicantID) && projectApply.Contains(applicantID))
-//            {
-//                //Add applicant to the team
-//                projectTeam.Add(applicantID);
-//                client.SendWhisper(splitCommand[1], "Your application has been accepted.");
-//            }
-//        }
-//    }
+    public void SendWhisper(string id, string username, List<string> splitWhisper)
+    {
+        string companyName;
 
-//}
+        if (string.Compare(splitWhisper[0], "start", true) == 0)
+        {
+            if (startProject)
+            {
+                client.SendWhisper(username, WhisperMessages.Project.alreadyUnderway);
+                return;
+            }
 
-//if (string.Compare(e.Command.Command, "project", true) == 0)
-//        {
-//            List<string> splitCommand = e.Command.ArgumentsAsList;
+            //Developer check
+            if (CommandController.developers.ContainsKey(id))
+            {
 
-//            if (string.Compare(splitCommand[0], "start", true) == 0)
-//            {
-//                //Stuff
-//            }
-//        }
+            }
 
-//        if (string.Compare(e.Command.Command, "company", true) == 0)
-//        {
-//            List<string> splitCommand = e.Command.ArgumentsAsList;
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.Developer.notDeveloper);
+                return;
+            }
 
-//            if (string.Compare(splitCommand[0], "start", true) == 0)
-//            {
-//                company = new CompanyClass(splitCommand[1]);
+            if (CommandController.developers[id].IsFounder)
+            {
+                companyName = CommandController.developers[id].companyName;
+            }
 
-//company.founderIDs[0] = developers[e.Command.ChatMessage.Username].developerID;
-//            }
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.Company.notFounder);
+                return;
+            }
 
-//            else if (string.Compare(splitCommand[0], "invite", true) == 0)
-//            {
-//                uint id = developers[e.Command.ChatMessage.Username].developerID;
+            if (CommandController.companies[companyName].HasEnoughMoney(1000)) //TODO - Make it more expensive if needed
+            {
 
-//CompanyClass chosenCompany = null;
+            }
 
-//                foreach (var company in companies)
-//                {
-//                    if (company.Value.founderIDs.Contains(id))
-//                    {
-//                        chosenCompany = company.Value;
-//                    }
-//                }
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.Project.Start.money(1000));
+                return;
+            }
 
-//                chosenCompany.founderIDs.Add(developers[splitCommand[1]].developerID); //Need to invite and accept before adding
+            string projectName = splitWhisper[1];
 
-//                //Get userID
-//                //Want to get the company the user is part of
-//            }
-//        }
+            //Project check
+            if (CommandController.projects.ContainsKey(projectName))
+            {
+                client.SendWhisper(username, WhisperMessages.Project.Start.alreadyExists);
+                return;
+            }
+
+            else
+            {
+                startProject = true;
+
+                //Create the project
+                project = new ProjectClass(projectName, username); //Reason we store name over ID is because project is saved in their profile anyway, means we can look back at it easier and see what they worked on
+                project.category = ProjectClass.Categories.games;
+
+                client.SendWhisper(username, WhisperMessages.Project.Start.success(projectName), Timers.ProjectApplication);
+            }
+        }
+
+        if (string.Compare(splitWhisper[0], "apply", true) == 0) //Do they apply for specific roles?
+        {
+            if (startProject)
+            {
+
+            }
+
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.Project.alreadyUnderway);
+                return;
+            }
+
+            if (project == null)
+            {
+                client.SendWhisper(Settings.channelToJoin, WhisperMessages.Project.fail);
+                return;
+            }
+
+            //Developer check
+            if (CommandController.developers.ContainsKey(id))
+            {
+
+            }
+
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.Developer.notDeveloper);
+                return;
+            }
+
+            if (project.HasPendingApplication(username))
+            {
+                client.SendWhisper(username, WhisperMessages.Project.Apply.alreadyApplied);
+                return;
+            }
+
+            if (splitWhisper[1] == String.Empty)
+            {
+                client.SendWhisper(username, WhisperMessages.Project.Apply.specifyPosition);
+                return;
+            }
+
+            if (splitWhisper[1] == DeveloperPosition.Designer.ToString())
+            {
+                project.AddApplicant(username, DeveloperPosition.Designer);
+                client.SendWhisper(username, WhisperMessages.Project.Apply.success);
+                //Add them to the Pastebin
+            }
+
+            else if (splitWhisper[1] == DeveloperPosition.Developer.ToString())
+            {
+                project.AddApplicant(username, DeveloperPosition.Developer);
+                client.SendWhisper(username, WhisperMessages.Project.Apply.success);
+                //Add them to the Pastebin
+            }
+
+            else if (splitWhisper[1] == DeveloperPosition.Artist.ToString())
+            {
+                project.AddApplicant(username, DeveloperPosition.Artist);
+                client.SendWhisper(username, WhisperMessages.Project.Apply.success);
+                //Add them to the Pastebin
+            }
+
+            else
+            {
+
+                client.SendWhisper(username, WhisperMessages.Project.Apply.notPosition);
+                return;
+            }
+        }
+
+        if (string.Compare(splitWhisper[0], "accept", true) == 0)
+        {
+            if (startProject)
+            {
+
+            }
+
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.Project.alreadyUnderway);
+                return;
+            }
+
+            if (project == null)
+            {
+                client.SendWhisper(username, WhisperMessages.Project.fail);
+                return;
+            }
+
+            //Check they are developer
+            //Developer check
+            if (CommandController.developers.ContainsKey(id))
+            {
+
+            }
+
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.Developer.notDeveloper);
+                return;
+            }
+
+            //Check they are a founder
+            if (CommandController.developers[id].IsFounder)
+            {
+                companyName = CommandController.developers[id].companyName;
+            }
+
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.Company.notFounder);
+                return;
+            }
+
+            //Check they are the ProjectLead
+            if (project.projectLead == username)
+            {
+
+            }
+
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.Project.notProjectLead);
+                return;
+            }
+
+            string applicant = splitWhisper[1];
+
+            //Check the person they are accepting exists
+            if (CommandController.DoesUsernameExist(applicant))
+            {
+
+            }
+
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.Project.Accept.notExist);
+                return;
+            }
+
+            //Check they've sent an application
+            if (project.HasPendingApplication(applicant))
+            {
+            }
+
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.Project.Accept.notApplied);
+                return;
+            }
+
+            //Check whether they've already been added
+            if (project.developers.ContainsKey(applicant))
+            {
+                client.SendWhisper(username, WhisperMessages.Project.Accept.alreadyTeam);
+                return;
+            }
+
+            else
+            {
+                project.AcceptApplicant(splitWhisper[1], project.applicants[applicant]);
+                client.SendWhisper(applicant, WhisperMessages.Project.Accept.successApplicant(project.projectName));
+                client.SendWhisper(username, WhisperMessages.Project.Accept.successLead(applicant, project.projectName));
+            }
+        }
+    }
+}
+
+public enum DeveloperPosition
+{
+    Designer,
+    Developer,
+    Artist
+}

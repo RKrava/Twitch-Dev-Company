@@ -9,24 +9,29 @@ public class CompanyInvite
 	public string inviter { get; private set; }
 
 	Timer expiryCheck = new Timer(1000);
-	DateTime expiry;
+    TimeSpan timeSpan = TimeSpan.FromSeconds(5);
 
-	public CompanyInvite(CompanyClass company, string invitedID, string invitedUsername, string inviter, TimeSpan expiryTime)
+    DateTime expiry;
+
+	public CompanyInvite(CompanyClass company, string invitedID, string invitedUsername, string inviter)
 	{
 		this.company = company;
 		this.invitedID = invitedID;
 		this.invitedUsername = invitedUsername;
 		this.inviter = inviter;
 
-		expiry = DateTime.Now.Add(expiryTime);
+		expiry = DateTime.Now.Add(timeSpan);
 		expiryCheck.Elapsed += OnTimerElapsed;
+        expiryCheck.Enabled = true;
 	}
 
+    //Every second it runs
 	private void OnTimerElapsed(object sender, ElapsedEventArgs e)
 	{
 		if (DateTime.Now >= expiry)
 		{
-			// TODO Send message here to user saying the invite has expired
+            client.SendWhisper(invitedUsername, WhisperMessages.Company.Invite.timedOut);
+            client.SendWhisper(inviter, WhisperMessages.Company.Invite.notResponded(invitedUsername));
 			company.RemoveInvite(this);
 			expiryCheck.Dispose();
 		}

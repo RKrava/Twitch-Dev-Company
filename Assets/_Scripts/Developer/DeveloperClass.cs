@@ -12,7 +12,7 @@ public class DeveloperClass
     public void JoinCompany(string name) => companyName = name;
     public void UpdateCompany(string name) => companyName = name;
     public void LeaveCompany() => companyName = "";
-    public List<int> projectIDs = new List<int>();
+    public List<ProjectClass> projects = new List<ProjectClass>();
     public int developerMoney { get; set; } = 5000;
     public void AddMoney(int amount) => developerMoney += amount;
     public void SpendMoney(int amount) => developerMoney -= amount;

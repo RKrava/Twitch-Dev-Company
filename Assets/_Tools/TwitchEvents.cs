@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using TwitchLib.Events.Client;
+﻿using System.Collections;
 using UnityEngine;
 
 public class TwitchEvents : MonoBehaviour

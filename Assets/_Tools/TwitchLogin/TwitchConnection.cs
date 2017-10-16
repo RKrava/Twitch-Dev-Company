@@ -11,7 +11,6 @@ using UnityEngine;
  * GameObjects have a method called SendMessage, therefor I need to supress the message
  * saying that my method matches the same name
  */ 
-#pragma warning disable CS0108
 
 public class TwitchConnection : MonoBehaviour
 {
@@ -52,12 +51,14 @@ public class TwitchConnection : MonoBehaviour
 	/// <param name="recipient">User who the message is targetted at</param>
 	/// <param name="message">Message for them to see</param>
 	public void SendMessage(string recipient, string message) => client.SendMessage($"{recipient} - {message}");
-	public void SendMessage(string message) => client.SendMessage(message);
+#pragma warning disable CS0108 // Member hides inherited member; missing new keyword
+    public void SendMessage(string message) => client.SendMessage(message);
+#pragma warning restore CS0108 // Member hides inherited member; missing new keyword
 
     public void SendWhisper(string recipient, string message)
     {
         //Leave debug to allow us to test delay when the game is complete
-        Debug.Log("TwitchConnection: " + Time.time);
+        //Debug.Log("TwitchConnection: " + Time.time);
         client.SendWhisper(recipient, message);
     }
 
@@ -88,7 +89,7 @@ public class TwitchConnection : MonoBehaviour
 
         client.OnJoinedChannel += ClientOnJoinedChannel;
         
-        EnsureMainThread.executeOnMainThread.Enqueue(() => { FindObjectOfType<Canvas>()?.gameObject.SetActive(false); });
+        EnsureMainThread.executeOnMainThread.Enqueue(() => { FindObject.loginCanvas.gameObject.SetActive(false); });
         //EnsureMainThread.executeOnMainThread.Enqueue(() => { commandController.DelayedStart(); });
     }
 

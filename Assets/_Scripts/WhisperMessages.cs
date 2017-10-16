@@ -3,51 +3,131 @@
 [Serializable]
 public class WhisperMessages
 {
-    //NotDeveloper
-    public static string notDeveloper = "You are not a developer yet. Please send a message to chat first.";
 
-    //Money
-    public static string money(int money) => $"You have £ {money} .";
+    public class Developer
+    {
+        public static string notDeveloper = "You are not a developer yet. Please send a message to chat first.";
+        public static string money(int money) => $"You have £{money}.";
+        public static string skills(int lead, int design, int develop, int art, int marketing) => $"Lead: {lead} | Design: {design} | Develop: {develop} | Art: {art} | Marketing: {marketing}.";
+    }
 
-    //Skills
-    public static string skills(int lead, int design, int develop, int art, int marketing) => $"Lead: {lead} | Design: {design} | Develop: {develop} | Art: {art} | Marketing: {marketing}.";
+    public class Company
+    {
+        public static string notFounder = "You need to be a founder of company to do this.";
+        public static string notOwner = "You need to be the owner of the company to do this.";
+        public static string alreadyFounder(string companyName) => $"You are already part of a company called {companyName}.";
 
-    //Company
-    //- Start
-    public static string companyStartNew(string companyName) => $"You are now the proud owner of {companyName}.";
-    public static string companyStartExists = "A company already exists with that name. Please choose another.";
-    public static string companyStartOwner(string companyName) => $"You are already part of a company called {companyName}.";
-    //- Invite
-    public static string companyInviteOwner = "You have to be the owner of the company to invite founders.";
-    public static string companyInviteMax = "You are not allowed more than 3 founders in a company.";
-    public static string companyInviteNotDeveloper(string invitedUsername) => $"{invitedUsername} is not a developer. Wait for them to send a message in chat.";
-    public static string companyInviteSelf = "You cannot invite yourself to your company, silly.";
-    public static string companyInviteInvited(string username, string companyName) => $"You have been invited by {username} to join their company, {companyName}. Type !company accept {companyName} in the next 5 minutes to join.";
-    public static string companyInviteSent1(string invitedUsername) => $"An invite has been sent to {invitedUsername}.";
-    public static string companyInviteSent2(string invitedUsername) => $"{invitedUsername} is already part of another company.";
-    //- Accept
-    public static string companyAcceptFounder1(string companyName) => $"You are now a founder of {companyName}. You can add funds with !company deposit 1000, etc. to fund projects, and !project start [NAME] to start projects.";
-    public static string companyAcceptFounder2(string username) => $"{username} has become a founder of your company.";
-    public static string companyAcceptMax(string companyName) => $"{companyName} already has three founders.";
-    public static string companyAcceptExist(string companyName) => $"{companyName} doesn't exist. Check you typed the name correctly.";
-    public static string companyAcceptCompany(string companyName) => $"You are already part of another company, {companyName}.";
-    //- Money
-    public static string companyMoneySuccess(string companyName, int companyMoney) => $"{companyName} has £{companyMoney} in the bank.";
-    public static string companyMoneyFail = "You need to be part of a company to check how much money a company has.";
-    //- Deposit
-    public static string companyDepositSuccess(int money, string companyName, int companyMoney, int developerMoney) => $"You have deposited £{money}. Now {companyName} has £{companyMoney}, and you have £{developerMoney} left.";
-    public static string companyDepositNotEnough(int developerMoney) => $"You only have {developerMoney}.";
-    public static string companyDepositSyntax = "To deposit money, you need to use !command deposit 1000, etc.";
-    public static string companyDepositPermissions = "You need to be part of a company to deposit money.";
-    //- Withdraw
-    public static string companyWithdrawSuccess(int money, string companyName, int developerMoney, int companyMoney) => $"You have withdrawn {money}. Now you have £{developerMoney}, and {companyName} has £{companyMoney} left.";
-    public static string companyWithdrawNotEnough(int companyMoney) => $"The company only has £{companyMoney}.";
-    public static string companyWithdrawSyntax = "To withdraw money, you need to use !command withdraw 1000, etc.";
-    public static string companyWithdrawPermissions = "You need to be part of a company to withdraw money.";
-    //- Edit
-    public static string companyEditSuccess(string newName) => $"You have changed the name of the company to {newName}";
-    public static string companyEditFail = "You have to be the company owner to change the name.";
-    //- Leave
-    public static string companyLeaveSuccess(string companyName) => $"You have left {companyName}.";
-    public static string companyLeaveFail = "You cannot leave a company if you are not part of a company. FailFish";
+        public class Start
+        {
+            public static string success(string companyName) => $"You are now the proud owner of {companyName}.";
+            public static string alreadyExists = "A company already exists with that name. Please choose another.";
+        }
+
+        public class Invite
+        {
+            public static string maxFounders = "You are not allowed more than 3 founders in a company.";
+            public static string notDeveloper(string invitedUsername) => $"{invitedUsername} is not a developer. Wait for them to send a message in chat.";
+            public static string self = "You can't invite yourself to your company, silly.";
+            public static string received(string username, string companyName) => $"You have been invited by {username} to join their company, {companyName}. Type !company accept {companyName} in the next 5 minutes to join.";
+            public static string sent(string invitedUsername) => $"An invite has been sent to {invitedUsername}.";
+            public static string anotherCompany(string invitedUsername) => $"{invitedUsername} is already part of another company.";
+            public static string timedOut = "It has been 5 minutes since you received your invite. It has now run out.";
+            public static string notResponded(string invitedUsername) => $"Your invite to {invitedUsername} has run out before they could respond.";
+        }
+
+        public class Accept
+        {
+            public static string joined(string companyName) => $"You are now a founder of {companyName}. You can add funds with !company deposit 1000, etc. to fund projects, and !project start [NAME] to start projects.";
+            public static string accepted(string username) => $"{username} has become a founder of your company.";
+            public static string maxFounders(string companyName) => $"{companyName} already has three founders.";
+            public static string noExist(string companyName) => $"{companyName} doesn't exist. Check you typed the name correctly.";
+            public static string anotherCompany(string companyName) => $"You are already part of another company, {companyName}.";
+        }
+
+        public class Money
+        {
+            public static string success(string companyName, int companyMoney) => $"{companyName} has £{companyMoney} in the bank.";
+        }
+
+        public class Deposit
+        {
+            public static string success(int money, string companyName, int companyMoney, int developerMoney) => $"You have deposited £{money}. Now {companyName} has £{companyMoney}, and you have £{developerMoney} left.";
+            public static string notEnough(int developerMoney) => $"You only have {developerMoney}.";
+            public static string syntax = "To deposit money, you need to use !command deposit 1000, etc.";
+        }
+
+        public class Withdraw
+        {
+            public static string success(int money, string companyName, int developerMoney, int companyMoney) => $"You have withdrawn {money}. Now you have £{developerMoney}, and {companyName} has £{companyMoney} left.";
+            public static string notEnough(int companyMoney) => $"The company only has £{companyMoney}.";
+            public static string syntax = "To withdraw money, you need to use !command withdraw 1000, etc.";
+        }
+
+        public class Edit
+        {
+            public static string success(string newName) => $"You have changed the name of the company to {newName}";
+            public static string fail = "You have to be the company owner to change the name.";
+        }
+
+        public class Leave
+        {
+            public static string success(string companyName) => $"You have left {companyName}.";
+            public static string fail = "You cannot leave a company if you are not part of a company. FailFish";
+        }        
+    }
+
+    public class Project
+    {
+        public static string noProject = "There is no project going on at the moment.";
+        public static string fail = "Project is returning null. Should this be happening?";
+        public static string notProjectLead = "You need to be the Project Lead to be able to do this.";
+        public static string alreadyUnderway = "A project is underway. Please wait until it is finished.";
+
+        public class Start
+        {
+            public static string money(int money) => $"You need at least £{money} in your company funds to start a project. This is to pay Developers, and buy features.";
+            public static string alreadyExists = "A project with the name already exists. Please come up with a new one.";
+            public static string success(string projectName) => $"You have started {projectName}. People can now apply to join.";
+        }
+
+        public class Apply
+        {
+            public static string alreadyApplied = "You've already applied for this project. You can only send in one application.";
+            public static string success = "Your application has been sent.";
+            public static string notPosition = "You cannot apply for that position, only Designer, Developer, or Artist.";
+            public static string specifyPosition = "You have to specify the position you are applying for: !project apply Designer|Developer|Artist.";
+        }
+
+        public class Accept
+        {
+            public static string applicantsList(string pasteURL) => $"Here are all the applicants: {pasteURL}";
+            public static string notExist = "This person does not exist. Have you typed their name our correctly?";
+            public static string notApplied = "This person hasn't applied for this project. You cannot accept an application that doesn't exist.";
+            public static string successApplicant(string projectName) => $"Your application has been successful. You are now part of the development team for {projectName}";
+            public static string successLead(string applicantUsername, string projectName) => $"{applicantUsername} is now part of the development team for {projectName}.";
+            public static string alreadyTeam = "This person is already a member of the development team.";
+        }
+    }
+
+    public class Mod
+    {
+        public class Add
+        {
+            public static string xpSuccess(int amount, string username, string skill) => $"You have successfully added {amount}xp to {username}'s {skill} skill.";
+            public static string levelSuccess(int amount, string username, string skill) => $"You have successfully added {amount} levels to {username}'s {skill} skill.";
+            public static string modSuccess(string username) => $"You have successfully added {username} as a mod of the game.";
+        }
+
+        public class Remove
+        {
+            public static string xpSuccess(int amount, string username, string skill) => $"You have successfully remove {amount}xp from {username}'s {skill} skill.";
+            public static string levelSuccess(int amount, string username, string skill) => $"You have successfully removed {amount} levels from {username}'s {skill} skill.";
+            public static string modSuccess(string username) => $"You have successfully removed {username} as a mod of the game.";
+        }
+
+        public class Force
+        {
+
+        }
+    }
 }

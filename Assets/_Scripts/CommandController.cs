@@ -77,8 +77,6 @@ public class CommandController : MonoBehaviour
     /// Developers
     /// </summary>
     public static SortedDictionary<string, DeveloperClass> developers { get; set; } = new SortedDictionary<string, DeveloperClass>();
-    private Queue<string> idQueue = new Queue<string>();
-    private Queue<string> usernameQueue = new Queue<string>();
 
     /// <summary>
 	/// Companies
@@ -93,24 +91,16 @@ public class CommandController : MonoBehaviour
     public static SortedDictionary<string, ProjectClass> projects { get; set; } = new SortedDictionary<string, ProjectClass>();
     //Tidy this
 
-    //Those who have applied
-    private List<uint> projectApply = new List<uint>();
-
-    //Those who have been accepted onto a project
-    private List<uint> projectTeam = new List<uint>();
-
-    //Has a project been started already?
-    private bool startProject;
-
-    //Are applications open?
-    private bool applyOpen;
-
     private CompanyManager companyManager;
+    private ModTools modTools;
+    private ProjectManager projectManager;
 
     private void Awake()
     {
         TwitchEvents.DelayedAwake += DelayedAwake;
         companyManager = FindObject.companyManager;
+        modTools = FindObject.modTools;
+        projectManager = FindObject.projectManager;
     }
 
     public void DelayedAwake()
@@ -176,28 +166,11 @@ public class CommandController : MonoBehaviour
         if (!developers.ContainsKey(id))
         {
             AddDeveloper(username, id);
-            //DeveloperClass developer = new DeveloperClass();
-            //developer.developerID = id;
-
-            //viewers.Add(new Viewer(username, id));
-
-            //developers.Add(id, developer);
-
-            //Debug.Log(username + " has been added as a developer.");
         }
 
         else
         {
             ChangeDeveloperName(username, id);
-            //Debug.Log(e.ChatMessage.DisplayName + " already is a developer.");
-
-            //string developerName = GetUsername(id);
-
-            //if (developerName != username)
-            //{
-            //    // Update their username, it appears it has changes
-            //    SetUsername(id, username);
-            //}
         }
     }
 
@@ -225,28 +198,11 @@ public class CommandController : MonoBehaviour
         if (!developers.ContainsKey(id))
         {
             AddDeveloper(username, id);
-            //DeveloperClass developer = new DeveloperClass();
-            //developer.developerID = id;
-
-            //viewers.Add(new Viewer(username, id));
-
-            //developers.Add(id, developer);
-
-            //Debug.Log(username + " has been added as a developer.");
         }
 
         else
         {
             ChangeDeveloperName(username, id);
-            //Debug.Log(e.ChatMessage.DisplayName + " already is a developer.");
-
-            //string developerName = GetUsername(id);
-
-            //if (developerName != username)
-            //{
-            //    // Update their username, it appears it has changes
-            //    SetUsername(id, username);
-            //}
         }
     }
 
@@ -267,25 +223,38 @@ public class CommandController : MonoBehaviour
         // Check they have been added as a developer
         if (!developers.ContainsKey(id))
         {
-			client.SendWhisper(username, WhisperMessages.notDeveloper);
+			client.SendWhisper(username, WhisperMessages.Developer.notDeveloper);
             return;
         }
 
         Debug.Log("Do I make it here?");
 
+        if (developers[id].mod == true)
+        {
+            if (string.Compare(e.Command, "mod", true) == 0)
+            {
+                modTools.ModWhisper(username, splitWhisper);
+            }
+        }
+
         if (string.Compare(e.Command, "money", true) == 0)
         {
-			client.SendWhisper(username, WhisperMessages.money(developers[id].developerMoney));
+            client.SendWhisper(username, WhisperMessages.Developer.money(developers[id].developerMoney));
         }
 
         else if (string.Compare(e.Command, "skills", true) == 0)
         {
-			client.SendWhisper(username, WhisperMessages.skills(developers[id].GetSkillLevel(SkillTypes.LeaderSkills.Leadership), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Design), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Development), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Art), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Marketing)));
+            client.SendWhisper(username, WhisperMessages.Developer.skills(developers[id].GetSkillLevel(SkillTypes.LeaderSkills.Leadership), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Design), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Development), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Art), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Marketing)));
         }
 
         else if (string.Compare(e.Command, "company", true) == 0)
         {
             companyManager.SendWhisper(id, username, splitWhisper);
+        }
+
+        else if (string.Compare(e.Command, "project", true) == 0)
+        {
+            projectManager.SendWhisper(id, username, splitWhisper);
         }
     }
 }

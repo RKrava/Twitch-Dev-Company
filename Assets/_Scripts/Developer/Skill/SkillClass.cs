@@ -19,10 +19,15 @@ public class SkillClass
     {
         skillXP += xp;
 
-		if (skillXP >= xpRequired)
+		while (skillXP >= xpRequired)
 		{
 			skillLevel += 1;
 			skillXP -= xpRequired;
 		}
 	}
+
+    //public void RemoveXP(int xp)
+    //{
+
+    //}
 }
