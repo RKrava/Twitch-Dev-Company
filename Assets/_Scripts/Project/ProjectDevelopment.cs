@@ -123,20 +123,18 @@ public class ProjectDevelopment : MonoBehaviour
                 answers = 2;
             }
 
-            //Parse Ints
+            //TODO - Parse Int
             int answer = int.Parse(splitWhisper[0]);
 
             if (answer > answers)
             {
+                //TODO - Add a whisper message
                 Debug.Log("Not an option.");
                 return;
             }
 
             else if (answer == question.correctAnswer)
             {
-                //Correct answer
-                Debug.Log("Correct");
-
                 if (question.difficulty == "easy")
                 {
                     switch (position)
@@ -157,7 +155,6 @@ public class ProjectDevelopment : MonoBehaviour
 
                 else if (question.difficulty == "medium")
                 {
-                    //Adds several points... Or increases point production
                     switch (position)
                     {
                         case DeveloperPosition.Designer:
@@ -176,9 +173,6 @@ public class ProjectDevelopment : MonoBehaviour
 
                 else if (question.difficulty == "hard")
                 {
-                    //Increase quality
-                    Debug.Log("Increase max quality.");
-
                     switch (position)
                     {
                         case DeveloperPosition.Designer:
@@ -199,29 +193,22 @@ public class ProjectDevelopment : MonoBehaviour
 
             else
             {
-                //Wrong answer
-                Debug.Log("Wrong");
-
                 if (question.difficulty == "easy")
                 {
-                    Debug.Log("Nothing.");
-
                     client.SendWhisper(username, WhisperMessages.Project.Question.easyWrong);
                 }
 
                 else if (question.difficulty == "medium")
                 {
-                    //Stop you from adding points for a minute
-                    Debug.Log("No points for a minute.");
+                    developer.bonus = 0;
+
+                    EnsureMainThread.executeOnMainThread.Enqueue(() => { StartCoroutine(ResetBonus(developer, 60)); });
 
                     client.SendWhisper(username, WhisperMessages.Project.Question.mediumWrong);
                 }
 
                 else if (question.difficulty == "hard")
                 {
-                    //Decrease quality
-                    Debug.Log("Decrease quality.");
-
                     switch (position)
                     {
                         case DeveloperPosition.Designer:
@@ -244,6 +231,15 @@ public class ProjectDevelopment : MonoBehaviour
         }
     }
 
+    IEnumerator ResetBonus(DeveloperClass developer, int time)
+    {
+        yield return new WaitForSeconds(time);
+
+        developer.bonus = 1;
+
+        yield return null;
+    }
+
     public void StartProject()
     {
         features = ProjectManager.project.features;
@@ -256,7 +252,6 @@ public class ProjectDevelopment : MonoBehaviour
         EnsureMainThread.executeOnMainThread.Enqueue(() => { InvokeRepeating("ProjectUpdate", 0, 30); });
         EnsureMainThread.executeOnMainThread.Enqueue(() => { InvokeRepeating("SendQuestion", 0, 120); });
         EnsureMainThread.executeOnMainThread.Enqueue(() => { Invoke("ProjectEnd", 420); });
-        //Every 30 to 60 seconds
     }
 
     private void SendQuestion()
@@ -278,15 +273,10 @@ public class ProjectDevelopment : MonoBehaviour
         Question question = RandomGenerator.GetRandom();
 
         string questionDifficulty = Tools.FirstLetterCapital(question.difficulty);
-
-        //DeveloperUsername
         string message = $"Difficulty: {questionDifficulty} | {question.question} {question.answersString}";
-        //Correct Answer
 
-        //Add to dictionary (Username, CorrectAnswer)
         questionDictionary.Add(developerUsername, question);
 
-        //Send a message that runs the timer
         client.SendWhisper(developerUsername, message, Timers.QuestionTimer);
 
         yield return null;
@@ -330,7 +320,7 @@ public class ProjectDevelopment : MonoBehaviour
                 else
                 {
                     features[featureDesignIndex].designPoints += points * bonus;
-                    developerObject.developerSkills[SkillTypes.DeveloperSkills.Design].AddXP(2);
+                    developerObject.developerSkills[SkillTypes.DeveloperSkills.Design].AddXP(2 * bonus);
                     Debug.Log($"{features[featureDesignIndex].featureName} | {feature.designPoints}");
                 }
             }
@@ -367,7 +357,7 @@ public class ProjectDevelopment : MonoBehaviour
                 else
                 {
                     features[featureDevelopIndex].developmentPoints += points * bonus;
-                    developerObject.developerSkills[SkillTypes.DeveloperSkills.Development].AddXP(2);
+                    developerObject.developerSkills[SkillTypes.DeveloperSkills.Development].AddXP(2 * bonus);
                     Debug.Log($"{features[featureDevelopIndex].featureName} | {feature.developmentPoints}");
                 }
             }
@@ -394,7 +384,7 @@ public class ProjectDevelopment : MonoBehaviour
                     }
                 }
 
-                if (features[featureArtIndex] == null)
+                if (featureArtIndex + 1 > features.Count)
                 {
                     featureArtIndex--;
                     return;
@@ -403,7 +393,7 @@ public class ProjectDevelopment : MonoBehaviour
                 else
                 {
                     features[featureArtIndex].artPoints += points * bonus;
-                    developerObject.developerSkills[SkillTypes.DeveloperSkills.Art].AddXP(2);
+                    developerObject.developerSkills[SkillTypes.DeveloperSkills.Art].AddXP(2 * bonus);
                     Debug.Log($"{features[featureArtIndex].featureName} | {feature.artPoints}");
                 }
             }
