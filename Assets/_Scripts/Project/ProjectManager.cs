@@ -39,10 +39,11 @@ public class ProjectManager : MonoBehaviour
             pastebin = $"{applicant}: ";
 
             DeveloperPosition developerPosition = applicants[applicant];
+            int pay = developer.developerPay.pay * 7;
 
-            if (developerPosition == DeveloperPosition.Designer) {pastebin += $"Design - {developer.GetSkillLevel(SkillTypes.DeveloperSkills.Design)}";}
-            else if (developerPosition == DeveloperPosition.Developer) {pastebin += $"Develop - {developer.GetSkillLevel(SkillTypes.DeveloperSkills.Development)}";}
-            else if (developerPosition == DeveloperPosition.Artist) {pastebin += $"Art - {developer.GetSkillLevel(SkillTypes.DeveloperSkills.Art)}";}
+            if (developerPosition == DeveloperPosition.Designer) {pastebin += $"Design - {developer.GetSkillLevel(SkillTypes.DeveloperSkills.Design)} | Cost: {pay}";}
+            else if (developerPosition == DeveloperPosition.Developer) {pastebin += $"Develop - {developer.GetSkillLevel(SkillTypes.DeveloperSkills.Development)} | Cost: {pay}";}
+            else if (developerPosition == DeveloperPosition.Artist) {pastebin += $"Art - {developer.GetSkillLevel(SkillTypes.DeveloperSkills.Art)} | Cost: {pay}";}
             else
             {
                 Debug.Log("How the F did I get here?");
@@ -139,7 +140,7 @@ public class ProjectManager : MonoBehaviour
                 startProject = true;
 
                 //Create the project
-                project = new ProjectClass(projectName, username); //Reason we store name over ID is because project is saved in their profile anyway, means we can look back at it easier and see what they worked on
+                project = new ProjectClass(projectName, username, companyName); //Reason we store name over ID is because project is saved in their profile anyway, means we can look back at it easier and see what they worked on
                 project.category = Categories.Games;
 
                 client.SendWhisper(username, WhisperMessages.Project.Start.success(projectName), Timers.ProjectApplication);
@@ -289,6 +290,9 @@ public class ProjectManager : MonoBehaviour
                 return;
             }
 
+            string applicantID = CommandController.GetID(applicant);
+            int pay = CommandController.developers[applicantID].developerPay.pay;
+
             //Check they've sent an application
             if (project.HasPendingApplication(applicant))
             {
@@ -309,7 +313,7 @@ public class ProjectManager : MonoBehaviour
 
             else
             {
-                project.AcceptApplicant(splitWhisper[1], project.applicants[applicant]);
+                project.AcceptApplicant(applicant, project.applicants[applicant], pay);
                 client.SendWhisper(applicant, WhisperMessages.Project.Accept.successApplicant(project.projectName));
                 client.SendWhisper(username, WhisperMessages.Project.Accept.successLead(applicant, project.projectName));
             }

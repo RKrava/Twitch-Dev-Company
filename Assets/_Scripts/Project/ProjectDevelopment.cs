@@ -406,5 +406,13 @@ public class ProjectDevelopment : MonoBehaviour
         Debug.Log("Project Ended");
         CancelInvoke("ProjectUpdate");
         CancelInvoke("SendQuestion");
+
+        foreach (string developer in project.developerPay.Keys)
+        {
+            string id = CommandController.GetID(developer);
+            int pay = (7 * project.developerPay[developer]);
+            CommandController.companies[project.companyName].SpendMoney(pay);
+            CommandController.developers[id].AddMoney(pay);
+        }
     }
 }
