@@ -19,11 +19,10 @@ namespace Quiz
         public async Task GenerateToken()
         {
             string url = _apiTokenUrl + ApiParameters.TokenRequest;
-            Uri uri = new Uri(url);
 
             using (WebClient client = new WebClient())
             {
-                string resp = await client.DownloadStringTaskAsync(uri);
+                string resp = await client.DownloadStringTaskAsync(url);
                 _sessionToken = RequestSession(resp);
             }
         }
@@ -35,59 +34,49 @@ namespace Quiz
             if (_sessionToken == null) { throw new TokenNotFound("No Session Key exists, please generate one."); }
             else { url += ApiParameters.TokenReset + _sessionToken; }
 
-            Uri uri = new Uri(url);
-
             using (WebClient client = new WebClient())
             {
-                string resp = await client.DownloadStringTaskAsync(uri);
+                string resp = await client.DownloadStringTaskAsync(url);
                 _sessionToken = RequestSession(resp);
             }
         }
 
-        public async Task<RootObject> GenerateQuestions(int amount, QuizCategories category, QuizDifficulty difficulty, QuizType type)
+        public async Task<Results> GenerateQuestions(int amount, QuizCategories category, QuizDifficulty difficulty, QuizType type)
         {
             string url = _apiRequestUrl;
 
-            //Amount
-            if (amount == 0) { throw new InvalidParameter("Invalid amount"); }
-            else { url += ApiParameters.QuestionAmount + amount.ToString(); }
+            amount = Mathf.Clamp(amount, 1, 50);
+            url += ApiParameters.QuestionAmount + amount.ToString();
 
-            //Category
-            if (category == QuizCategories.All) { }
-            else { url += ApiParameters.QuestionCategory + (int)category; }
+            if (category != QuizCategories.All)
+            {
+                url += ApiParameters.QuestionCategory + (int)category;
+            }
 
-            //Difficulty
-            if (difficulty == QuizDifficulty.Any) { }
-
-            else
+            if (difficulty != QuizDifficulty.Any)
             {
                 string difficultyString = FormatDifficulty(difficulty);
                 url += ApiParameters.QuestionDifficulty + difficultyString;
             }
 
-            //Type
-            if (type == QuizType.Any) { }
-
-            else
+            if (type != QuizType.Any)
             {
                 string typeString = FormatType(type);
                 url += ApiParameters.QuestionType + typeString;
             }
 
-            //SessionToken
-            if (_sessionToken == null) { }
-            else { url += ApiParameters.Token + _sessionToken; }
+            if (_sessionToken != null)
+            {
+                url += ApiParameters.Token + _sessionToken;
+            }
 
             Debug.Log(_sessionToken);
-
             Debug.Log(url);
-
-            Uri uri = new Uri(url);
 
             using (WebClient client = new WebClient())
             {
-                string resp = await client.DownloadStringTaskAsync(uri);
-                RootObject questions = GetQuestions(resp);
+                string resp = await client.DownloadStringTaskAsync(url);
+                Results questions = GetQuestions(resp);
                 return questions;
             }
         }
@@ -109,10 +98,10 @@ namespace Quiz
             return sessionToken;
         }
 
-        private RootObject GetQuestions(string resp)
+        private Results GetQuestions(string resp)
         {
             //string questionsJson = File.ReadAllText(resp);
-            RootObject questions = JsonConvert.DeserializeObject<RootObject>(resp);
+            Results questions = JsonConvert.DeserializeObject<Results>(resp);
 
             switch (questions.response_code)
             {
@@ -197,7 +186,7 @@ namespace Quiz
         public List<string> incorrect_answers { get; set; }
     }
 
-    public class RootObject
+    public class Results
     {
         public int response_code { get; set; }
         public List<Result> results { get; set; }

@@ -45,7 +45,7 @@ public class QuizHandler : MonoBehaviour
 
     public async void AddQuestions()
     {
-        RootObject questions;
+        Results questions;
 
         try
         {
