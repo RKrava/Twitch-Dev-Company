@@ -20,7 +20,7 @@ When they first send a message/whisper, they'll be added as a developer and spaw
 There is none, as it doesn't function as intended yet.
 
 ## Contributing
-**Unity Version:** 2017.1f1
+**Unity Version:** 2017.2.0f3
 
 Refer to the WIKI before/when working on the project. Here we'll keep documentation for the overall plan for the game, such as the roles of certain scripts, etc.
 
