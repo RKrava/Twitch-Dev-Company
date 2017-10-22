@@ -3,6 +3,15 @@
 [Serializable]
 public class SkillClass
 {
+    private DeveloperClass developerClass;
+    private bool leadershipSkill;
+
+    public SkillClass(DeveloperClass developerClass, bool leadershipSkill)
+    {
+        this.developerClass = developerClass;
+        this.leadershipSkill = leadershipSkill;
+    }
+
     public int skillLevel = 1;
     public int skillXP = 0;
 
@@ -22,9 +31,23 @@ public class SkillClass
 		while (skillXP >= xpRequired)
 		{
 			skillLevel += 1;
+            LevelUp(developerClass, leadershipSkill);
 			skillXP -= xpRequired;
 		}
 	}
+
+    public  void LevelUp(DeveloperClass developerClass, bool leadershipSkill)
+    {
+        if (leadershipSkill)
+        {
+            developerClass.developerPay.IncreasePay(10);
+        }
+
+        else
+        {
+            developerClass.developerPay.IncreasePay(5);
+        }
+    }
 
     //public void RemoveXP(int xp)
     //{

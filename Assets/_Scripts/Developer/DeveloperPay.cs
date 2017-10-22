@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 public class DeveloperPay
 {
-	/// <summary>
-	/// Per minute
-	/// This is just a placeholder default value
-	/// </summary>
-	public int pay { get; private set; } = 4;
+    /// <summary>
+    /// Per minute
+    /// This is just a placeholder default value
+    /// </summary>
+    public int pay { get; private set; } = 15;
 
 	/// <summary>
 	/// Used to calculate how much this developer will cost for a specified period of time.
@@ -24,8 +24,10 @@ public class DeveloperPay
 	/// </summary>
 	List<ProjectClass> completedProjects = new List<ProjectClass>();
 
-	public DeveloperPay(int pay)
-	{
-		this.pay = pay;
-	}
+    public DeveloperPay() { }
+
+    public void IncreasePay(int pay)
+    {
+        this.pay += pay;
+    }
 }
