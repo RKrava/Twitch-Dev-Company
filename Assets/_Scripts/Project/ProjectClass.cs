@@ -48,7 +48,7 @@ public class ProjectClass
     public void ClearApplicants() => applicants.Clear();
     public bool HasPendingApplication(string applicantUsername) => applicants.ContainsKey(applicantUsername);
 
-    public int cost;
+    public int cost = 0;
     public int revenue;
     public int profit;
     public int sales;

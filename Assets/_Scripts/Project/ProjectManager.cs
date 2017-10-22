@@ -8,7 +8,7 @@ public class ProjectManager : MonoBehaviour
     private ProjectDevelopment projectDevelopment;
 
     public static ProjectClass project;
-    private bool startProject;
+    public static bool startProject;
 
     private void Start()
     {
