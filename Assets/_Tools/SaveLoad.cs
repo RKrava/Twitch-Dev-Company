@@ -9,6 +9,7 @@ public class SaveLoad : MonoBehaviour
     private string developerFile;
     private string viewerFile;
     private string companiesFile;
+    private string projectsFile;
 
     private bool loaded;
 
@@ -27,6 +28,7 @@ public class SaveLoad : MonoBehaviour
         developerFile = Application.streamingAssetsPath + "/developers.json";
         viewerFile = Application.streamingAssetsPath + "/viewers.json";
         companiesFile = Application.streamingAssetsPath + "/companies.json";
+        projectsFile = Application.streamingAssetsPath + "/projects.json";
 
         Load();
 
@@ -67,6 +69,16 @@ public class SaveLoad : MonoBehaviour
             File.CreateText(companiesFile).Dispose();
         }
 
+        if (File.Exists(projectsFile) == true)
+        {
+            string projectsJson = File.ReadAllText(projectsFile);
+            CommandController.projects = JsonConvert.DeserializeObject<SortedDictionary<string, ProjectClass>>(projectsJson);
+        }
+        else
+        {
+            File.CreateText(projectsFile).Dispose();
+        }
+
         loaded = true;
         Debug.Log("Loaded.");
     }
@@ -83,6 +95,9 @@ public class SaveLoad : MonoBehaviour
 
         string companiesJson = JsonConvert.SerializeObject(CommandController.companies, Formatting.Indented);
         File.WriteAllText(companiesFile, companiesJson);
+
+        string projectsJson = JsonConvert.SerializeObject(CommandController.projects, Formatting.Indented);
+        File.WriteAllText(projectsFile, projectsJson);
     }
 
     //Don't have to worry about potential save clashes when quitting application

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -63,17 +64,47 @@ public class ProjectDevelopment : MonoBehaviour
             feature.featureName = featureSO.name;
             int cost = featureSO.featureCost;
 
-            feature.designPointsRequired = (int)(featureSO.featureDesign * Mathf.Pow(0.8f, 8));
-            feature.developmentPointsRequired = (int)(featureSO.featureDevelop * Mathf.Pow(0.8f, 8));
-            feature.artPointsRequired = (int)(featureSO.featureArt * Mathf.Pow(0.8f, 8));
+            if (featureSO.featureDesign == 0)
+            {
+                feature.designQualityHit = FeatureQuality.Perfect;
+            }
 
-            string projectLeadID = CommandController.GetID(ProjectManager.project.projectLead);
+            else
+            {
+                feature.designPointsRequired = (int)(featureSO.featureDesign * Mathf.Pow(0.8f, 8));
+            }
+
+            if (featureSO.featureDevelop == 0)
+            {
+                feature.developmentQualityHit = FeatureQuality.Perfect;
+            }
+
+            else
+            {
+                feature.developmentPointsRequired = (int)(featureSO.featureDevelop * Mathf.Pow(0.8f, 8));
+            }
+
+            if (featureSO.featureArt == 0)
+            {
+                feature.artQualityHit = FeatureQuality.Perfect;
+            }
+
+            else
+            {
+                feature.artPointsRequired = (int)(featureSO.featureArt * Mathf.Pow(0.8f, 8));
+            }
+            
+            project = ProjectManager.project;
+
+            string projectLeadID = CommandController.GetID(project.projectLead);
             string companyName = CommandController.developers[projectLeadID].companyName;
             CompanyClass company = CommandController.companies[companyName];
 
             if (company.HasEnoughMoney(cost))
             {
-                ProjectManager.project.features.Add(feature);
+                company.SpendMoney(cost);
+                project.cost += cost;
+                project.features.Add(feature);
                 Debug.Log(ProjectManager.project.features[0].featureName);
             }
         }
@@ -406,5 +437,55 @@ public class ProjectDevelopment : MonoBehaviour
         Debug.Log("Project Ended");
         CancelInvoke("ProjectUpdate");
         CancelInvoke("SendQuestion");
+
+        foreach (string developer in project.developerPay.Keys)
+        {
+            string id = CommandController.GetID(developer);
+            int pay = (7 * project.developerPay[developer]);
+            project.cost += pay;
+            CommandController.companies[project.companyName].SpendMoney(pay);
+            CommandController.developers[id].AddMoney(pay);
+        }
+
+        foreach (Feature feature in features)
+        {
+            int min = Mathf.Min((int)feature.designQualityHit, Mathf.Min((int)feature.developmentQualityHit, (int)feature.artQualityHit));
+
+            feature.featureQuality = (FeatureQuality)min;
+        }
+
+        //Delay it by a minute
+        EnsureMainThread.executeOnMainThread.Enqueue(() => { Invoke("ReviewScore", 60); });
+        EnsureMainThread.executeOnMainThread.Enqueue(() => { Invoke("Sales", 120); });
+    }
+
+    private void ReviewScore()
+    {
+        int totalPoints = 0;
+
+        foreach (Feature feature in features)
+        {
+            totalPoints += (int)feature.featureQuality;
+        }
+
+        //17 references the FeatureQuality enum, and 10 brings it to an actual number
+        int score = (((totalPoints / features.Count) / 17) * 10);
+
+        project.overallRating = score;
+
+        //TODO - SendMessage
+    }
+
+    private void Sales()
+    {
+        int revenue = project.overallRating * features.Count * 1000;
+
+        project.revenue = revenue;
+        project.profit = project.revenue - project.cost;
+
+        //TODO - SendWhisper
+
+        CommandController.projects.Add(project.projectName, project);
+        ProjectManager.startProject = false;
     }
 }
