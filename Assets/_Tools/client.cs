@@ -1,5 +1,4 @@
-﻿#pragma warning disable CS0108
-public class client
+﻿public class client
 {
     /// <summary>
     /// Sends bot messages/whispers to the main queue.
