@@ -19,7 +19,6 @@ public class CompanyManager : MonoBehaviour
 
         int money;
 
-        //Check if the viewer is part of a company
         if (companyName == string.Empty)
         {
             companyFounder = false;
@@ -29,7 +28,6 @@ public class CompanyManager : MonoBehaviour
         {
             company = CommandController.companies[companyName];
 
-            //Check if the viewer is the owner of the company
             if (CommandController.companies[companyName].IsOwner(id))
             {
                 companyOwner = true;

@@ -150,7 +150,7 @@ public class CommandController : MonoBehaviour
         username = e.ChatMessage.DisplayName;
 
         //Check if the viewer exists on the system
-        if (DoesIDExist(id))
+        if (!DoesIDExist(id))
         {
             AddDeveloper(username, id);
         }
@@ -167,7 +167,7 @@ public class CommandController : MonoBehaviour
         username = e.WhisperMessage.DisplayName;
 
         //Check if the viewer exists on the system
-        if (DoesIDExist(id))
+        if (!DoesIDExist(id))
         {
             AddDeveloper(username, id);
         }
@@ -203,7 +203,7 @@ public class CommandController : MonoBehaviour
         username = e.WhisperMessage.DisplayName;
 
         //Check if the viewer exists on the system
-        if (DoesIDExist(id))
+        if (!DoesIDExist(id))
         {
 			client.SendWhisper(username, WhisperMessages.Developer.notDeveloper);
             return;
