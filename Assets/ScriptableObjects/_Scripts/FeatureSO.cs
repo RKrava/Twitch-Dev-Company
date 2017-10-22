@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
 [CreateAssetMenu(menuName = "Create/Item/Feature")]
-[System.Serializable]
 public class FeatureSO : ScriptableObject
 {
     public string featureName;

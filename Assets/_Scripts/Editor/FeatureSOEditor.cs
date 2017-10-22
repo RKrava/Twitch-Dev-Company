@@ -3,7 +3,6 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 
 [CustomEditor(typeof(FeatureSO))]
-[System.Serializable]
 public class FeatureSOEditor : Editor
 {
     private float skillLabelWidth = 80f;
