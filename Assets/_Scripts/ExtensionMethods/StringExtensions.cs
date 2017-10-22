@@ -11,7 +11,7 @@ public static class StringExtensions
     /// <returns></returns>
     public static string CapitaliseFirstLetter(this string s)
     {
-        return s.First().ToString().ToUpper();
+        return s.First().ToString().ToUpper() + s.Substring(1);
     }
 
     /// <summary>
