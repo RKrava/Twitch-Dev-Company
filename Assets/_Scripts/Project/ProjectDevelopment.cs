@@ -277,7 +277,7 @@ public class ProjectDevelopment : MonoBehaviour
 
         Question question = RandomGenerator.GetRandom();
 
-        string questionDifficulty = Tools.FirstLetterCapital(question.difficulty);
+        string questionDifficulty = question.difficulty.CapitaliseFirstLetter();
 
         //DeveloperUsername
         string message = $"Difficulty: {questionDifficulty} | {question.question} {question.answersString}";
