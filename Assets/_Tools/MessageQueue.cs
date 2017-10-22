@@ -88,7 +88,9 @@ public class MessageQueue : MonoBehaviour
                         return;
                     }
 
-                    string companyName = CommandController.developers[username].companyName;
+                    string id = CommandController.GetID(username);
+
+                    string companyName = CommandController.developers[id].companyName;
                     CompanyClass company = CommandController.companies[companyName];
 
                     company.AddInvite(new CompanyInvite(company, invitedID, message.username, username));
