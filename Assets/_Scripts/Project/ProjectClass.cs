@@ -56,8 +56,8 @@ public class ProjectClass
 
     public DateTime releaseDate;
 
-    public List<int> ratings; ///Several ratings?
+    public List<int> ratings = new List<int>(); ///Several ratings?
     public int overallRating;
 
-    public List<string> features;
+    public List<Feature> features = new List<Feature>();
 }

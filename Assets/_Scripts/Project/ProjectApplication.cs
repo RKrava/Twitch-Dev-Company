@@ -23,7 +23,7 @@ public class ProjectApplication
         Debug.Log("Running ProjectApplication.");
         applicationsOpen = true;
 
-        applyExpiry = DateTime.Now.Add(TimeSpan.FromMinutes(1));
+        applyExpiry = DateTime.Now.Add(TimeSpan.FromSeconds(30));
         expiryCheck.Elapsed += OnTimerElapsed;
         expiryCheck.Enabled = true;
     }
@@ -31,7 +31,7 @@ public class ProjectApplication
     private void ApplicationsClosed()
     {
         Debug.Log("Running ApplicationsClosed.");
-        acceptExpiry = DateTime.Now.Add(TimeSpan.FromMinutes(2));
+        acceptExpiry = DateTime.Now.Add(TimeSpan.FromSeconds(30));
         expiryCheck.Elapsed += OnTimerElapsed;
     }
 
@@ -50,7 +50,8 @@ public class ProjectApplication
         {
             Debug.Log("Accepting Closed.");
             acceptApplications = false;
-            ProjectManager.RunProject();
+            ProjectDevelopment projectDevelopment = FindObject.projectDevelopment;
+            projectDevelopment.StartProject();
             expiryCheck.Dispose();
             Debug.Log("Done.");
         }

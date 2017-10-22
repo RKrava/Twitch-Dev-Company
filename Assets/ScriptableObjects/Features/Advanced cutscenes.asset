@@ -11,8 +11,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29aba230cb9966645b12d87181cdbe98, type: 3}
   m_Name: Advanced cutscenes
   m_EditorClassIdentifier: 
-  featureName: 
-  featureCost: 0
-  featureDesign: 0
-  featureDevelop: 0
-  featureArt: 0
+  featureName: Advanced cutscenes
+  featureCost: 5000
+  _featureDesign: 20
+  _featureDevelop: 0
+  _featureArt: 20

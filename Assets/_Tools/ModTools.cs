@@ -281,18 +281,14 @@ public class ModTools : MonoBehaviour
             skill = (SkillTypes.DeveloperSkills)Enum.Parse(typeof(SkillTypes.DeveloperSkills), splitWhisper[3]);
         }
 
-#pragma warning disable CS0168 // Variable is declared but never used
-        catch (Exception e)
-#pragma warning restore CS0168 // Variable is declared but never used
+        catch
         {
             Debug.Log("Not a skill.");
             //Wrong syntax
             return null;
         }
 
-#pragma warning disable CS0162 // Unreachable code detected
         if (int.TryParse(splitWhisper[4], out amount))
-#pragma warning restore CS0162 // Unreachable code detected
         {
 
         }

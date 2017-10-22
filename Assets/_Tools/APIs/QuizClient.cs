@@ -9,14 +9,14 @@ using UnityEngine;
 
 namespace Quiz
 {
-    class QuizClient
+    public class QuizClient
     {
         private const string _apiTokenUrl = "https://opentdb.com/api_token.php?";
         private const string _apiRequestUrl = "https://opentdb.com/api.php?";
 
         private string _sessionToken;
 
-        public async void GenerateToken()
+        public async Task GenerateToken()
         {
             string url = _apiTokenUrl + ApiParameters.TokenRequest;
             Uri uri = new Uri(url);
@@ -26,7 +26,7 @@ namespace Quiz
             _sessionToken = RequestSession(resp);
         }
 
-        public async void ResetToken()
+        public async Task ResetToken()
         {
             string url = _apiTokenUrl;
 
@@ -50,7 +50,7 @@ namespace Quiz
 
             //Category
             if (category == QuizCategories.All) { }
-            else { url += ApiParameters.QuestionCategory + category.ToString(); }
+            else { url += ApiParameters.QuestionCategory + (int)category; }
 
             //Difficulty
             if (difficulty == QuizDifficulty.Any) { }
@@ -74,6 +74,10 @@ namespace Quiz
             if (_sessionToken == null) { }
             else { url += ApiParameters.Token + _sessionToken; }
 
+            Debug.Log(_sessionToken);
+
+            Debug.Log(url);
+
             Uri uri = new Uri(url);
 
             WebClient client = new WebClient();
@@ -84,24 +88,25 @@ namespace Quiz
 
         private string RequestSession(string resp)
         {
-            string tokenJson = File.ReadAllText(resp);
-            RequestSession tokenRequest = JsonConvert.DeserializeObject<RequestSession>(tokenJson);
+            //string tokenJson = File.ReadAllText(resp);
+            RequestSession tokenRequest = JsonConvert.DeserializeObject<RequestSession>(resp);
             string sessionToken = tokenRequest.token;
+            Debug.Log(tokenRequest.token);
             return sessionToken;
         }
 
         private string ResetSession(string resp)
         {
-            string tokenJson = File.ReadAllText(resp);
-            ResetSession tokenReset = JsonConvert.DeserializeObject<ResetSession>(tokenJson);
+            //string tokenJson = File.ReadAllText(resp);
+            ResetSession tokenReset = JsonConvert.DeserializeObject<ResetSession>(resp);
             string sessionToken = tokenReset.token;
             return sessionToken;
         }
 
         private RootObject GetQuestions(string resp)
         {
-            string questionsJson = File.ReadAllText(resp);
-            RootObject questions = JsonConvert.DeserializeObject<RootObject>(questionsJson);
+            //string questionsJson = File.ReadAllText(resp);
+            RootObject questions = JsonConvert.DeserializeObject<RootObject>(resp);
 
             switch (questions.response_code)
             {
@@ -120,7 +125,7 @@ namespace Quiz
             public const string TokenRequest = "command=request";
             public const string TokenReset = "command=reset";
             public const string Token = "&token=";
-            public const string QuestionAmount = "amount =";
+            public const string QuestionAmount = "amount=";
             public const string QuestionCategory = "&category=";
             public const string QuestionDifficulty = "&difficulty=";
             public const string QuestionType = "&type=";
@@ -141,7 +146,7 @@ namespace Quiz
             }
         }
 
-        private static string FormatType(QuizType type)
+        public string FormatType(QuizType type)
         {
             switch (type)
             {

@@ -40,7 +40,7 @@ public class SaveLoad : MonoBehaviour
         if (File.Exists(developerFile) == true)
         {
             string developerJson = File.ReadAllText(developerFile);
-            CommandController.developers = JsonConvert.DeserializeObject<SortedDictionary<string, DeveloperClass>>(developerJson);
+            CommandController.developers = JsonConvert.DeserializeObject<Dictionary<string, DeveloperClass>>(developerJson);
         }
         else
         {

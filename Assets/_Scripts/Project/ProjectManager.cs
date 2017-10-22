@@ -5,13 +5,16 @@ using UnityEngine;
 
 public class ProjectManager : MonoBehaviour
 {
-    public static ProjectClass project;
+    private ProjectDevelopment projectDevelopment;
 
+    public static ProjectClass project;
     private bool startProject;
 
     private void Start()
     {
         startProject = false;
+
+        projectDevelopment = FindObject.projectDevelopment;
     }
 
     public static void SendApplicants()
@@ -74,11 +77,6 @@ public class ProjectManager : MonoBehaviour
         client.SendWhisper(projectLead, WhisperMessages.Project.Accept.applicantsList(pasteUrl));
 
         //client.SendWhisper(projectLead, $"Here are all the applicants: {pasteUrl}");
-    }
-
-    public static void RunProject()
-    {
-
     }
 
     public void SendWhisper(string id, string username, List<string> splitWhisper)
@@ -145,6 +143,7 @@ public class ProjectManager : MonoBehaviour
                 project.category = ProjectClass.Categories.games;
 
                 client.SendWhisper(username, WhisperMessages.Project.Start.success(projectName), Timers.ProjectApplication);
+                client.SendMessage(WhisperMessages.Project.Start.canApply(username));
             }
         }
 
@@ -191,21 +190,21 @@ public class ProjectManager : MonoBehaviour
                 return;
             }
 
-            if (splitWhisper[1] == DeveloperPosition.Designer.ToString())
+            if (splitWhisper[1].ToLower() == DeveloperPosition.Designer.ToString().ToLower())
             {
                 project.AddApplicant(username, DeveloperPosition.Designer);
                 client.SendWhisper(username, WhisperMessages.Project.Apply.success);
                 //Add them to the Pastebin
             }
 
-            else if (splitWhisper[1] == DeveloperPosition.Developer.ToString())
+            else if (splitWhisper[1].ToLower() == DeveloperPosition.Developer.ToString().ToLower())
             {
                 project.AddApplicant(username, DeveloperPosition.Developer);
                 client.SendWhisper(username, WhisperMessages.Project.Apply.success);
                 //Add them to the Pastebin
             }
 
-            else if (splitWhisper[1] == DeveloperPosition.Artist.ToString())
+            else if (splitWhisper[1].ToLower() == DeveloperPosition.Artist.ToString().ToLower())
             {
                 project.AddApplicant(username, DeveloperPosition.Artist);
                 client.SendWhisper(username, WhisperMessages.Project.Apply.success);
@@ -314,6 +313,19 @@ public class ProjectManager : MonoBehaviour
                 client.SendWhisper(applicant, WhisperMessages.Project.Accept.successApplicant(project.projectName));
                 client.SendWhisper(username, WhisperMessages.Project.Accept.successLead(applicant, project.projectName));
             }
+        }
+
+        switch (splitWhisper[0].ToLower())
+        {
+            case "add":
+                projectDevelopment.Add(splitWhisper);
+                break;
+            case "move":
+                projectDevelopment.Move(splitWhisper);
+                break;
+            default:
+                Debug.Log("ProjectManager switch broken.");
+                break;
         }
     }
 }

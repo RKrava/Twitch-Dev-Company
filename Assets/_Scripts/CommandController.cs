@@ -1,29 +1,23 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using TwitchLib;
 using TwitchLib.Events.Client;
 using UnityEngine;
 
 public class CommandController : MonoBehaviour
 {
-    private TwitchConnection twitchConnection;
-
+    #region Viewers
     /// <summary>
-    /// Store a viewers ID and current Username
-    /// This is so a name change wont lose a users progress. As the ID stays the same.
-    /// Able to get a viewer/developers ID from their username, and vice versa
+    /// Stores a chatters ID and current username.
+    /// This is so a name change won't affect users progress, as the ID stays the same.
     /// </summary>
     public static List<Viewer> viewers = new List<Viewer>();
 
     /// <summary>
-    /// Looks through the list of viewers for those that match the ID of the one which was
-    /// passed it. Then return the username of the first in the list.
-    /// (There should never be more than one result as that would mean multiple people have the same ID)
+    /// Looks through the list of viewers for one that matches the ID passed.
+    /// Return the username of the first in the list.
+    /// (There should never be more than one result, as that would mean multiple people have the same ID.)
     /// </summary>
     public static string GetUsername(string id)
     {
@@ -33,8 +27,9 @@ public class CommandController : MonoBehaviour
     }
 
     /// <summary>
-    /// Pretty much the same as GetUsername except we are comparing the username
-    /// instead of the ID to look for matches
+    /// Looks through the list of viewers for one that matches the username passed.
+    /// Returns the ID of the first in the list.
+    /// (There should never be more than one result, as that would mean multiple people have the same username.)
     /// </summary>
     public static string GetID(string username)
     {
@@ -43,6 +38,10 @@ public class CommandController : MonoBehaviour
             .ToList()[0].id;
     }
 
+    /// <summary>
+    /// Looks through the list of viewers for one that matches the username passed.
+    /// If there is one, returns true.
+    /// </summary>
     public static bool DoesUsernameExist(string username)
     {
         return viewers
@@ -51,7 +50,11 @@ public class CommandController : MonoBehaviour
             .Count > 0;
     }
 
-    public bool DoesIDExist(string id)
+    /// <summary>
+    /// Looks through the list of viewers for one that matches the ID passed.
+    /// If there is one, returns true.
+    /// </summary>
+    public static bool DoesIDExist(string id)
     {
         return viewers
             .Where(i => (i.id == id))
@@ -60,127 +63,96 @@ public class CommandController : MonoBehaviour
     }
 
     /// <summary>
-    /// Look for a viewer matching the id of what was passed in, get the first result
-    /// and run the ChangeUsername method to change the name to their new one
+    /// Looks through the list of viewers for one that matches the ID passed.
+    /// Gets the first result, and runs the ChangeUsername method to update their username.
     /// </summary>
-    /// <param name="id"></param>
-    /// <param name="username"></param>
-    public void SetUsername(string id, string username)
+    public static void SetUsername(string id, string username)
     {
         viewers
             .Where(i => id == i.id)
             .ToList()[0]
             .ChangeUsername(username);
     }
+    #endregion
 
+    #region Dictionaries
     /// <summary>
     /// Developers
     /// </summary>
-    public static SortedDictionary<string, DeveloperClass> developers { get; set; } = new SortedDictionary<string, DeveloperClass>();
+    public static Dictionary<string, DeveloperClass> developers { get; set; } = new Dictionary<string, DeveloperClass>();
 
     /// <summary>
 	/// Companies
 	/// </summary>
-    private CompanyClass company;
     public static SortedDictionary<string, CompanyClass> companies { get; set; } = new SortedDictionary<string, CompanyClass>();
 
     /// <summary>
 	/// Projects
 	/// </summary>
-    private ProjectClass project;
     public static SortedDictionary<string, ProjectClass> projects { get; set; } = new SortedDictionary<string, ProjectClass>();
-    //Tidy this
+#endregion
 
     private CompanyManager companyManager;
-    private ModTools modTools;
     private ProjectManager projectManager;
+    private ModTools modTools;
+    private ProjectDevelopment projectDevelopment;
+
+    string id;
+    string username;
 
     private void Awake()
     {
         TwitchEvents.DelayedAwake += DelayedAwake;
+
         companyManager = FindObject.companyManager;
-        modTools = FindObject.modTools;
         projectManager = FindObject.projectManager;
+        modTools = FindObject.modTools;
+        projectDevelopment = FindObject.projectDevelopment;
     }
 
     public void DelayedAwake()
     {
-        TwitchConnection.Instance.client.OnJoinedChannel += ClientOnJoinedChannel;
 		TwitchConnection.Instance.client.OnMessageReceived += ClientOnMessageReceived;
 		TwitchConnection.Instance.client.OnChatCommandReceived += ClientOnCommandReceived;
 		TwitchConnection.Instance.client.OnWhisperReceived += ClientOnWhisperReceived;
 		TwitchConnection.Instance.client.OnWhisperCommandReceived += ClientOnWhisperCommandReceived;
 
         GetChannelID();
-
-        //SaveLoad saveLoad = FindObject.saveLoad;
-        //saveLoad.DelayedStart();
     }
 
     private async void GetChannelID()
     {
-        Debug.Log("Getting Channel ID: " + Time.time);
-
         //TODO - Max 1 API call
         var channel = await TwitchAPI.Channels.v3.GetChannelByNameAsync(Settings.channelToJoin);
-
-        Debug.Log("Got Channel ID: " + Time.time);
-
         Settings.channelToJoinID = channel.Id;
     }
 
-    private void ClientOnJoinedChannel(object sender, OnJoinedChannelArgs e)
-    {
-        Debug.Log("CommandController has connected.");
-    }
-
+    #region Check/Add User
     public void AddDeveloper(string username, string id)
     {
-        DeveloperClass developer = new DeveloperClass();
-        developer.developerID = id;
-
         viewers.Add(new Viewer(username, id));
 
+        DeveloperClass developer = new DeveloperClass();
+        developer.developerID = id;
         developers.Add(id, developer);
 
         Debug.Log(username + " has been added as a developer.");
     }
 
-    public void ChangeDeveloperName(string username, string id)
-    {
-        string developerName = GetUsername(id);
-
-        if (developerName != username)
-        {
-            // Update their username, it appears it has changes
-            SetUsername(id, username);
-        }
-    }
-
     private void ClientOnMessageReceived(object sender, OnMessageReceivedArgs e)
     {
-        string id = e.ChatMessage.UserId;
-        string username = e.ChatMessage.DisplayName;
-
-        //Check the user doesn't already have a developer
-        if (!developers.ContainsKey(id))
-        {
-            AddDeveloper(username, id);
-        }
-
-        else
-        {
-            ChangeDeveloperName(username, id);
-        }
+        EnsureMainThread.executeOnMainThread.Enqueue(() => { Messaged(sender, e); });
     }
 
-    private void ClientOnCommandReceived(object sender, OnChatCommandReceivedArgs e)
+    private void Messaged(object sender, OnMessageReceivedArgs e)
     {
-        Debug.Log("I received a message.");
+        id = e.ChatMessage.UserId;
+        username = e.ChatMessage.DisplayName;
 
-        if (string.Compare(e.Command.Command, "twitchtycoon", true) == 0)
+        //Check if the viewer exists on the system
+        if (DoesIDExist(id))
         {
-			client.SendMessage("Twitch Dev Tycoon is a Twitch version of games like Game Dev Tycoon and Software Inc. If you'd like to get involved, whisper me '!help'.");
+            AddDeveloper(username, id);
         }
     }
 
@@ -191,18 +163,28 @@ public class CommandController : MonoBehaviour
 
     private void WhisperedMessage(object sender, OnWhisperReceivedArgs e)
     {
-        string id = e.WhisperMessage.UserId;
-        string username = e.WhisperMessage.DisplayName;
+        id = e.WhisperMessage.UserId;
+        username = e.WhisperMessage.DisplayName;
 
-        //Add if they whisper
-        if (!developers.ContainsKey(id))
+        //Check if the viewer exists on the system
+        if (DoesIDExist(id))
         {
             AddDeveloper(username, id);
         }
+    }
+    #endregion
 
-        else
+    #region Commands
+    private void ClientOnCommandReceived(object sender, OnChatCommandReceivedArgs e)
+    {
+        EnsureMainThread.executeOnMainThread.Enqueue(() => { MessagedCommand(sender, e); });
+    }
+
+    private void MessagedCommand(object sender, OnChatCommandReceivedArgs e)
+    {
+        if (string.Compare(e.Command.Command, "streamtycoon", true) == 0)
         {
-            ChangeDeveloperName(username, id);
+            client.SendMessage("Stream Dev Tycoon is a Twitch version of games like Game Dev Tycoon and Software Inc. If you'd like to get involved, whisper me '!help'.");
         }
     }
 
@@ -217,18 +199,17 @@ public class CommandController : MonoBehaviour
 
         List<string> splitWhisper = e.ArgumentsAsList;
 
-        string id = e.WhisperMessage.UserId;
-        string username = e.WhisperMessage.DisplayName;
+        id = e.WhisperMessage.UserId;
+        username = e.WhisperMessage.DisplayName;
 
-        // Check they have been added as a developer
-        if (!developers.ContainsKey(id))
+        //Check if the viewer exists on the system
+        if (DoesIDExist(id))
         {
 			client.SendWhisper(username, WhisperMessages.Developer.notDeveloper);
             return;
         }
 
-        Debug.Log("Do I make it here?");
-
+        //Check if the viewer is a mod
         if (developers[id].mod == true)
         {
             if (string.Compare(e.Command, "mod", true) == 0)
@@ -237,24 +218,40 @@ public class CommandController : MonoBehaviour
             }
         }
 
-        if (string.Compare(e.Command, "money", true) == 0)
+        switch (e.Command.ToLower())
         {
-            client.SendWhisper(username, WhisperMessages.Developer.money(developers[id].developerMoney));
-        }
-
-        else if (string.Compare(e.Command, "skills", true) == 0)
-        {
-            client.SendWhisper(username, WhisperMessages.Developer.skills(developers[id].GetSkillLevel(SkillTypes.LeaderSkills.Leadership), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Design), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Development), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Art), developers[id].GetSkillLevel(SkillTypes.DeveloperSkills.Marketing)));
-        }
-
-        else if (string.Compare(e.Command, "company", true) == 0)
-        {
-            companyManager.SendWhisper(id, username, splitWhisper);
-        }
-
-        else if (string.Compare(e.Command, "project", true) == 0)
-        {
-            projectManager.SendWhisper(id, username, splitWhisper);
+            case "money":
+                client.SendWhisper(username, WhisperMessages.Developer.money(developers[id].developerMoney));
+                break;
+            case "skills":
+                Func<SkillTypes.DeveloperSkills, int> devLevel = type => developers[id].GetSkillLevel(type);
+                Func<SkillTypes.LeaderSkills, int> leadLevel = type => developers[id].GetSkillLevel(type);
+                client.SendWhisper(username, WhisperMessages.Developer.skills(
+                    leadLevel(SkillTypes.LeaderSkills.Leadership), leadLevel(SkillTypes.LeaderSkills.Motivation),
+                    devLevel(SkillTypes.DeveloperSkills.Design), devLevel(SkillTypes.DeveloperSkills.Development),
+                    devLevel(SkillTypes.DeveloperSkills.Art), devLevel(SkillTypes.DeveloperSkills.Marketing)));
+                break;
+            case "xp":
+                Func<SkillTypes.DeveloperSkills, int> devXP = type => developers[id].GetXP(type);
+                Func<SkillTypes.LeaderSkills, int> leadXP = type => developers[id].GetXP(type);
+                client.SendWhisper(username, WhisperMessages.Developer.xp(
+                    leadXP(SkillTypes.LeaderSkills.Leadership), leadXP(SkillTypes.LeaderSkills.Motivation),
+                    devXP(SkillTypes.DeveloperSkills.Design), devXP(SkillTypes.DeveloperSkills.Development),
+                    devXP(SkillTypes.DeveloperSkills.Art), devXP(SkillTypes.DeveloperSkills.Marketing)));
+                break;
+            case "company":
+                companyManager.SendWhisper(id, username, splitWhisper);
+                break;
+            case "project":
+                projectManager.SendWhisper(id, username, splitWhisper);
+                break;
+            case "answer":
+                projectDevelopment.Answer(username, splitWhisper);
+                break;
+            default:
+                Debug.Log("No options found in CommandController.");
+                break;
         }
     }
+#endregion
 }

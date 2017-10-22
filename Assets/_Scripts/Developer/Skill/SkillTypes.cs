@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public class SkillTypes : MonoBehaviour
+﻿public class SkillTypes
 {
 	/// <summary>
 	/// Skills which a 'Leader' has/uses.

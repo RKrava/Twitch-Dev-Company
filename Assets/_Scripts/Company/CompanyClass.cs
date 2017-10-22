@@ -27,12 +27,6 @@ public class CompanyClass
 	public void AddFounder(string userID) => founderIDs.Add(userID);
     public void RemoveFounder(string userID) => founderIDs.Remove(userID);
 	public int FounderCount => founderIDs.Count;
-  
-  //public List<string> invitedIDs = new List<string>();
-	//public bool HasPendingInvite(string userID) => invitedIDs.Contains(userID);
-	//public void AddInvite(string userID) => invitedIDs.Add(userID);
-	//public string GetFirstInvite() => invitedIDs[0];
-	//public void RemoveFirstInvite() => invitedIDs.RemoveAt(0);
 
 	List<CompanyInvite> invites = new List<CompanyInvite>();
 	public void AddInvite(CompanyInvite invite) => invites.Add(invite);

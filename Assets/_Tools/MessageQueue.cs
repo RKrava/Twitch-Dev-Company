@@ -58,12 +58,17 @@ public class MessageQueue : MonoBehaviour
             {
                 client.SendWhisperQueued(message.username, message.message);
 
-                if (message.timer == Timers.ProjectApplication)
+                if (message.timer == Timers.Null)
+                {
+                    Debug.Log("Do JACK SHIT.");
+                }
+
+                else if (message.timer == Timers.ProjectApplication)
                 {
                     ProjectManager.project.projectApplication = Activator.CreateInstance<ProjectApplication>();
                 }
 
-                if (message.timer == Timers.CompanyInvite)
+                else if (message.timer == Timers.CompanyInvite)
                 {
                     string invitedID = CommandController.GetID(message.username);
                     string[] splitMessage = message.message.Split(' ');
@@ -87,6 +92,11 @@ public class MessageQueue : MonoBehaviour
                     CompanyClass company = CommandController.companies[companyName];
 
                     company.AddInvite(new CompanyInvite(company, invitedID, message.username, username));
+                }
+
+                else if (message.timer == Timers.QuestionTimer)
+                {
+                    new QuestionTimer(message.username);
                 }
             }
 
@@ -137,6 +147,8 @@ public class Message
 //Change to suit whatever timers you need
 public enum Timers
 {
+    Null,
     CompanyInvite,
-    ProjectApplication
+    ProjectApplication,
+    QuestionTimer,
 }

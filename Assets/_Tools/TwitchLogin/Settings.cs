@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [Serializable]
-public class Settings : MonoBehaviour
+public class Settings
 {
     public static string username;
     public static string clientId;

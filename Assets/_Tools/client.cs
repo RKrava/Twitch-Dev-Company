@@ -1,54 +1,25 @@
-﻿using UnityEngine;
-
-#pragma warning disable CS0108
-public class client : MonoBehaviour
+﻿#pragma warning disable CS0108
+public class client
 {
-    public static void SendMessage(string message)
-    {
-        MessageQueue.messageQueue.Enqueue(new Message(message));
-    }
+    /// <summary>
+    /// Sends bot messages/whispers to the main queue.
+    /// </summary>
+    /// <param name="message"></param>
+    public static void SendMessage(string message, Timers timer = Timers.Null) => MessageQueue.messageQueue.Enqueue(new Message(message, timer));
+    public static void SendWhisper(string username, string message, Timers timer = Timers.Null) => MessageQueue.messageQueue.Enqueue(new Message(username, message, timer));
 
-    public static void SendMessage(string message, Timers timer)
-    {
-        MessageQueue.messageQueue.Enqueue(new Message(message, timer));
-    }
+    /// <summary>
+    /// Sends bot messages/whispers to the mod queue.
+    /// This is emptied first, as mod commands can affect the game.
+    /// </summary>
+    /// <param name="message"></param>
+    public static void SendModMessage(string message, Timers timer = Timers.Null) => MessageQueue.modQueue.Enqueue(new Message(message, timer));
+    public static void SendModWhisper(string username, string message, Timers timer = Timers.Null) => MessageQueue.modQueue.Enqueue(new Message(username, message, timer));
 
-    public static void SendWhisper(string username, string message)
-    {
-        MessageQueue.messageQueue.Enqueue(new Message(username, message));
-    }
-
-    public static void SendWhisper(string username, string message, Timers timer)
-    {
-        MessageQueue.messageQueue.Enqueue(new Message(username, message, timer));
-    }
-
-    public static void SendModMessage(string message)
-    {
-        MessageQueue.modQueue.Enqueue(new Message(message));
-    }
-
-    public static void SendModMessage(string message, Timers timer)
-    {
-        MessageQueue.modQueue.Enqueue(new Message(message, timer));
-    }
-
-    public static void SendModWhisper(string username, string message)
-    {
-        MessageQueue.modQueue.Enqueue(new Message(username, message));
-    }
-
-    public static void SendModWhisper(string username, string message, Timers timer)
-    {
-        MessageQueue.modQueue.Enqueue(new Message(username, message, timer));
-    }
-
-    //Purely exists to make sending messages and whispers easier
+    /// <summary>
+    /// Once the messages are dequeued, they are sent through here to the Twitch Client.
+    /// </summary>
+    /// <param name="message"></param>
     public static void SendMessageQueued(string message) => TwitchConnection.Instance.SendMessage(message);
-    public static void SendWhisperQueued(string username, string message)
-    {
-        //Leave debug to allow us to test delay when the game is complete
-        //Debug.Log("Client Script: " + Time.time);
-        TwitchConnection.Instance.SendWhisper(username, message);
-    }
+    public static void SendWhisperQueued(string username, string message) => TwitchConnection.Instance.SendWhisper(username, message);
 }

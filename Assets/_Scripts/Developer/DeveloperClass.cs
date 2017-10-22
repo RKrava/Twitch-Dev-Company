@@ -46,4 +46,10 @@ public class DeveloperClass
     public void AwardXP(SkillTypes.LeaderSkills skill, int xp) => leaderSkills[skill].AddXP(xp);
     public int GetSkillLevel(SkillTypes.DeveloperSkills skill) => developerSkills[skill].skillLevel;
     public int GetSkillLevel(SkillTypes.LeaderSkills skill) => leaderSkills[skill].skillLevel;
+    public int GetXP(SkillTypes.DeveloperSkills skill) => developerSkills[skill].skillXP;
+    public int GetXP(SkillTypes.LeaderSkills skill) => leaderSkills[skill].skillXP;
+
+    public int bonus = 1;
+
+    public Feature feature;
 }

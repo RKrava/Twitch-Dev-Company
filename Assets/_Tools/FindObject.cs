@@ -116,4 +116,18 @@ public class FindObject : MonoBehaviour
             return _loginCanvas;
         }
     }
+
+    private static ProjectDevelopment _projectDevelopment;
+    public static ProjectDevelopment projectDevelopment
+    {
+        get
+        {
+            if (_projectDevelopment == null)
+            {
+                _projectDevelopment = FindObjectOfType<ProjectDevelopment>();
+            }
+
+            return _projectDevelopment;
+        }
+    }
 }
