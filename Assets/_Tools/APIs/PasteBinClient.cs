@@ -37,14 +37,16 @@ namespace PasteBin
             parameters[ApiParameters.UserName] = userName;
             parameters[ApiParameters.UserPassword] = password;
 
-            WebClient client = new WebClient();
-            byte[] bytes = client.UploadValues(_apiLoginUrl, parameters);
-            string resp = GetResponseText(bytes);
-            if (resp.StartsWith("Bad API request"))
-                throw new PasteBinApiException(resp);
+            using (WebClient client = new WebClient())
+            {
+                byte[] bytes = client.UploadValues(_apiLoginUrl, parameters);
+                string resp = GetResponseText(bytes);
+                if (resp.StartsWith("Bad API request"))
+                    throw new PasteBinApiException(resp);
 
-            _userName = userName;
-            _apiUserKey = resp;
+                _userName = userName;
+                _apiUserKey = resp;
+            }
         }
 
         public void Logout()
@@ -69,12 +71,14 @@ namespace PasteBin
             SetIfNotEmpty(parameters, ApiParameters.PasteExpireDate, FormatExpireDate(entry.Expiration));
             SetIfNotEmpty(parameters, ApiParameters.UserKey, _apiUserKey);
 
-            WebClient client = new WebClient();
-            byte[] bytes = client.UploadValues(_apiPostUrl, parameters);
-            string resp = GetResponseText(bytes);
-            if (resp.StartsWith("Bad API request"))
-                throw new PasteBinApiException(resp);
-            return resp;
+            using (WebClient client = new WebClient())
+            {
+                byte[] bytes = client.UploadValues(_apiPostUrl, parameters);
+                string resp = GetResponseText(bytes);
+                if (resp.StartsWith("Bad API request"))
+                    throw new PasteBinApiException(resp);
+                return resp;
+            }
         }
 
         private static string FormatExpireDate(PasteBinExpiration expiration)

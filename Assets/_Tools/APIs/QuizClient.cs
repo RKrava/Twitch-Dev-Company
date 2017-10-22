@@ -21,9 +21,11 @@ namespace Quiz
             string url = _apiTokenUrl + ApiParameters.TokenRequest;
             Uri uri = new Uri(url);
 
-            WebClient client = new WebClient();
-            string resp = await client.DownloadStringTaskAsync(uri);
-            _sessionToken = RequestSession(resp);
+            using (WebClient client = new WebClient())
+            {
+                string resp = await client.DownloadStringTaskAsync(uri);
+                _sessionToken = RequestSession(resp);
+            }
         }
 
         public async Task ResetToken()
@@ -35,9 +37,11 @@ namespace Quiz
 
             Uri uri = new Uri(url);
 
-            WebClient client = new WebClient();
-            string resp = await client.DownloadStringTaskAsync(uri);
-            _sessionToken = RequestSession(resp);
+            using (WebClient client = new WebClient())
+            {
+                string resp = await client.DownloadStringTaskAsync(uri);
+                _sessionToken = RequestSession(resp);
+            }
         }
 
         public async Task<RootObject> GenerateQuestions(int amount, QuizCategories category, QuizDifficulty difficulty, QuizType type)
@@ -80,10 +84,12 @@ namespace Quiz
 
             Uri uri = new Uri(url);
 
-            WebClient client = new WebClient();
-            string resp = await client.DownloadStringTaskAsync(uri);
-            RootObject questions = GetQuestions(resp);
-            return questions;
+            using (WebClient client = new WebClient())
+            {
+                string resp = await client.DownloadStringTaskAsync(uri);
+                RootObject questions = GetQuestions(resp);
+                return questions;
+            }
         }
 
         private string RequestSession(string resp)
