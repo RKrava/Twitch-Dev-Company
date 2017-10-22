@@ -6,9 +6,6 @@ public class FeatureSO : ScriptableObject
     public string featureName;
     public int featureCost;
 
-    private const int MinValue = 0;
-    private const int MaxValue = 5000;
-
     public int featureDesign = -1;
     public bool designRequired = false;
 
