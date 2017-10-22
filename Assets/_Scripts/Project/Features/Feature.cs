@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 
 [Serializable]
 public class Feature
 {
     public string featureName;
-    public FeatureQuality maxQuality = FeatureQuality.good;
-    public FeatureQuality featureQuality = FeatureQuality.trulyAbysmal;
+    public FeatureQuality maxQuality = FeatureQuality.Good;
+    public FeatureQuality featureQuality = FeatureQuality.TrulyAbysmal;
     
     public int qualityCounter = 0;
 
@@ -25,22 +24,22 @@ public class Feature
 
 public enum FeatureQuality
 {
-    nothing,
-    trulyAbysmal,
-    horrendous,
-    dreadful,
-    terrible,
-    poor,
-    mediocre,
-    decent,
-    pleasant,
-    good,
-    sweet,
-    splendid,
-    awesome,
-    great,
-    terrific,
-    wonderful,
-    incredible,
-    perfect,
+    Nothing,
+    TrulyAbysmal,
+    Horrendous,
+    Dreadful,
+    Terrible,
+    Poor,
+    Mediocre,
+    Decent,
+    Pleasant,
+    Good,
+    Sweet,
+    Splendid,
+    Awesome,
+    Great,
+    Terrific,
+    Wonderful,
+    Incredible,
+    Perfect,
 }
