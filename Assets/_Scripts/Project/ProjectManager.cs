@@ -140,7 +140,7 @@ public class ProjectManager : MonoBehaviour
 
                 //Create the project
                 project = new ProjectClass(projectName, username); //Reason we store name over ID is because project is saved in their profile anyway, means we can look back at it easier and see what they worked on
-                project.category = ProjectClass.Categories.games;
+                project.category = Categories.Games;
 
                 client.SendWhisper(username, WhisperMessages.Project.Start.success(projectName), Timers.ProjectApplication);
                 client.SendMessage(WhisperMessages.Project.Start.canApply(username));
@@ -328,11 +328,4 @@ public class ProjectManager : MonoBehaviour
                 break;
         }
     }
-}
-
-public enum DeveloperPosition
-{
-    Designer,
-    Developer,
-    Artist
 }
