@@ -19,11 +19,17 @@ public class FeatureSOEditor : Editor
 
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField("Name", GUILayout.Width(80f));
-        target.featureName = EditorGUILayout.TextField("");
+        target.featureName = EditorGUILayout.TextField(target.featureName);
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.LabelField("Cost", GUILayout.Width(80f));
+        target.featureCost = EditorGUILayout.IntField(target.featureCost);
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.Space();
 
+        EditorGUILayout.LabelField("Skills", EditorStyles.boldLabel);
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField("Design:", GUILayout.Width(skillLabelWidth));
         EditorGUILayout.LabelField("Required:", GUILayout.Width(80f));
