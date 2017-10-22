@@ -10,10 +10,7 @@ public class ProjectClass
     public string projectLead;
     public Dictionary<string, DeveloperPosition> developers = new Dictionary<string, DeveloperPosition>();
 
-    public enum Categories
-    {
-        games,
-    };
+    
     public Categories category;
 
     public bool sequel = false;
