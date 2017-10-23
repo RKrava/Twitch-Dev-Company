@@ -3,52 +3,75 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ProjectDevelopment : MonoBehaviour
 {
+    private ProjectManager projectManager;
     private ProjectClass project;
     public DeveloperClass developerObject;
 
     public FeatureList featureList;
     private List<FeatureSO> featuresSO;
-    public List<Feature> features;
 
+    public List<Feature> features;
     private Feature feature;
+
+    private GameObject featureObject;
+    private List<GameObject> featureObjects = new List<GameObject>();
+
+    private Text featureNameUI;
+    private Text qualityUI;
+    private Text designPointsRequiredUI;
+    private Text designPointsUI;
+    private Text developmentPointsRequiredUI;
+    private Text developmentPointsUI;
+    private Text artPointsRequiredUI;
+    private Text artPointsUI;
 
     public int featureDesignIndex;
     public int featureDevelopIndex;
     public int featureArtIndex;
+    public int featureLeadIndex;
 
     private System.Random rnd = new System.Random();
 
     public static Dictionary<string, Question> questionDictionary = new Dictionary<string, Question>();
 
-    private bool FeatureExists(string featureName)
+    private bool FeatureSOExists(string featureName)
     {
         return featuresSO.Where(i => i.featureName == featureName).ToList().Count > 0;
     }
 
-    private FeatureSO FeatureFromName(string featureName)
+    private FeatureSO FeatureSOFromName(string featureName)
     {
         return featuresSO.Where(i => i.featureName == featureName).ToList()[0];
     }
 
-    private void NextFeature(ref int index)
+    private bool FeatureExists(string featureName, List<Feature> features)
     {
-        index++;
+        return features.Where(i => i.featureName == featureName).ToList().Count > 0;
+    }
+
+    private int FeatureFromName(string featureName, List<Feature> features)
+    {
+        return features.FindIndex(i => i.featureName == featureName);
+    }
+
+    private void Awake()
+    {
+        projectManager = FindObject.projectManager;
     }
 
     public void Add(List<string> splitWhisper)
     {
-        List<string> splitWhisperTest = splitWhisper;
-
         featuresSO = featureList.features;
 
         if (string.Compare(splitWhisper[1], "feature", true) == 0)
         {
             string featureName;
 
-            if (FeatureExists(splitWhisper[2]))
+            if (FeatureSOExists(splitWhisper[2]))
             {
                 featureName = splitWhisper[2];
             }
@@ -58,7 +81,15 @@ public class ProjectDevelopment : MonoBehaviour
                 return;
             }
 
-            FeatureSO featureSO = FeatureFromName(featureName);
+            project = ProjectManager.project;
+
+            if (FeatureExists(featureName, project.features))
+            {
+                client.SendWhisper(project.projectLead, WhisperMessages.Project.Add.onlyOne(featureName));
+                return;
+            }
+
+            FeatureSO featureSO = FeatureSOFromName(featureName);
 
             feature = new Feature();
             feature.featureName = featureSO.name;
@@ -93,26 +124,72 @@ public class ProjectDevelopment : MonoBehaviour
             {
                 feature.artPointsRequired = (int)(featureSO.featureArt * Mathf.Pow(0.8f, 8));
             }
-            
-            project = ProjectManager.project;
 
+            
             string projectLeadID = CommandController.GetID(project.projectLead);
             string companyName = CommandController.developers[projectLeadID].companyName;
             CompanyClass company = CommandController.companies[companyName];
+
+            featureObject = Instantiate(projectManager.featureUI, projectManager.featuresUI);
+            featureObjects.Add(featureObject);
+
+            featureNameUI = featureObject.GetComponent<Text>();
+            featureNameUI.text = feature.featureName;
+
+            designPointsRequiredUI = featureObject.transform.Find("Design Points Required:").GetComponent<Text>();
+            designPointsUI = featureObject.transform.Find("Design Points:").GetComponent<Text>();
+            designPointsRequiredUI.text = $"Design Points Required: {feature.designPointsRequired}";
+
+            developmentPointsRequiredUI = featureObject.transform.Find("Development Points Required:").GetComponent<Text>();
+            developmentPointsUI = featureObject.transform.Find("Development Points:").GetComponent<Text>();
+            developmentPointsRequiredUI.text = $"Development Points Required: {feature.developmentPointsRequired}";
+
+            artPointsRequiredUI = featureObject.transform.Find("Art Points Required:").GetComponent<Text>();
+            artPointsUI = featureObject.transform.Find("Art Points:").GetComponent<Text>();
+            artPointsRequiredUI.text = $"Art Points Required: {feature.artPointsRequired}";
+
+            if (featureObject == null)
+            {
+
+            }
+
+            else
+            {
+                featureObjects.Add(featureObject);
+            }
 
             if (company.HasEnoughMoney(cost))
             {
                 company.SpendMoney(cost);
                 project.cost += cost;
                 project.features.Add(feature);
+                projectManager.costUI.text = $"Cost: £{project.cost}";
                 Debug.Log(ProjectManager.project.features[0].featureName);
             }
         }
     }
 
-    public void Move(List<string> splitWhisper)
+    public void Move(List<string> splitWhisper, string username)
     {
+        if (username == project.projectLead)
+        {
+            if (FeatureExists(splitWhisper[1], project.features))
+            {
+                featureLeadIndex = FeatureFromName(splitWhisper[1], project.features);
 
+                client.SendWhisper(username, WhisperMessages.Project.Move.success(splitWhisper[1]));
+            }
+
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.Project.Move.fail(splitWhisper[1]));
+            }
+        }
+
+        else
+        {
+            client.SendWhisper(username, WhisperMessages.Project.notProjectLead);
+        }
     }
 
     public void Answer(string username, List<string> splitWhisper)
@@ -154,13 +231,21 @@ public class ProjectDevelopment : MonoBehaviour
                 answers = 2;
             }
 
-            //TODO - Parse Int
-            int answer = int.Parse(splitWhisper[0]);
+            int answer = 0;
+
+            try
+            {
+                answer = int.Parse(splitWhisper[0]);
+            }
+
+            catch
+            {
+                client.SendWhisper(username, WhisperMessages.Project.Question.answerSyntax);
+            }
 
             if (answer > answers)
             {
-                //TODO - Add a whisper message
-                Debug.Log("Not an option.");
+                client.SendWhisper(username, WhisperMessages.Project.Question.noOption);
                 return;
             }
 
@@ -218,7 +303,7 @@ public class ProjectDevelopment : MonoBehaviour
                             features[featureArtIndex].maxQuality++;
                             client.SendWhisper(username, WhisperMessages.Project.Question.hardCorrect(features[featureArtIndex].featureName, features[featureArtIndex].maxQuality.ToString()));
                             break;
-                    } 
+                    }
                 }
             }
 
@@ -231,9 +316,10 @@ public class ProjectDevelopment : MonoBehaviour
 
                 else if (question.difficulty == "medium")
                 {
+                    int oldBonus = developer.bonus;
                     developer.bonus = 0;
 
-                    EnsureMainThread.executeOnMainThread.Enqueue(() => { StartCoroutine(ResetBonus(developer, 60)); });
+                    EnsureMainThread.executeOnMainThread.Enqueue(() => { StartCoroutine(ResetBonus(developer, 60, oldBonus)); });
 
                     client.SendWhisper(username, WhisperMessages.Project.Question.mediumWrong);
                 }
@@ -262,11 +348,11 @@ public class ProjectDevelopment : MonoBehaviour
         }
     }
 
-    IEnumerator ResetBonus(DeveloperClass developer, int time)
+    IEnumerator ResetBonus(DeveloperClass developer, int time, int oldBonus)
     {
         yield return new WaitForSeconds(time);
 
-        developer.bonus = 1;
+        developer.bonus = oldBonus;
 
         yield return null;
     }
@@ -277,6 +363,7 @@ public class ProjectDevelopment : MonoBehaviour
         featureDesignIndex = 0;
         featureDevelopIndex = 0;
         featureArtIndex = 0;
+        featureLeadIndex = 0;
 
         project = ProjectManager.project;
 
@@ -292,7 +379,7 @@ public class ProjectDevelopment : MonoBehaviour
         foreach (string developer in project.developers.Keys)
         {
             int time = rnd.Next(60);
-            
+
             EnsureMainThread.executeOnMainThread.Enqueue(() => { StartCoroutine(Question(developer, project.developers[developer], time)); });
         }
     }
@@ -316,14 +403,25 @@ public class ProjectDevelopment : MonoBehaviour
 
     private void ProjectUpdate()
     {
+        DeveloperClass projectLead = CommandController.developers[CommandController.GetID(project.projectLead)];
+        int motivationBonus = Mathf.CeilToInt((projectLead.GetSkillLevel(SkillTypes.LeaderSkills.Motivation) + 1f) / 5f);
+
+        Debug.Log(motivationBonus);
+
         foreach (string developer in project.developers.Keys)
         {
             developerObject = CommandController.developers[CommandController.GetID(developer)];
             int bonus = developerObject.bonus;
+            int leadBonus = 1;
 
             if (project.developers[developer] == DeveloperPosition.Designer)
             {
                 int points = developerObject.GetSkillLevel(SkillTypes.DeveloperSkills.Design);
+
+                if (points < 3)
+                {
+                    points = 3;
+                }
 
                 while (features[featureDesignIndex].designPoints >= features[featureDesignIndex].designPointsRequired)
                 {
@@ -340,7 +438,7 @@ public class ProjectDevelopment : MonoBehaviour
                         features[featureDesignIndex].designQualityHit++;
 
                         features[featureDesignIndex].designPointsRequired = (int)(features[featureDesignIndex].designPointsRequired * 1.2f);
-                    }  
+                    }
                 }
 
                 if (featureDesignIndex + 1 > features.Count)
@@ -351,15 +449,36 @@ public class ProjectDevelopment : MonoBehaviour
 
                 else
                 {
-                    features[featureDesignIndex].designPoints += points * bonus;
-                    developerObject.developerSkills[SkillTypes.DeveloperSkills.Design].AddXP(2 * bonus);
-                    Debug.Log($"{features[featureDesignIndex].featureName} | {feature.designPoints}");
+                    if (featureDesignIndex == featureLeadIndex)
+                    {
+                        leadBonus = motivationBonus;
+                        projectLead.AwardXP(SkillTypes.LeaderSkills.Motivation, 5, projectLead);
+                    }
+
+                    feature = features[featureDesignIndex];
+
+                    feature.designPoints += points * bonus * leadBonus;
+                    developerObject.AwardXP(SkillTypes.DeveloperSkills.Design, 2 * bonus, developerObject);
+
+                    featureObject = featureObjects[featureDesignIndex];
+
+                    designPointsRequiredUI = featureObject.transform.Find("Design Points Required:").GetComponent<Text>();
+                    designPointsUI = featureObject.transform.Find("Design Points:").GetComponent<Text>();
+                    designPointsRequiredUI.text = $"Design Points Required: {feature.designPointsRequired}";
+                    designPointsUI.text = $"Design Points: {feature.designPoints}";
+
+                    Debug.Log($"{feature.featureName} | {feature.designPoints}");
                 }
             }
 
             else if (project.developers[developer] == DeveloperPosition.Developer)
             {
                 int points = developerObject.GetSkillLevel(SkillTypes.DeveloperSkills.Development);
+
+                if (points < 3)
+                {
+                    points = 3;
+                }
 
                 while (feature.developmentPoints >= feature.developmentPointsRequired)
                 {
@@ -388,15 +507,36 @@ public class ProjectDevelopment : MonoBehaviour
 
                 else
                 {
-                    features[featureDevelopIndex].developmentPoints += points * bonus;
-                    developerObject.developerSkills[SkillTypes.DeveloperSkills.Development].AddXP(2 * bonus);
-                    Debug.Log($"{features[featureDevelopIndex].featureName} | {feature.developmentPoints}");
+                    if (featureDevelopIndex == featureLeadIndex)
+                    {
+                        leadBonus = motivationBonus;
+                        projectLead.AwardXP(SkillTypes.LeaderSkills.Motivation, 5, projectLead);
+                    }
+
+                    feature = features[featureDevelopIndex];
+
+                    feature.developmentPoints += points * bonus * leadBonus;
+                    developerObject.AwardXP(SkillTypes.DeveloperSkills.Development, 2 * bonus, developerObject);
+
+                    featureObject = featureObjects[featureDesignIndex];
+
+                    developmentPointsRequiredUI = featureObject.transform.Find("Development Points Required:").GetComponent<Text>();
+                    developmentPointsUI = featureObject.transform.Find("Development Points:").GetComponent<Text>();
+                    developmentPointsRequiredUI.text = $"Development Points Required: {feature.developmentPointsRequired}";
+                    developmentPointsUI.text = $"Development Points: {feature.developmentPoints}";
+
+                    Debug.Log($"{feature.featureName} | {feature.developmentPoints}");
                 }
             }
 
             else if (project.developers[developer] == DeveloperPosition.Artist)
             {
                 int points = developerObject.GetSkillLevel(SkillTypes.DeveloperSkills.Art);
+
+                if (points < 3)
+                {
+                    points = 3;
+                }
 
                 while (feature.artPoints >= feature.artPointsRequired)
                 {
@@ -424,9 +564,25 @@ public class ProjectDevelopment : MonoBehaviour
 
                 else
                 {
-                    features[featureArtIndex].artPoints += points * bonus;
-                    developerObject.developerSkills[SkillTypes.DeveloperSkills.Art].AddXP(2 * bonus);
-                    Debug.Log($"{features[featureArtIndex].featureName} | {feature.artPoints}");
+                    if (featureArtIndex == featureLeadIndex)
+                    {
+                        leadBonus = motivationBonus;
+                        projectLead.AwardXP(SkillTypes.LeaderSkills.Motivation, 5, projectLead);
+                    }
+
+                    feature = features[featureDesignIndex];
+
+                    feature.artPoints += points * bonus * leadBonus;
+                    developerObject.AwardXP(SkillTypes.DeveloperSkills.Art, 2 * bonus, developerObject);
+
+                    featureObject = featureObjects[featureDesignIndex];
+
+                    artPointsRequiredUI = featureObject.transform.Find("Art Points Required:").GetComponent<Text>();
+                    artPointsUI = featureObject.transform.Find("Art Points:").GetComponent<Text>();
+                    artPointsRequiredUI.text = $"Art Points Required: {feature.artPointsRequired}";
+                    artPointsUI.text = $"Art Points: {feature.artPoints}";
+
+                    Debug.Log($"{feature.featureName} | {feature.artPoints}");
                 }
             }
         }
@@ -452,15 +608,21 @@ public class ProjectDevelopment : MonoBehaviour
             int min = Mathf.Min((int)feature.designQualityHit, Mathf.Min((int)feature.developmentQualityHit, (int)feature.artQualityHit));
 
             feature.featureQuality = (FeatureQuality)min;
+
+            featureObject = featureObjects[FeatureFromName(feature.featureName, features)];
+
+            qualityUI = featureObject.transform.Find("Quality").GetComponent<Text>();
+            qualityUI.text = $"Quality: {feature.featureQuality}";
         }
 
-        //Delay it by a minute
         EnsureMainThread.executeOnMainThread.Enqueue(() => { Invoke("ReviewScore", 60); });
         EnsureMainThread.executeOnMainThread.Enqueue(() => { Invoke("Sales", 120); });
     }
 
     private void ReviewScore()
     {
+        Debug.Log("Review Score");
+
         int totalPoints = 0;
 
         foreach (Feature feature in features)
@@ -469,21 +631,53 @@ public class ProjectDevelopment : MonoBehaviour
         }
 
         //17 references the FeatureQuality enum, and 10 brings it to an actual number
-        int score = (((totalPoints / features.Count) / 17) * 10);
+        project.overallRating = (((totalPoints / features.Count) / 17) * 10);
 
-        project.overallRating = score;
+        projectManager.reviewScoreUI.text = $"Review Score: {project.overallRating} out of 10";
 
-        //TODO - SendMessage
+        if (project.overallRating > 5)
+        {
+            int bonus = (project.overallRating - 5) * 5;
+
+            foreach (string developer in project.developers.Keys)
+            {
+                developerObject = CommandController.developers[CommandController.GetID(developer)];
+
+                if (project.developers[developer] == DeveloperPosition.Designer)
+                {
+                    developerObject.AwardXP(SkillTypes.DeveloperSkills.Design, 2 * bonus, developerObject);
+                }
+
+                else if (project.developers[developer] == DeveloperPosition.Developer)
+                {
+                    developerObject.AwardXP(SkillTypes.DeveloperSkills.Development, 2 * bonus, developerObject);
+                }
+
+                else if (project.developers[developer] == DeveloperPosition.Artist)
+                {
+                    developerObject.AwardXP(SkillTypes.DeveloperSkills.Art, 2 * bonus, developerObject);
+                }
+
+                client.SendWhisper(developer, WhisperMessages.Project.Complete.reviewBonus(project.overallRating, bonus));
+            }
+        }
+
+        client.SendMessage(WhisperMessages.Project.Complete.reviewScore(project.projectName, project.overallRating));
     }
 
     private void Sales()
     {
+        Debug.Log("Sales");
+
         int revenue = project.overallRating * features.Count * 1000;
 
         project.revenue = revenue;
         project.profit = project.revenue - project.cost;
 
-        //TODO - SendWhisper
+        projectManager.revenueUI.text = $"Revenue: £{project.revenue}";
+        projectManager.profitUI.text = $"Revenue: £{project.profit}";
+
+        client.SendWhisper(project.projectLead, WhisperMessages.Project.Complete.sales(project.projectName, project.cost, project.revenue, project.profit));
 
         CommandController.projects.Add(project.projectName, project);
         ProjectManager.startProject = false;

@@ -161,7 +161,8 @@ public class ModTools : MonoBehaviour
 
                 Debug.Log($"{targetUsername} + {targetID} + {skill} + {amount}");
 
-                CommandController.developers[targetID].developerSkills[skill].AddXP(amount);
+                //CommandController.developers[targetID].developerSkills[skill].AddXP(amount);
+                CommandController.developers[targetID].AwardXP(skill, amount, CommandController.developers[targetID]);
 
                 client.SendModWhisper(username, WhisperMessages.Mod.Add.xpSuccess(amount, targetUsername, skill.ToString()));
             }
@@ -188,7 +189,8 @@ public class ModTools : MonoBehaviour
                 {
                     int xpRemaining = CommandController.developers[targetID].developerSkills[skill].XpRemaining;
 
-                    CommandController.developers[targetID].developerSkills[skill].AddXP(xpRemaining);
+                    //CommandController.developers[targetID].developerSkills[skill].AddXP(xpRemaining);
+                    CommandController.developers[targetID].AwardXP(skill, xpRemaining, CommandController.developers[targetID]);
 
                     Debug.Log(CommandController.developers[targetID].developerSkills[skill].skillLevel);
 

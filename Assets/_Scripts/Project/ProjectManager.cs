@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ProjectManager : MonoBehaviour
 {
@@ -10,11 +11,27 @@ public class ProjectManager : MonoBehaviour
     public static ProjectClass project;
     public static bool startProject;
 
+    public Text projectNameUI;
+    public Text projectLeadUI;
+    public Text costUI;
+    public Text revenueUI;
+    public Text profitUI;
+    public Text reviewScoreUI;
+    public RectTransform featuresUI;
+    public GameObject featureUI;
+
     private void Start()
     {
         startProject = false;
 
         projectDevelopment = FindObject.projectDevelopment;
+
+        projectNameUI.text = "";
+        projectLeadUI.text = "";
+        costUI.text = "";
+        revenueUI.text = "";
+        profitUI.text = "";
+        reviewScoreUI.text = "";
     }
 
     public static void SendApplicants()
@@ -92,6 +109,18 @@ public class ProjectManager : MonoBehaviour
                 return;
             }
 
+            projectNameUI.text = "";
+            projectLeadUI.text = "";
+            costUI.text = "";
+            revenueUI.text = "";
+            profitUI.text = "";
+            reviewScoreUI.text = "";
+
+            foreach (Transform child in featuresUI.transform)
+            {
+                GameObject.Destroy(child.gameObject);
+            }
+
             //Developer check
             if (CommandController.developers.ContainsKey(id))
             {
@@ -142,6 +171,9 @@ public class ProjectManager : MonoBehaviour
                 //Create the project
                 project = new ProjectClass(projectName, username, companyName); //Reason we store name over ID is because project is saved in their profile anyway, means we can look back at it easier and see what they worked on
                 project.category = Categories.Games;
+
+                projectNameUI.text = $"Project Name: {projectName}";
+                projectLeadUI.text = $"Project Lead: {username}";
 
                 client.SendWhisper(username, WhisperMessages.Project.Start.success(projectName), Timers.ProjectApplication);
                 client.SendMessage(WhisperMessages.Project.Start.canApply(username));
@@ -314,6 +346,9 @@ public class ProjectManager : MonoBehaviour
             else
             {
                 project.AcceptApplicant(applicant, project.applicants[applicant], pay);
+
+                costUI.text = $"Cost: £{project.cost}";
+
                 client.SendWhisper(applicant, WhisperMessages.Project.Accept.successApplicant(project.projectName));
                 client.SendWhisper(username, WhisperMessages.Project.Accept.successLead(applicant, project.projectName));
             }
@@ -325,7 +360,7 @@ public class ProjectManager : MonoBehaviour
                 projectDevelopment.Add(splitWhisper);
                 break;
             case "move":
-                projectDevelopment.Move(splitWhisper);
+                projectDevelopment.Move(splitWhisper, username);
                 break;
             default:
                 Debug.Log("ProjectManager switch broken.");
