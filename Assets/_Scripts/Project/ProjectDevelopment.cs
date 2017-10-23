@@ -194,11 +194,6 @@ public class ProjectDevelopment : MonoBehaviour
 
     public void Answer(string username, List<string> splitWhisper)
     {
-        if (string.Compare(splitWhisper[0], "test", true) == 0)
-        {
-            alertQueue.Enqueue("Test");
-        }
-
         if (questionDictionary.ContainsKey(username))
         {
             Question question = questionDictionary[username];
