@@ -11,15 +11,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8774a84b95d3d44dadea3c38d792019, type: 3}
   m_Name: FeatureList
   m_EditorClassIdentifier: 
-  featureNames:
-  - Text-based
-  - Physics
-  - Music
-  - Dialog
-  - Open world
+  featuresFolderPath: Features
+  featureNames: []
   features:
-  - {fileID: 11400000, guid: da3c33fefe225ef4baa041887c3d3805, type: 2}
-  - {fileID: 11400000, guid: ed6a583d07a4ab749bf31872090d9d83, type: 2}
-  - {fileID: 11400000, guid: aaccb9eba30c9204996343f5a7c46123, type: 2}
+  - {fileID: 11400000, guid: 9655d0d948631874c9b2cdbda0963e87, type: 2}
+  - {fileID: 11400000, guid: 5ccf7b81ac62f4d4bbb77cc58d81aa32, type: 2}
+  - {fileID: 11400000, guid: e92143434d8b5d742aa323a74cf7fff8, type: 2}
+  - {fileID: 11400000, guid: c605117c9377f8142b8aea34bcd98beb, type: 2}
+  - {fileID: 11400000, guid: 4a4d5ab3f36471c43b768bc8e8d9239c, type: 2}
+  - {fileID: 11400000, guid: e5a4c2fce08a19d45bf676fe5f074a7a, type: 2}
   - {fileID: 11400000, guid: fce658ebd3173b04fb45b0ccaa0ce2b2, type: 2}
+  - {fileID: 11400000, guid: 8cd96dcdab31af44987bdf4d6e8bb541, type: 2}
+  - {fileID: 11400000, guid: 2829efeb1e2a22e47a1d4ca1cfcd0dba, type: 2}
+  - {fileID: 11400000, guid: c5762526a0f59e54ebe430086b085e2f, type: 2}
+  - {fileID: 11400000, guid: 8763dfe2611bd18468a6687ed928a6bc, type: 2}
+  - {fileID: 11400000, guid: 86d02aef92c46534abeba704f04c86ea, type: 2}
+  - {fileID: 11400000, guid: aaccb9eba30c9204996343f5a7c46123, type: 2}
   - {fileID: 11400000, guid: 065f38a873100e5468158088b711463c, type: 2}
+  - {fileID: 11400000, guid: ed6a583d07a4ab749bf31872090d9d83, type: 2}
+  - {fileID: 11400000, guid: da3c33fefe225ef4baa041887c3d3805, type: 2}
+  - {fileID: 11400000, guid: fd67ce1dd11120848b5042c54742734d, type: 2}
+  - {fileID: 11400000, guid: 194ad0a94f4b6d6479419b00e5ac5605, type: 2}
