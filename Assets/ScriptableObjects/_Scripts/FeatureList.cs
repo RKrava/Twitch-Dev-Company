@@ -12,10 +12,9 @@ public class FeatureList : ScriptableObject
 {
     [Tooltip("The path to the Features folder relative to this ScriptableObject")]
     public string featuresFolderPath = "Features";
-
-    public List<string> featureNames = new List<string>();
     public List<FeatureSO> features = new List<FeatureSO>();
 
+    #if UNITY_EDITOR
     /// <summary>
     /// This method has many steps:
     /// - Clear any existing FeatureSO's as to not have duplicates.
@@ -27,7 +26,7 @@ public class FeatureList : ScriptableObject
     /// - Get a relative file path for the ScriptableObject so I can load it with AssetDatabase.
     /// - Add it to the list of FeatureSO's
     /// </summary>
-    #if UNITY_EDITOR
+
     [ContextMenu("Get Features")]
     public void GetFeatures()
     {
