@@ -8,7 +8,7 @@ public class FeatureSOEditor : Editor
     private float skillLabelWidth = 80f;
 
     private int minSkillPoints = 30;
-    private int maxSkillPoints = 200;
+    private int maxSkillPoints = 300;
 
     public override void OnInspectorGUI()
     {
@@ -94,22 +94,66 @@ public class FeatureSOEditor : Editor
             RandomiseFeatureRequirements(target);
         }
 
+        EditorGUILayout.LabelField("Presets", EditorStyles.boldLabel);
+        EditorGUILayout.BeginHorizontal();
+
+        if (GUILayout.Button("Technical", GUILayout.Height(20f)))
+        {
+            ActivateSkills(target, art: false, design: true, development: true);
+            SetSkills(target, -1, 30, 120);
+        }
+
+        if (GUILayout.Button("Arty", GUILayout.Height(20f)))
+        {
+            ActivateSkills(target, art: true, design: true, development: false);
+            SetSkills(target, 150, 60, -1);
+        }
+
+        if (GUILayout.Button("Prototype", GUILayout.Height(20f)))
+        {
+            ActivateSkills(target, art: false, design: true, development: false);
+            SetSkills(target, -1, 250, -1);
+        }
+
+        if (GUILayout.Button("Mix", GUILayout.Height(20f)))
+        {
+            ActivateSkills(target, art: true, design: true, development: true);
+            SetSkills(target, 60, 70, 50);
+        }
+
+        EditorGUILayout.EndHorizontal();
+
+        if (GUILayout.Button("Reset", GUILayout.Height(30f)))
+        {
+            ActivateSkills(target, art: false, design: false, development: false);
+            SetSkills(target, -1, -1, -1);
+        }
+
         EditorUtility.SetDirty(target);
+    }
+
+    private void ActivateSkills(FeatureSO target, bool art, bool design, bool development)
+    {
+        target.artRequired = art;
+        target.designRequired = design;
+        target.developRequired = development;
+    }
+
+    private void SetSkills(FeatureSO target, int art, int design, int development)
+    {
+        if (target.artRequired == true)
+            target.featureArt = art;
+
+        if (target.designRequired == true)
+            target.featureDesign = design;
+
+        if (target.developRequired == true)
+            target.featureDevelop = development;
     }
 
     private void RandomiseFeatureRequirements(FeatureSO target)
     {
-        target.artRequired = (Random.Range(0, 2) == 1);
-        target.designRequired = (Random.Range(0, 2) == 1);
-        target.developRequired = (Random.Range(0, 2) == 1);
-
-        if (target.artRequired == true)
-            target.featureArt = Random.Range(minSkillPoints, maxSkillPoints);
-
-        if (target.designRequired == true)
-            target.featureDesign = Random.Range(minSkillPoints, maxSkillPoints);
-
-        if (target.developRequired == true)
-            target.featureDevelop = Random.Range(minSkillPoints, maxSkillPoints);
+        ActivateSkills(target, Random.Range(0, 2) == 1, Random.Range(0, 2) == 1, Random.Range(0, 2) == 1);
+        SetSkills(target, Random.Range(minSkillPoints, maxSkillPoints), Random.Range(minSkillPoints, maxSkillPoints), Random.Range(minSkillPoints, maxSkillPoints));
     }
 }
