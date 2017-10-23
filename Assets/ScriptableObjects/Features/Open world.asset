@@ -11,8 +11,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29aba230cb9966645b12d87181cdbe98, type: 3}
   m_Name: Open world
   m_EditorClassIdentifier: 
-  featureName: 
-  featureCost: 0
-  featureDesign: 0
-  featureDevelop: 0
-  featureArt: 0
+  featureName: Open world
+  featureCost: 2500
+  featureDesign: 75
+  designRequired: 1
+  featureDevelop: 90
+  developRequired: 1
+  featureArt: 50
+  artRequired: 1

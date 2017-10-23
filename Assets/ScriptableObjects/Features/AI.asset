@@ -11,8 +11,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29aba230cb9966645b12d87181cdbe98, type: 3}
   m_Name: AI
   m_EditorClassIdentifier: 
-  featureName: 
-  featureCost: 0
-  featureDesign: 0
-  featureDevelop: 0
-  featureArt: 0
+  featureName: AI
+  featureCost: 2000
+  featureDesign: 30
+  designRequired: 1
+  featureDevelop: 75
+  developRequired: 1
+  featureArt: -1
+  artRequired: 0

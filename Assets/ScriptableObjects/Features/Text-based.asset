@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Name: Text-based
   m_EditorClassIdentifier: 
   featureName: Text-based
-  featureCost: 200
-  _featureDesign: 30
-  _featureDevelop: 30
-  _featureArt: 0
+  featureCost: 250
+  featureDesign: 30
+  designRequired: 1
+  featureDevelop: 30
+  developRequired: 1
+  featureArt: -1
+  artRequired: 0

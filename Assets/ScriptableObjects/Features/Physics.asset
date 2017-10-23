@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Name: Physics
   m_EditorClassIdentifier: 
   featureName: Physics
-  featureCost: 1000
-  _featureDesign: 30
-  _featureDevelop: 50
-  _featureArt: 0
+  featureCost: 750
+  featureDesign: 30
+  designRequired: 1
+  featureDevelop: 50
+  developRequired: 1
+  featureArt: -1
+  artRequired: 0

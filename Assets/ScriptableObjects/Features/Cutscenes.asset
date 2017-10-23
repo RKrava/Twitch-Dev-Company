@@ -11,8 +11,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29aba230cb9966645b12d87181cdbe98, type: 3}
   m_Name: Cutscenes
   m_EditorClassIdentifier: 
-  featureName: 
-  featureCost: 0
-  featureDesign: 0
-  featureDevelop: 0
-  featureArt: 0
+  featureName: Cutscenes
+  featureCost: 5000
+  featureDesign: -1
+  designRequired: 0
+  featureDevelop: -1
+  developRequired: 0
+  featureArt: 150
+  artRequired: 1
