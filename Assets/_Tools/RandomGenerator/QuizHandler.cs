@@ -1,17 +1,11 @@
-﻿using UnityEngine;
-using Quiz;
-using System.Threading.Tasks;
-using System.Collections;
-using System;
+﻿using Quiz;
 using System.Collections.Generic;
-using System.Linq;
+using UnityEngine;
 
 public class QuizHandler : MonoBehaviour
 {
     public QuizClient quizClient = new QuizClient();
     private Question questionObject;
-
-    private static System.Random rnd = new System.Random();
 
     private List<string> answersTemp = new List<string>();
 
@@ -66,11 +60,12 @@ public class QuizHandler : MonoBehaviour
 
         foreach (Result question in questions.results)
         {
-            questionObject = new Question();
-
-            questionObject.question = question.question;
-            questionObject.difficulty = question.difficulty;
-            questionObject.type = question.type;
+            questionObject = new Question()
+            {
+                question = question.question,
+                difficulty = question.difficulty,
+                type = question.type
+            };
 
             answersTemp = question.incorrect_answers;
             answersTemp.Add(question.correct_answer);
@@ -79,21 +74,16 @@ public class QuizHandler : MonoBehaviour
 
             for (int x = 0; x < count; x++)
             {
-                int r = rnd.Next(answersTemp.Count);
+                int r = Random.Range(0, answersTemp.Count);
                 questionObject.answersList.Add(answersTemp[r]);
                 answersTemp.RemoveAt(r);
             }
 
             questionObject.correctAnswer = CorrectAnswer(question.correct_answer) + 1;
 
-            if (questionObject.type == "multiple")
+            for (int i = 0; i < questionObject.answersList.Count; i++)
             {
-                questionObject.answersString = $"1. {questionObject.answersList[0]} | 2. {questionObject.answersList[1]} | 3. {questionObject.answersList[2]} | 4. {questionObject.answersList[3]}";
-            }
-
-            else if (questionObject.type == "boolean")
-            {
-                questionObject.answersString = $"1. {questionObject.answersList[0]} | 2. {questionObject.answersList[1]}";
+                questionObject.answersString += $"{i + 1}. {questionObject.answersList[i]} | ";
             }
 
             queue.Enqueue(questionObject);
