@@ -1,8 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SaveLoad : MonoBehaviour
 {
@@ -37,47 +33,10 @@ public class SaveLoad : MonoBehaviour
 
     private void Load()
     {
-        Debug.Log("Loading.");
-
-        if (File.Exists(developerFile) == true)
-        {
-            string developerJson = File.ReadAllText(developerFile);
-            CommandController.developers = JsonConvert.DeserializeObject<Dictionary<string, DeveloperClass>>(developerJson);
-        }
-        else
-        {
-            File.CreateText(developerFile).Dispose();
-        }
-
-        if (File.Exists(viewerFile) == true)
-        {
-            string viewerJson = File.ReadAllText(viewerFile);
-            CommandController.viewers = JsonConvert.DeserializeObject<List<Viewer>>(viewerJson);
-        }
-        else
-        {
-            File.CreateText(viewerFile).Dispose();
-        }
-
-        if (File.Exists(companiesFile) == true)
-        {
-            string companiesJson = File.ReadAllText(companiesFile);
-            CommandController.companies = JsonConvert.DeserializeObject<SortedDictionary<string, CompanyClass>>(companiesJson);
-        }
-        else
-        {
-            File.CreateText(companiesFile).Dispose();
-        }
-
-        if (File.Exists(projectsFile) == true)
-        {
-            string projectsJson = File.ReadAllText(projectsFile);
-            CommandController.projects = JsonConvert.DeserializeObject<SortedDictionary<string, ProjectClass>>(projectsJson);
-        }
-        else
-        {
-            File.CreateText(projectsFile).Dispose();
-        }
+        CommandController.developers = CommandController.developers.LoadOrCreateNew(developerFile);
+        CommandController.viewers = CommandController.viewers.LoadOrCreateNew(viewerFile);
+        CommandController.companies = CommandController.companies.LoadOrCreateNew(companiesFile);
+        CommandController.projects = CommandController.projects.LoadOrCreateNew(projectsFile);
 
         loaded = true;
         Debug.Log("Loaded.");
@@ -85,19 +44,12 @@ public class SaveLoad : MonoBehaviour
 
     public void Save()
     {
-        Debug.Log("Saving.");
+        CommandController.developers.Save(developerFile);
+        CommandController.viewers.Save(viewerFile);
+        CommandController.companies.Save(companiesFile);
+        CommandController.projects.Save(projectsFile);
 
-        string developerJson = JsonConvert.SerializeObject(CommandController.developers, Formatting.Indented);
-        File.WriteAllText(developerFile, developerJson);
-
-        string viewerJson = JsonConvert.SerializeObject(CommandController.viewers, Formatting.Indented);
-        File.WriteAllText(viewerFile, viewerJson);
-
-        string companiesJson = JsonConvert.SerializeObject(CommandController.companies, Formatting.Indented);
-        File.WriteAllText(companiesFile, companiesJson);
-
-        string projectsJson = JsonConvert.SerializeObject(CommandController.projects, Formatting.Indented);
-        File.WriteAllText(projectsFile, projectsJson);
+        Debug.Log("Saved.");
     }
 
     //Don't have to worry about potential save clashes when quitting application
