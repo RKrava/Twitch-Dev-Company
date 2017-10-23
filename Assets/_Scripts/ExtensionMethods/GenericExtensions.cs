@@ -33,4 +33,28 @@ public static class GenericExtensions
         string json = File.ReadAllText(path);
         return JsonConvert.DeserializeObject<T>(json);
     }
+
+    /// <summary>
+    /// Take a path and generic type.
+    /// If the file does not exist, create it and write an empty object to it.
+    /// Then read it back in so it returns a new object
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="item"></param>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static T LoadOrCreateNew<T>(this T item, string path) where T : new()
+    {
+        if (File.Exists(path) == false)
+        {
+            string defaultText = JsonConvert.SerializeObject(new T());
+
+            StreamWriter stream = File.CreateText(path);
+            stream.Write(defaultText);
+            stream.Close();
+        }
+
+        string json = File.ReadAllText(path);
+        return JsonConvert.DeserializeObject<T>(json);
+    }
 }
