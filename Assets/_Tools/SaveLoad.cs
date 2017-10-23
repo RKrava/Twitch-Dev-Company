@@ -21,15 +21,15 @@ public class SaveLoad : MonoBehaviour
     private void Start()
     {
         loaded = false;
-    }
 
-    public void DelayedAwake()
-    {
         developerFile = Application.streamingAssetsPath + "/developers.json";
         viewerFile = Application.streamingAssetsPath + "/viewers.json";
         companiesFile = Application.streamingAssetsPath + "/companies.json";
         projectsFile = Application.streamingAssetsPath + "/projects.json";
+    }
 
+    public void DelayedAwake()
+    {
         Load();
 
         InvokeRepeating("Save", 60, 60);
