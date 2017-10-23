@@ -13,6 +13,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   featureName: 
   featureCost: 0
-  featureDesign: 0
-  featureDevelop: 0
-  featureArt: 0
+  featureDesign: -1
+  designRequired: 0
+  featureDevelop: -1
+  developRequired: 0
+  featureArt: -1
+  artRequired: 0

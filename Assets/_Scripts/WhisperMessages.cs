@@ -122,6 +122,17 @@ public class WhisperMessages
             public static string successLead(string applicantUsername, string projectName) => $"{applicantUsername} is now part of the development team for {projectName}.";
         }
 
+        public class Add
+        {
+            public static string onlyOne(string featureName) => $"You already have {featureName} added.";
+        }
+
+        public class Move
+        {
+            public static string success(string featureName) => $"You have moved to {featureName}. Anyone working on this will receive a bonus.";
+            public static string fail(string featureName) => $"{featureName} doesn't exist, or isn't part of this project.";
+        }
+
         public class Question
         {
             public static string easyCorrect(int points, string position) => $"Correct: {points} bonus points.";
@@ -131,6 +142,16 @@ public class WhisperMessages
             public static string easyWrong = "Wrong: Nothing.";
             public static string mediumWrong = "Wrong: No points for a minute.";
             public static string hardWrong(string feature, string quality) => $"Wrong: You have decrease the Max Quality for {feature} to {quality}.";
+
+            public static string answerSyntax = "To answer a question, type !answer 1, or whichever number you think is correct.";
+            public static string noOption = "This answer isn't an option. Remember, type !answer 1, or whichever number you think is correct.";
+        }
+
+        public class Complete
+        {
+            public static string reviewScore(string projectName, int reviewScore) => $"{projectName} was awarded {reviewScore} out of 10.";
+            public static string reviewBonus(int bonus, int reviewScore) => $"Thanks to a review score of {reviewScore}, you were awarded a bonus of {bonus} XP.";
+            public static string sales(string projectName, int cost, int revenue, int profit) => $"Your project, {projectName}, made an overall profit of £{profit}. You spent £{cost}, and made £{revenue} from sales.";
         }
     }
 

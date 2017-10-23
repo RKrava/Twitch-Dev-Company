@@ -13,6 +13,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   featureName: Advanced cutscenes
   featureCost: 5000
-  _featureDesign: 20
-  _featureDevelop: 0
-  _featureArt: 20
+  featureDesign: -1
+  designRequired: 0
+  featureDevelop: -1
+  developRequired: 0
+  featureArt: -1
+  artRequired: 0

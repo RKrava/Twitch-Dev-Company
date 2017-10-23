@@ -11,8 +11,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29aba230cb9966645b12d87181cdbe98, type: 3}
   m_Name: Local multiplayer
   m_EditorClassIdentifier: 
-  featureName: 
-  featureCost: 0
-  featureDesign: 0
-  featureDevelop: 0
-  featureArt: 0
+  featureName: Local multiplayer
+  featureCost: 2500
+  featureDesign: 50
+  designRequired: 1
+  featureDevelop: 75
+  developRequired: 1
+  featureArt: -1
+  artRequired: 0

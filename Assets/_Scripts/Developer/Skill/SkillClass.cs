@@ -24,7 +24,7 @@ public class SkillClass
 	/// increment by one and take the XP away
 	/// </summary>
 	/// <param name="xp"></param>
-    public void AddXP(int xp)
+    public void AddXP(int xp, DeveloperClass developerClass, bool leadershipSkill)
     {
         skillXP += xp;
 

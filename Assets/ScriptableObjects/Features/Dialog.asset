@@ -11,8 +11,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29aba230cb9966645b12d87181cdbe98, type: 3}
   m_Name: Dialog
   m_EditorClassIdentifier: 
-  featureName: 
-  featureCost: 0
-  featureDesign: 0
-  featureDevelop: 0
-  featureArt: 0
+  featureName: Dialog
+  featureCost: 1000
+  featureDesign: 50
+  designRequired: 1
+  featureDevelop: 50
+  developRequired: 1
+  featureArt: 30
+  artRequired: 1
