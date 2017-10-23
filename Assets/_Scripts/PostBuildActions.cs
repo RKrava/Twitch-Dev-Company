@@ -31,7 +31,7 @@ public class PostBuildActions : MonoBehaviour
                     File.Delete(file);
                 }
 
-                Debug.Log("[POST-BUILD] The streaming assets folder for the build has been deleted!");
+                Debug.Log("[POST-BUILD] All of the files within the StreamingAssets folder have been deleted!");
             }
         }
     }
