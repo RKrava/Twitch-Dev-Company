@@ -14,8 +14,12 @@ public class ProjectDevelopment : MonoBehaviour
     public FeatureList featureList;
     private List<FeatureSO> featuresSO;
 
+    private Queue<string> alertQueue = new Queue<string>();
+    public Text alertUI;
+
     public List<Feature> features;
     private Feature feature;
+
 
     private GameObject featureUIObject;
     private FeatureUI featureUI;
@@ -53,6 +57,30 @@ public class ProjectDevelopment : MonoBehaviour
     private void Awake()
     {
         projectManager = FindObject.projectManager;
+
+        alertUI.text = "";
+
+        InvokeRepeating("AlertUI", 0, 8);
+    }
+
+    private void AlertUI()
+    {
+        StartCoroutine("AlertCoroutine");
+    }
+
+    IEnumerator AlertCoroutine()
+    {
+        if (alertQueue.Count == 0)
+        {
+            yield break;
+        }
+
+        string alert = alertQueue.Dequeue();
+        alertUI.text = alert;
+
+        yield return new WaitForSeconds(5);
+
+        alertUI.text = "";
     }
 
     public void Add(List<string> splitWhisper)
@@ -116,7 +144,7 @@ public class ProjectDevelopment : MonoBehaviour
             {
                 feature.artPointsRequired = (int)(featureSO.featureArt * Mathf.Pow(0.8f, 8));
             }
-            
+
             string projectLeadID = CommandController.GetID(project.projectLead);
             string companyName = CommandController.developers[projectLeadID].companyName;
             CompanyClass company = CommandController.companies[companyName];
@@ -166,6 +194,11 @@ public class ProjectDevelopment : MonoBehaviour
 
     public void Answer(string username, List<string> splitWhisper)
     {
+        if (string.Compare(splitWhisper[0], "test", true) == 0)
+        {
+            alertQueue.Enqueue("Test");
+        }
+
         if (questionDictionary.ContainsKey(username))
         {
             Question question = questionDictionary[username];
@@ -239,6 +272,7 @@ public class ProjectDevelopment : MonoBehaviour
                     }
 
                     client.SendWhisper(username, WhisperMessages.Project.Question.easyCorrect(level, position.ToString()));
+                    alertQueue.Enqueue($"{username} was awarded a bonus point.");
                 }
 
                 else if (question.difficulty == "medium")
@@ -257,6 +291,7 @@ public class ProjectDevelopment : MonoBehaviour
                     }
 
                     client.SendWhisper(username, WhisperMessages.Project.Question.mediumCorrect(level * 3, position.ToString()));
+                    alertQueue.Enqueue($"{username} was awarded 3 bonus points.");
                 }
 
                 else if (question.difficulty == "hard")
@@ -266,14 +301,17 @@ public class ProjectDevelopment : MonoBehaviour
                         case DeveloperPosition.Designer:
                             features[featureDesignIndex].maxQuality++;
                             client.SendWhisper(username, WhisperMessages.Project.Question.hardCorrect(features[featureDesignIndex].featureName, features[featureDesignIndex].maxQuality.ToString()));
+                            alertQueue.Enqueue($"{username} increased the Max Quality of {features[featureDesignIndex].featureName} to {features[featureDesignIndex].maxQuality.ToString()}.");
                             break;
                         case DeveloperPosition.Developer:
                             features[featureDevelopIndex].maxQuality++;
                             client.SendWhisper(username, WhisperMessages.Project.Question.hardCorrect(features[featureDevelopIndex].featureName, features[featureDevelopIndex].maxQuality.ToString()));
+                            alertQueue.Enqueue($"{username} increased the Max Quality of {features[featureDevelopIndex].featureName} to {features[featureDevelopIndex].maxQuality.ToString()}.");
                             break;
                         case DeveloperPosition.Artist:
                             features[featureArtIndex].maxQuality++;
                             client.SendWhisper(username, WhisperMessages.Project.Question.hardCorrect(features[featureArtIndex].featureName, features[featureArtIndex].maxQuality.ToString()));
+                            alertQueue.Enqueue($"{username} increased the Max Quality of {features[featureArtIndex].featureName} to {features[featureArtIndex].maxQuality.ToString()}.");
                             break;
                     }
                 }
@@ -284,6 +322,7 @@ public class ProjectDevelopment : MonoBehaviour
                 if (question.difficulty == "easy")
                 {
                     client.SendWhisper(username, WhisperMessages.Project.Question.easyWrong);
+                    alertQueue.Enqueue($"{username} just got an easy question wrong.");
                 }
 
                 else if (question.difficulty == "medium")
@@ -294,6 +333,7 @@ public class ProjectDevelopment : MonoBehaviour
                     EnsureMainThread.executeOnMainThread.Enqueue(() => { StartCoroutine(ResetBonus(developer, 60, oldBonus)); });
 
                     client.SendWhisper(username, WhisperMessages.Project.Question.mediumWrong);
+                    alertQueue.Enqueue($"{username} can not produce points for a minute.");
                 }
 
                 else if (question.difficulty == "hard")
@@ -303,14 +343,17 @@ public class ProjectDevelopment : MonoBehaviour
                         case DeveloperPosition.Designer:
                             features[featureDesignIndex].maxQuality--;
                             client.SendWhisper(username, WhisperMessages.Project.Question.hardWrong(features[featureDesignIndex].featureName, features[featureDesignIndex].maxQuality.ToString()));
+                            alertQueue.Enqueue($"{username} decreased the Max Quality of {features[featureDesignIndex].featureName} to {features[featureDesignIndex].maxQuality.ToString()}.");
                             break;
                         case DeveloperPosition.Developer:
                             features[featureDevelopIndex].maxQuality--;
                             client.SendWhisper(username, WhisperMessages.Project.Question.hardWrong(features[featureDevelopIndex].featureName, features[featureDevelopIndex].maxQuality.ToString()));
+                            alertQueue.Enqueue($"{username} decreased the Max Quality of {features[featureDesignIndex].featureName} to {features[featureDesignIndex].maxQuality.ToString()}.");
                             break;
                         case DeveloperPosition.Artist:
                             features[featureArtIndex].maxQuality--;
                             client.SendWhisper(username, WhisperMessages.Project.Question.hardWrong(features[featureArtIndex].featureName, features[featureArtIndex].maxQuality.ToString()));
+                            alertQueue.Enqueue($"{username} decreased the Max Quality of {features[featureDesignIndex].featureName} to {features[featureDesignIndex].maxQuality.ToString()}.");
                             break;
                     }
                 }
