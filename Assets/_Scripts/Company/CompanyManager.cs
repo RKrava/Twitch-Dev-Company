@@ -36,6 +36,8 @@ public class CompanyManager : MonoBehaviour
 
         if (string.Compare(splitWhisper[0], "start", true) == 0)
         {
+            splitWhisper.RemoveAt(0);
+
             if (companyFounder)
             {
                 client.SendWhisper(username, WhisperMessages.Company.alreadyFounder(companyName));
@@ -44,7 +46,7 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-                companyName = splitWhisper[1];
+                companyName = String.Join(" ", splitWhisper);
             }
 
             if (CommandController.companies.ContainsKey(companyName))
@@ -124,6 +126,8 @@ public class CompanyManager : MonoBehaviour
 
         else if (string.Compare(splitWhisper[0], "accept", true) == 0)
         {
+            splitWhisper.RemoveAt(0);
+
             if (companyFounder)
             {
                 client.SendWhisper(username, WhisperMessages.Company.Accept.anotherCompany(companyName));
@@ -132,7 +136,7 @@ public class CompanyManager : MonoBehaviour
 
             else
             {
-                companyName = splitWhisper[1];
+                companyName = String.Join(" ", splitWhisper);
             }
 
             if (CommandController.companies.ContainsKey(companyName))
