@@ -3,6 +3,7 @@
 [Serializable]
 public class WhisperMessages
 {
+    public static string help = "https://github.com/BeardlessDev/Twitch-Dev-Company/blob/master/How%20to%20Play.md";
 
     public class Developer
     {
