@@ -58,6 +58,5 @@ public class DeveloperClass
     public int GetXP(SkillTypes.LeaderSkills skill) => leaderSkills[skill].skillXP;
 
     public int bonus = 1;
-
-    public Feature feature;
+    public bool questions = true;
 }

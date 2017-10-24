@@ -11,6 +11,7 @@ public class WhisperMessages
         public static string money(int money) => $"You have £{money}.";
         public static string skills(int lead, int motivation, int design, int develop, int art, int marketing) => $"Lead: {lead} | Motivation {motivation} | Design: {design} | Develop: {develop} | Art: {art} | Marketing: {marketing}.";
         public static string xp(int lead, int motivation, int design, int develop, int art, int marketing) => $"Lead: {lead} | Motivation {motivation} | Design: {design} | Develop: {develop} | Art: {art} | Marketing: {marketing}.";
+        public static string questions(bool questions) => $"You have set questions to {questions}.";
     }
 
     public class Company

@@ -388,6 +388,13 @@ public class ProjectDevelopment : MonoBehaviour
 
         foreach (string developer in project.developers.Keys)
         {
+            developerObject = CommandController.developers[CommandController.GetID(developer)];
+
+            if (!developerObject.questions)
+            {
+                return;
+            }
+
             int time = rnd.Next(60);
 
             EnsureMainThread.executeOnMainThread.Enqueue(() => { StartCoroutine(Question(developer, project.developers[developer], time)); });

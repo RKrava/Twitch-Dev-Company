@@ -252,6 +252,10 @@ public class CommandController : MonoBehaviour
             case "answer":
                 projectDevelopment.Answer(username, splitWhisper);
                 break;
+            case "questions":
+                developers[id].questions = !developers[id].questions;
+                client.SendWhisper(username, WhisperMessages.Developer.questions(developers[id].questions));
+                break;
             default:
                 Debug.Log("No options found in CommandController.");
                 break;
