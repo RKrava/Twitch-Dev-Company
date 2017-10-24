@@ -185,6 +185,7 @@ public class CommandController : MonoBehaviour
         if (string.Compare(e.Command.Command, "streamtycoon", true) == 0)
         {
             client.SendMessage("Stream Dev Tycoon is a Twitch version of games like Game Dev Tycoon and Software Inc. If you'd like to get involved, whisper me '!help'.");
+            return;
         }
     }
 
@@ -220,6 +221,9 @@ public class CommandController : MonoBehaviour
 
         switch (e.Command.ToLower())
         {
+            case "help":
+                client.SendWhisper(username, WhisperMessages.help);
+                break;
             case "money":
                 client.SendWhisper(username, WhisperMessages.Developer.money(developers[id].developerMoney));
                 break;
@@ -247,6 +251,10 @@ public class CommandController : MonoBehaviour
                 break;
             case "answer":
                 projectDevelopment.Answer(username, splitWhisper);
+                break;
+            case "questions":
+                developers[id].questions = !developers[id].questions;
+                client.SendWhisper(username, WhisperMessages.Developer.questions(developers[id].questions));
                 break;
             default:
                 Debug.Log("No options found in CommandController.");

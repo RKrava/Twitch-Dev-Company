@@ -14,20 +14,16 @@ public class ProjectDevelopment : MonoBehaviour
     public FeatureList featureList;
     private List<FeatureSO> featuresSO;
 
+    private Queue<string> alertQueue = new Queue<string>();
+    public Text alertUI;
+
     public List<Feature> features;
     private Feature feature;
 
-    private GameObject featureObject;
-    private List<GameObject> featureObjects = new List<GameObject>();
 
-    private Text featureNameUI;
-    private Text qualityUI;
-    private Text designPointsRequiredUI;
-    private Text designPointsUI;
-    private Text developmentPointsRequiredUI;
-    private Text developmentPointsUI;
-    private Text artPointsRequiredUI;
-    private Text artPointsUI;
+    private GameObject featureUIObject;
+    private FeatureUI featureUI;
+    private List<FeatureUI> featureUIList = new List<FeatureUI>();
 
     public int featureDesignIndex;
     public int featureDevelopIndex;
@@ -61,6 +57,30 @@ public class ProjectDevelopment : MonoBehaviour
     private void Awake()
     {
         projectManager = FindObject.projectManager;
+
+        alertUI.text = "";
+
+        InvokeRepeating("AlertUI", 0, 8);
+    }
+
+    private void AlertUI()
+    {
+        StartCoroutine("AlertCoroutine");
+    }
+
+    IEnumerator AlertCoroutine()
+    {
+        if (alertQueue.Count == 0)
+        {
+            yield break;
+        }
+
+        string alert = alertQueue.Dequeue();
+        alertUI.text = alert;
+
+        yield return new WaitForSeconds(5);
+
+        alertUI.text = "";
     }
 
     public void Add(List<string> splitWhisper)
@@ -125,38 +145,18 @@ public class ProjectDevelopment : MonoBehaviour
                 feature.artPointsRequired = (int)(featureSO.featureArt * Mathf.Pow(0.8f, 8));
             }
 
-            
             string projectLeadID = CommandController.GetID(project.projectLead);
             string companyName = CommandController.developers[projectLeadID].companyName;
             CompanyClass company = CommandController.companies[companyName];
 
-            featureObject = Instantiate(projectManager.featureUI, projectManager.featuresUI);
-            featureObjects.Add(featureObject);
+            featureUIObject = Instantiate(projectManager.featureUI, projectManager.featuresUI);
+            featureUI = featureUIObject.GetComponent<FeatureUI>();
+            featureUIList.Add(featureUI);
 
-            featureNameUI = featureObject.GetComponent<Text>();
-            featureNameUI.text = feature.featureName;
-
-            designPointsRequiredUI = featureObject.transform.Find("Design Points Required:").GetComponent<Text>();
-            designPointsUI = featureObject.transform.Find("Design Points:").GetComponent<Text>();
-            designPointsRequiredUI.text = $"Design Points Required: {feature.designPointsRequired}";
-
-            developmentPointsRequiredUI = featureObject.transform.Find("Development Points Required:").GetComponent<Text>();
-            developmentPointsUI = featureObject.transform.Find("Development Points:").GetComponent<Text>();
-            developmentPointsRequiredUI.text = $"Development Points Required: {feature.developmentPointsRequired}";
-
-            artPointsRequiredUI = featureObject.transform.Find("Art Points Required:").GetComponent<Text>();
-            artPointsUI = featureObject.transform.Find("Art Points:").GetComponent<Text>();
-            artPointsRequiredUI.text = $"Art Points Required: {feature.artPointsRequired}";
-
-            if (featureObject == null)
-            {
-
-            }
-
-            else
-            {
-                featureObjects.Add(featureObject);
-            }
+            featureUI.featureNameUI.text = feature.featureName;
+            featureUI.designPointsRequiredUI.text = $"Design Points Required: {feature.designPointsRequired}pts.";
+            featureUI.developmentPointsRequiredUI.text = $"Development Points Required: {feature.developmentPointsRequired}pts.";
+            featureUI.artPointsRequiredUI.text = $"Art Points Required: {feature.artPointsRequired}pts.";
 
             if (company.HasEnoughMoney(cost))
             {
@@ -194,6 +194,12 @@ public class ProjectDevelopment : MonoBehaviour
 
     public void Answer(string username, List<string> splitWhisper)
     {
+        if (splitWhisper.Count == 0)
+        {
+            client.SendWhisper(username, WhisperMessages.Project.Question.answerSyntax);
+            return;
+        }
+
         if (questionDictionary.ContainsKey(username))
         {
             Question question = questionDictionary[username];
@@ -267,6 +273,7 @@ public class ProjectDevelopment : MonoBehaviour
                     }
 
                     client.SendWhisper(username, WhisperMessages.Project.Question.easyCorrect(level, position.ToString()));
+                    alertQueue.Enqueue($"{username} was awarded a bonus point.");
                 }
 
                 else if (question.difficulty == "medium")
@@ -285,6 +292,7 @@ public class ProjectDevelopment : MonoBehaviour
                     }
 
                     client.SendWhisper(username, WhisperMessages.Project.Question.mediumCorrect(level * 3, position.ToString()));
+                    alertQueue.Enqueue($"{username} was awarded 3 bonus points.");
                 }
 
                 else if (question.difficulty == "hard")
@@ -294,14 +302,17 @@ public class ProjectDevelopment : MonoBehaviour
                         case DeveloperPosition.Designer:
                             features[featureDesignIndex].maxQuality++;
                             client.SendWhisper(username, WhisperMessages.Project.Question.hardCorrect(features[featureDesignIndex].featureName, features[featureDesignIndex].maxQuality.ToString()));
+                            alertQueue.Enqueue($"{username} increased the Max Quality of {features[featureDesignIndex].featureName} to {features[featureDesignIndex].maxQuality.ToString()}.");
                             break;
                         case DeveloperPosition.Developer:
                             features[featureDevelopIndex].maxQuality++;
                             client.SendWhisper(username, WhisperMessages.Project.Question.hardCorrect(features[featureDevelopIndex].featureName, features[featureDevelopIndex].maxQuality.ToString()));
+                            alertQueue.Enqueue($"{username} increased the Max Quality of {features[featureDevelopIndex].featureName} to {features[featureDevelopIndex].maxQuality.ToString()}.");
                             break;
                         case DeveloperPosition.Artist:
                             features[featureArtIndex].maxQuality++;
                             client.SendWhisper(username, WhisperMessages.Project.Question.hardCorrect(features[featureArtIndex].featureName, features[featureArtIndex].maxQuality.ToString()));
+                            alertQueue.Enqueue($"{username} increased the Max Quality of {features[featureArtIndex].featureName} to {features[featureArtIndex].maxQuality.ToString()}.");
                             break;
                     }
                 }
@@ -312,6 +323,7 @@ public class ProjectDevelopment : MonoBehaviour
                 if (question.difficulty == "easy")
                 {
                     client.SendWhisper(username, WhisperMessages.Project.Question.easyWrong);
+                    alertQueue.Enqueue($"{username} just got an easy question wrong.");
                 }
 
                 else if (question.difficulty == "medium")
@@ -322,6 +334,7 @@ public class ProjectDevelopment : MonoBehaviour
                     EnsureMainThread.executeOnMainThread.Enqueue(() => { StartCoroutine(ResetBonus(developer, 60, oldBonus)); });
 
                     client.SendWhisper(username, WhisperMessages.Project.Question.mediumWrong);
+                    alertQueue.Enqueue($"{username} cannot produce points for a minute.");
                 }
 
                 else if (question.difficulty == "hard")
@@ -331,14 +344,17 @@ public class ProjectDevelopment : MonoBehaviour
                         case DeveloperPosition.Designer:
                             features[featureDesignIndex].maxQuality--;
                             client.SendWhisper(username, WhisperMessages.Project.Question.hardWrong(features[featureDesignIndex].featureName, features[featureDesignIndex].maxQuality.ToString()));
+                            alertQueue.Enqueue($"{username} decreased the Max Quality of {features[featureDesignIndex].featureName} to {features[featureDesignIndex].maxQuality.ToString()}.");
                             break;
                         case DeveloperPosition.Developer:
                             features[featureDevelopIndex].maxQuality--;
                             client.SendWhisper(username, WhisperMessages.Project.Question.hardWrong(features[featureDevelopIndex].featureName, features[featureDevelopIndex].maxQuality.ToString()));
+                            alertQueue.Enqueue($"{username} decreased the Max Quality of {features[featureDesignIndex].featureName} to {features[featureDesignIndex].maxQuality.ToString()}.");
                             break;
                         case DeveloperPosition.Artist:
                             features[featureArtIndex].maxQuality--;
                             client.SendWhisper(username, WhisperMessages.Project.Question.hardWrong(features[featureArtIndex].featureName, features[featureArtIndex].maxQuality.ToString()));
+                            alertQueue.Enqueue($"{username} decreased the Max Quality of {features[featureDesignIndex].featureName} to {features[featureDesignIndex].maxQuality.ToString()}.");
                             break;
                     }
                 }
@@ -378,6 +394,13 @@ public class ProjectDevelopment : MonoBehaviour
 
         foreach (string developer in project.developers.Keys)
         {
+            developerObject = CommandController.developers[CommandController.GetID(developer)];
+
+            if (!developerObject.questions)
+            {
+                return;
+            }
+
             int time = rnd.Next(60);
 
             EnsureMainThread.executeOnMainThread.Enqueue(() => { StartCoroutine(Question(developer, project.developers[developer], time)); });
@@ -460,12 +483,10 @@ public class ProjectDevelopment : MonoBehaviour
                     feature.designPoints += points * bonus * leadBonus;
                     developerObject.AwardXP(SkillTypes.DeveloperSkills.Design, 2 * bonus, developerObject);
 
-                    featureObject = featureObjects[featureDesignIndex];
+                    featureUI = featureUIList[featureDesignIndex];
 
-                    designPointsRequiredUI = featureObject.transform.Find("Design Points Required:").GetComponent<Text>();
-                    designPointsUI = featureObject.transform.Find("Design Points:").GetComponent<Text>();
-                    designPointsRequiredUI.text = $"Design Points Required: {feature.designPointsRequired}";
-                    designPointsUI.text = $"Design Points: {feature.designPoints}";
+                    featureUI.designPointsRequiredUI.text = $"Design Points Required: {feature.designPointsRequired}pts";
+                    featureUI.designPointsUI.text = $"Design Points: {feature.designPoints}pts";
 
                     Debug.Log($"{feature.featureName} | {feature.designPoints}");
                 }
@@ -518,12 +539,10 @@ public class ProjectDevelopment : MonoBehaviour
                     feature.developmentPoints += points * bonus * leadBonus;
                     developerObject.AwardXP(SkillTypes.DeveloperSkills.Development, 2 * bonus, developerObject);
 
-                    featureObject = featureObjects[featureDesignIndex];
+                    featureUI = featureUIList[featureDevelopIndex];
 
-                    developmentPointsRequiredUI = featureObject.transform.Find("Development Points Required:").GetComponent<Text>();
-                    developmentPointsUI = featureObject.transform.Find("Development Points:").GetComponent<Text>();
-                    developmentPointsRequiredUI.text = $"Development Points Required: {feature.developmentPointsRequired}";
-                    developmentPointsUI.text = $"Development Points: {feature.developmentPoints}";
+                    featureUI.developmentPointsRequiredUI.text = $"Development Points Required: {feature.developmentPointsRequired}pts";
+                    featureUI.developmentPointsUI.text = $"Development Points: {feature.developmentPoints}pts";
 
                     Debug.Log($"{feature.featureName} | {feature.developmentPoints}");
                 }
@@ -575,12 +594,10 @@ public class ProjectDevelopment : MonoBehaviour
                     feature.artPoints += points * bonus * leadBonus;
                     developerObject.AwardXP(SkillTypes.DeveloperSkills.Art, 2 * bonus, developerObject);
 
-                    featureObject = featureObjects[featureDesignIndex];
+                    featureUI = featureUIList[featureArtIndex];
 
-                    artPointsRequiredUI = featureObject.transform.Find("Art Points Required:").GetComponent<Text>();
-                    artPointsUI = featureObject.transform.Find("Art Points:").GetComponent<Text>();
-                    artPointsRequiredUI.text = $"Art Points Required: {feature.artPointsRequired}";
-                    artPointsUI.text = $"Art Points: {feature.artPoints}";
+                    featureUI.artPointsRequiredUI.text = $"Art Points Required: {feature.artPointsRequired}pts";
+                    featureUI.artPointsUI.text = $"Art Points: {feature.artPoints}pts";
 
                     Debug.Log($"{feature.featureName} | {feature.artPoints}");
                 }
@@ -603,16 +620,16 @@ public class ProjectDevelopment : MonoBehaviour
             CommandController.developers[id].AddMoney(pay);
         }
 
+        projectManager.costUI.text = $"Cost: £{project.cost}";
+
         foreach (Feature feature in features)
         {
             int min = Mathf.Min((int)feature.designQualityHit, Mathf.Min((int)feature.developmentQualityHit, (int)feature.artQualityHit));
 
             feature.featureQuality = (FeatureQuality)min;
 
-            featureObject = featureObjects[FeatureFromName(feature.featureName, features)];
-
-            qualityUI = featureObject.transform.Find("Quality").GetComponent<Text>();
-            qualityUI.text = $"Quality: {feature.featureQuality}";
+            featureUI = featureUIList[FeatureFromName(feature.featureName, features)];
+            featureUI.qualityUI.text = $"Quality: {feature.featureQuality}";
         }
 
         EnsureMainThread.executeOnMainThread.Enqueue(() => { Invoke("ReviewScore", 60); });

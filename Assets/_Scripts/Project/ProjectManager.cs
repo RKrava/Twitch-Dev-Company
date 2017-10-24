@@ -155,7 +155,15 @@ public class ProjectManager : MonoBehaviour
                 return;
             }
 
-            string projectName = splitWhisper[1];
+            splitWhisper.RemoveAt(0);
+
+            string projectName = String.Join(" ", splitWhisper);
+
+            if (projectName == String.Empty)
+            {
+                client.SendWhisper(username, WhisperMessages.Project.Start.syntax);
+                return;
+            }
 
             //Project check
             if (CommandController.projects.ContainsKey(projectName))

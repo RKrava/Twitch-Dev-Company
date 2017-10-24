@@ -3,6 +3,7 @@
 [Serializable]
 public class WhisperMessages
 {
+    public static string help = "https://github.com/BeardlessDev/Twitch-Dev-Company/blob/master/How%20to%20Play.md";
 
     public class Developer
     {
@@ -10,6 +11,7 @@ public class WhisperMessages
         public static string money(int money) => $"You have £{money}.";
         public static string skills(int lead, int motivation, int design, int develop, int art, int marketing) => $"Lead: {lead} | Motivation {motivation} | Design: {design} | Develop: {develop} | Art: {art} | Marketing: {marketing}.";
         public static string xp(int lead, int motivation, int design, int develop, int art, int marketing) => $"Lead: {lead} | Motivation {motivation} | Design: {design} | Develop: {develop} | Art: {art} | Marketing: {marketing}.";
+        public static string questions(bool questions) => $"You have set questions to {questions}.";
     }
 
     public class Company
@@ -22,6 +24,7 @@ public class WhisperMessages
         {
             public static string success(string companyName) => $"You are now the proud owner of {companyName}.";
             public static string alreadyExists = "A company already exists with that name. Please choose another.";
+            public static string syntax = "!company start (Company Name), without the brackets.";
         }
 
         public class Invite
@@ -57,7 +60,7 @@ public class WhisperMessages
 
         public class Deposit
         {
-            public static string notEnough(int developerMoney) => $"You only have {developerMoney}.";
+            public static string notEnough(int developerMoney) => $"You only have £{developerMoney}.";
             public static string syntax = "To deposit money, you need to use !company deposit 1000, etc.";
 
             public static string success(int money, string companyName, int companyMoney, int developerMoney) => $"You have deposited £{money}. Now {companyName} has £{companyMoney}, and you have £{developerMoney} left.";
@@ -96,6 +99,7 @@ public class WhisperMessages
         {
             public static string money(int money) => $"You need at least £{money} in your company funds to start a project. This is to pay Developers, and buy features.";
             public static string alreadyExists = "A project with the name already exists. Please come up with a new one.";
+            public static string syntax = "!project start (Project Name), without the brackets.";
 
             public static string success(string projectName) => $"You have started {projectName}. People can now apply to join.";
             public static string canApply(string projectLead) => $"A project has been started by {projectLead}. You can join by sending !project apply (Designer | Developer | Artist) to me.";
@@ -108,6 +112,9 @@ public class WhisperMessages
             public static string specifyPosition = "You have to specify the position you are applying for: !project apply (Designer | Developer | Artist).";
 
             public static string success = "Your application has been sent.";
+
+            public static string halfway = "You have 30 seconds left to join the project. You can join by sending !project apply (Designer | Developer | Artist) to me.";
+            public static string closed = "Applications are now closed.";
         }
 
         public class Accept

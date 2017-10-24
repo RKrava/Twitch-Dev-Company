@@ -9,7 +9,7 @@ public class CompanyInvite
 	public string inviter { get; private set; }
 
 	Timer expiryCheck = new Timer(1000);
-    TimeSpan timeSpan = TimeSpan.FromSeconds(5);
+    TimeSpan timeSpan = TimeSpan.FromMinutes(5);
 
     DateTime expiry;
 
