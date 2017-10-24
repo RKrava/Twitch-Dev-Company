@@ -19,7 +19,22 @@ public class CompanyClass
 	/// As just a few examples
 	/// </summary>
 	public List<string> founderIDs = new List<string>();
-	public string GetOwner => founderIDs[0];
+
+    private string _GetOwner => founderIDs[0];
+    public string GetOwner
+    {
+        get
+        {
+            if (founderIDs.Count == 0)
+            {
+                return null;
+            }
+
+            return _GetOwner;
+        }
+    }
+
+	
     //public List<string> GetFounders => founderIDs;
     public bool IsOwner(string userID) => (founderIDs[0] == userID);
 	public bool IsFounder(string userID) => founderIDs.Contains(userID);
