@@ -24,6 +24,7 @@ public class WhisperMessages
         {
             public static string success(string companyName) => $"You are now the proud owner of {companyName}.";
             public static string alreadyExists = "A company already exists with that name. Please choose another.";
+            public static string syntax = "!company start (Company Name), without the brackets.";
         }
 
         public class Invite
@@ -98,6 +99,7 @@ public class WhisperMessages
         {
             public static string money(int money) => $"You need at least £{money} in your company funds to start a project. This is to pay Developers, and buy features.";
             public static string alreadyExists = "A project with the name already exists. Please come up with a new one.";
+            public static string syntax = "!project start (Project Name), without the brackets.";
 
             public static string success(string projectName) => $"You have started {projectName}. People can now apply to join.";
             public static string canApply(string projectLead) => $"A project has been started by {projectLead}. You can join by sending !project apply (Designer | Developer | Artist) to me.";

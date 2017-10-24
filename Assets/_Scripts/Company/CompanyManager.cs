@@ -49,6 +49,12 @@ public class CompanyManager : MonoBehaviour
                 companyName = String.Join(" ", splitWhisper);
             }
 
+            if (companyName == String.Empty)
+            {
+                client.SendWhisper(username, WhisperMessages.Company.Start.syntax);
+                return;
+            }
+
             if (CommandController.companies.ContainsKey(companyName))
             {
                 client.SendWhisper(username, WhisperMessages.Company.Start.alreadyExists);
