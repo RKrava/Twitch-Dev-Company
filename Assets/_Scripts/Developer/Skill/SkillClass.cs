@@ -30,9 +30,9 @@ public class SkillClass
 
 		while (skillXP >= xpRequired)
 		{
-			skillLevel += 1;
+            skillXP -= xpRequired;
+            skillLevel += 1;
             LevelUp(developerClass, leadershipSkill);
-			skillXP -= xpRequired;
 		}
 	}
 
