@@ -115,7 +115,7 @@ public class ProjectDevelopment : MonoBehaviour
             feature.featureName = featureSO.name;
             int cost = featureSO.featureCost;
 
-            if (featureSO.featureDesign == 0)
+            if (!featureSO.designRequired)
             {
                 feature.designQualityHit = FeatureQuality.Perfect;
             }
@@ -125,7 +125,7 @@ public class ProjectDevelopment : MonoBehaviour
                 feature.designPointsRequired = (int)(featureSO.featureDesign * Mathf.Pow(0.8f, 8));
             }
 
-            if (featureSO.featureDevelop == 0)
+            if (!featureSO.developRequired)
             {
                 feature.developmentQualityHit = FeatureQuality.Perfect;
             }
@@ -135,9 +135,10 @@ public class ProjectDevelopment : MonoBehaviour
                 feature.developmentPointsRequired = (int)(featureSO.featureDevelop * Mathf.Pow(0.8f, 8));
             }
 
-            if (featureSO.featureArt == 0)
+            if (!featureSO.artRequired)
             {
                 feature.artQualityHit = FeatureQuality.Perfect;
+                Debug.Log($"{feature.featureName} | {feature.artQualityHit}");
             }
 
             else
@@ -467,7 +468,6 @@ public class ProjectDevelopment : MonoBehaviour
                 if (featureDesignIndex + 1 > features.Count)
                 {
                     featureDesignIndex--;
-                    return;
                 }
 
                 else
@@ -505,7 +505,7 @@ public class ProjectDevelopment : MonoBehaviour
                 {
                     Debug.Log($"Development Points complete: {features[featureDevelopIndex].featureName} | {features[featureDevelopIndex].developmentPoints}.");
 
-                    if (features[featureDevelopIndex].developmentQualityHit == features[featureDevelopIndex].maxQuality)
+                    if (features[featureDevelopIndex].developmentQualityHit >= features[featureDevelopIndex].maxQuality)
                     {
                         featureDevelopIndex++;
                         break;
@@ -561,7 +561,7 @@ public class ProjectDevelopment : MonoBehaviour
                 {
                     Debug.Log($"Art Points complete: {features[featureArtIndex].featureName} | {features[featureArtIndex].artPoints}.");
 
-                    if (features[featureArtIndex].artQualityHit == features[featureArtIndex].maxQuality)
+                    if (features[featureArtIndex].artQualityHit >= features[featureArtIndex].maxQuality)
                     {
                         featureArtIndex++;
                         break;
@@ -589,7 +589,7 @@ public class ProjectDevelopment : MonoBehaviour
                         projectLead.AwardXP(SkillTypes.LeaderSkills.Motivation, 5, projectLead);
                     }
 
-                    feature = features[featureDesignIndex];
+                    feature = features[featureArtIndex];
 
                     feature.artPoints += points * bonus * leadBonus;
                     developerObject.AwardXP(SkillTypes.DeveloperSkills.Art, 2 * bonus, developerObject);
