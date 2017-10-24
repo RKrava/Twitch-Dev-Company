@@ -501,7 +501,7 @@ public class ProjectDevelopment : MonoBehaviour
                     points = 3;
                 }
 
-                while (feature.developmentPoints >= feature.developmentPointsRequired)
+                while (features[featureDevelopIndex].developmentPoints >= features[featureDevelopIndex].developmentPointsRequired)
                 {
                     Debug.Log($"Development Points complete: {features[featureDevelopIndex].featureName} | {features[featureDevelopIndex].developmentPoints}.");
 
@@ -557,7 +557,7 @@ public class ProjectDevelopment : MonoBehaviour
                     points = 3;
                 }
 
-                while (feature.artPoints >= feature.artPointsRequired)
+                while (features[featureArtIndex].artPoints >= features[featureArtIndex].artPointsRequired)
                 {
                     Debug.Log($"Art Points complete: {features[featureArtIndex].featureName} | {features[featureArtIndex].artPoints}.");
 
