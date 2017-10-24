@@ -355,6 +355,7 @@ public class ProjectManager : MonoBehaviour
             {
                 project.AcceptApplicant(applicant, project.applicants[applicant], pay);
 
+                project.cost += pay * 7;
                 costUI.text = $"Cost: £{project.cost}";
 
                 client.SendWhisper(applicant, WhisperMessages.Project.Accept.successApplicant(project.projectName));
