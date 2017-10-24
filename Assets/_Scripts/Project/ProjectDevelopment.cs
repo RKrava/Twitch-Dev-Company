@@ -194,6 +194,12 @@ public class ProjectDevelopment : MonoBehaviour
 
     public void Answer(string username, List<string> splitWhisper)
     {
+        if (splitWhisper.Count == 0)
+        {
+            client.SendWhisper(username, WhisperMessages.Project.Question.answerSyntax);
+            return;
+        }
+
         if (questionDictionary.ContainsKey(username))
         {
             Question question = questionDictionary[username];
