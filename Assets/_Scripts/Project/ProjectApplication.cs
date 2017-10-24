@@ -31,7 +31,7 @@ public class ProjectApplication
     private void ApplicationsClosed()
     {
         Debug.Log("Running ApplicationsClosed.");
-        acceptExpiry = DateTime.Now.Add(TimeSpan.FromMinutes(2));
+        acceptExpiry = DateTime.Now.Add(TimeSpan.FromMinutes(1));
         expiryCheck.Elapsed += OnTimerElapsed;
     }
 
