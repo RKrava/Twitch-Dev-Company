@@ -16,6 +16,8 @@ You cannot currently buy anything with your money. In future updates, you will b
 
 !xp - Check the amount of XP you have in each skill.
 
+!questions - Turn random questions during development on or off. **NOTE:** Questions will give you bonuses if you get them correct, and debuffs if incorrect.
+
 ## Company
 
 ### Money
