@@ -328,7 +328,7 @@ public class ProjectDevelopment : MonoBehaviour
                     EnsureMainThread.executeOnMainThread.Enqueue(() => { StartCoroutine(ResetBonus(developer, 60, oldBonus)); });
 
                     client.SendWhisper(username, WhisperMessages.Project.Question.mediumWrong);
-                    alertQueue.Enqueue($"{username} can not produce points for a minute.");
+                    alertQueue.Enqueue($"{username} cannot produce points for a minute.");
                 }
 
                 else if (question.difficulty == "hard")
