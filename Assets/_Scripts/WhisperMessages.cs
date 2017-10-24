@@ -58,7 +58,7 @@ public class WhisperMessages
 
         public class Deposit
         {
-            public static string notEnough(int developerMoney) => $"You only have {developerMoney}.";
+            public static string notEnough(int developerMoney) => $"You only have £{developerMoney}.";
             public static string syntax = "To deposit money, you need to use !company deposit 1000, etc.";
 
             public static string success(int money, string companyName, int companyMoney, int developerMoney) => $"You have deposited £{money}. Now {companyName} has £{companyMoney}, and you have £{developerMoney} left.";
