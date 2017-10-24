@@ -109,6 +109,9 @@ public class WhisperMessages
             public static string specifyPosition = "You have to specify the position you are applying for: !project apply (Designer | Developer | Artist).";
 
             public static string success = "Your application has been sent.";
+
+            public static string halfway = "You have 30 seconds left to join the project. You can join by sending !project apply (Designer | Developer | Artist) to me.";
+            public static string closed = "Applications are now closed.";
         }
 
         public class Accept
