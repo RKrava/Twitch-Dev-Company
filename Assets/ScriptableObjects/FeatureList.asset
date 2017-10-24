@@ -11,8 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8774a84b95d3d44dadea3c38d792019, type: 3}
   m_Name: FeatureList
   m_EditorClassIdentifier: 
-  featuresFolderPath: Features
-  featureNames: []
+  featuresFolderPath: Assets/ScriptableObjects/Features
   features:
   - {fileID: 11400000, guid: 9655d0d948631874c9b2cdbda0963e87, type: 2}
   - {fileID: 11400000, guid: 5ccf7b81ac62f4d4bbb77cc58d81aa32, type: 2}
