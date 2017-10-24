@@ -182,10 +182,14 @@ public class CommandController : MonoBehaviour
 
     private void MessagedCommand(object sender, OnChatCommandReceivedArgs e)
     {
-        if (string.Compare(e.Command.Command, "streamtycoon", true) == 0)
+        switch (e.Command.Command.ToLower())
         {
-            client.SendMessage("Stream Dev Tycoon is a Twitch version of games like Game Dev Tycoon and Software Inc. If you'd like to get involved, whisper me '!help'.");
-            return;
+            case "game":
+                client.SendMessage("Stream Dev Tycoon is a Twitch version of games like Game Dev Tycoon and Software Inc. If you'd like to get involved, whisper me '!help'.");
+                break;
+            case "help":
+                client.SendMessage(WhisperMessages.help);
+                break;
         }
     }
 
