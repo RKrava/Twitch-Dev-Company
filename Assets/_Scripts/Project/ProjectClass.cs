@@ -20,11 +20,12 @@ public class ProjectClass
     public bool sequel = false;
     public List<string> prequels;
 
-    public ProjectClass(string projectName, string projectLead, string companyName)
+    public ProjectClass(string projectName, string projectLead, string companyName, Categories category)
     {
         this.projectLead = projectLead;
         this.projectName = projectName;
         this.companyName = companyName;
+        this.category = category;
     }
 
     //private ProjectApplication projectApplication = new ProjectApplication();

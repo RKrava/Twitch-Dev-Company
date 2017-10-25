@@ -19,45 +19,17 @@ public class FindObject : MonoBehaviour
         }
     }
 
-    private static CommandController _commandController;
-    public static CommandController commandController
+    private static Canvas _loginCanvas;
+    public static Canvas loginCanvas
     {
         get
         {
-            if (_commandController == null)
+            if (_loginCanvas == null)
             {
-                _commandController = FindObjectOfType<CommandController>();
+                _loginCanvas = GameObject.FindGameObjectWithTag("Login").GetComponent<Canvas>();
             }
 
-            return _commandController;
-        }
-    }
-
-    private static SaveLoad _saveLoad;
-    public static SaveLoad saveLoad
-    {
-        get
-        {
-            if (_saveLoad == null)
-            {
-                _saveLoad = FindObjectOfType<SaveLoad>();
-            }
-
-            return _saveLoad;
-        }
-    }
-
-    private static CompanyManager _companyManager;
-    public static CompanyManager companyManager
-    {
-        get
-        {
-            if (_companyManager == null)
-            {
-                _companyManager = FindObjectOfType<CompanyManager>();
-            }
-
-            return _companyManager;
+            return _loginCanvas;
         }
     }
 
@@ -75,17 +47,45 @@ public class FindObject : MonoBehaviour
         }
     }
 
-    private static ModTools _modTools;
-    public static ModTools modTools
+    private static SaveLoad _saveLoad;
+    public static SaveLoad saveLoad
     {
         get
         {
-            if (_modTools == null)
+            if (_saveLoad == null)
             {
-                _modTools = FindObjectOfType<ModTools>();
+                _saveLoad = FindObjectOfType<SaveLoad>();
             }
 
-            return _modTools;
+            return _saveLoad;
+        }
+    }
+
+    private static CommandController _commandController;
+    public static CommandController commandController
+    {
+        get
+        {
+            if (_commandController == null)
+            {
+                _commandController = FindObjectOfType<CommandController>();
+            }
+
+            return _commandController;
+        }
+    }
+
+    private static CompanyManager _companyManager;
+    public static CompanyManager companyManager
+    {
+        get
+        {
+            if (_companyManager == null)
+            {
+                _companyManager = FindObjectOfType<CompanyManager>();
+            }
+
+            return _companyManager;
         }
     }
 
@@ -103,17 +103,101 @@ public class FindObject : MonoBehaviour
         }
     }
 
-    private static Canvas _loginCanvas;
-    public static Canvas loginCanvas
+    private static ProjectStart _projectStart;
+    public static ProjectStart projectStart
     {
         get
         {
-            if (_loginCanvas == null)
+            if (_projectStart == null)
             {
-                _loginCanvas = GameObject.FindGameObjectWithTag("Login").GetComponent<Canvas>();
+                _projectStart = FindObjectOfType<ProjectStart>();
             }
 
-            return _loginCanvas;
+            return _projectStart;
+        }
+    }
+
+    private static ProjectApply _projectApply;
+    public static ProjectApply projectApply
+    {
+        get
+        {
+            if (_projectApply == null)
+            {
+                _projectApply = FindObjectOfType<ProjectApply>();
+            }
+
+            return _projectApply;
+        }
+    }
+
+    private static ProjectAccept _projectAccept;
+    public static ProjectAccept projectAccept
+    {
+        get
+        {
+            if (_projectAccept == null)
+            {
+                _projectAccept = FindObjectOfType<ProjectAccept>();
+            }
+
+            return _projectAccept;
+        }
+    }
+
+    private static ProjectRecruit _projectRecruit;
+    public static ProjectRecruit projectRecruit
+    {
+        get
+        {
+            if (_projectRecruit == null)
+            {
+                _projectRecruit = FindObjectOfType<ProjectRecruit>();
+            }
+
+            return _projectRecruit;
+        }
+    }
+
+    private static ProjectAdd _projectAdd;
+    public static ProjectAdd projectAdd
+    {
+        get
+        {
+            if (_projectAdd == null)
+            {
+                _projectAdd = FindObjectOfType<ProjectAdd>();
+            }
+
+            return _projectAdd;
+        }
+    }
+
+    private static ProjectMove _projectMove;
+    public static ProjectMove projectMove
+    {
+        get
+        {
+            if (_projectMove == null)
+            {
+                _projectMove = FindObjectOfType<ProjectMove>();
+            }
+
+            return _projectMove;
+        }
+    }
+
+    private static ProjectQuestion _projectQuestion;
+    public static ProjectQuestion projectQuestion
+    {
+        get
+        {
+            if (_projectQuestion == null)
+            {
+                _projectQuestion = FindObjectOfType<ProjectQuestion>();
+            }
+
+            return _projectQuestion;
         }
     }
 
@@ -128,6 +212,20 @@ public class FindObject : MonoBehaviour
             }
 
             return _projectDevelopment;
+        }
+    }
+
+    private static ModTools _modTools;
+    public static ModTools modTools
+    {
+        get
+        {
+            if (_modTools == null)
+            {
+                _modTools = FindObjectOfType<ModTools>();
+            }
+
+            return _modTools;
         }
     }
 }

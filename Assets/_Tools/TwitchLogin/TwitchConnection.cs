@@ -21,13 +21,11 @@ public class TwitchConnection : MonoBehaviour
 	/// probably a better way but this will do for now
 	/// </summary>
 	public TwitchClient client { get; private set; }
-    private CommandController commandController;
     private TwitchEvents twitchEvents;
 
     private void Awake()
     {
 		EnsureSingleton();
-        commandController = FindObject.commandController;
         twitchEvents = FindObject.twitchEvents;
     }
 

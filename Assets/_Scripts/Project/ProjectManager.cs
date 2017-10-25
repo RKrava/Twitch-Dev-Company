@@ -7,6 +7,12 @@ using UnityEngine.UI;
 public class ProjectManager : MonoBehaviour
 {
     private ProjectDevelopment projectDevelopment;
+    private ProjectStart projectStart;
+    private ProjectApply projectApply;
+    private ProjectAccept projectAccept;
+    private ProjectRecruit projectRecruit;
+    private ProjectAdd projectAdd;
+    private ProjectMove projectMove;
 
     public static ProjectClass project;
     public static bool startProject;
@@ -25,6 +31,12 @@ public class ProjectManager : MonoBehaviour
         startProject = false;
 
         projectDevelopment = FindObject.projectDevelopment;
+        projectStart = FindObject.projectStart;
+        projectApply = FindObject.projectApply;
+        projectAccept = FindObject.projectAccept;
+        projectRecruit = FindObject.projectRecruit;
+        projectAdd = FindObject.projectAdd;
+        projectMove = FindObject.projectMove;
 
         projectNameUI.text = "";
         projectLeadUI.text = "";
@@ -58,9 +70,21 @@ public class ProjectManager : MonoBehaviour
             DeveloperPosition developerPosition = applicants[applicant];
             int pay = developer.developerPay.pay * 7;
 
-            if (developerPosition == DeveloperPosition.Designer) {pastebin += $"Design - {developer.GetSkillLevel(SkillTypes.DeveloperSkills.Design)} | Cost: {pay}";}
-            else if (developerPosition == DeveloperPosition.Developer) {pastebin += $"Develop - {developer.GetSkillLevel(SkillTypes.DeveloperSkills.Development)} | Cost: {pay}";}
-            else if (developerPosition == DeveloperPosition.Artist) {pastebin += $"Art - {developer.GetSkillLevel(SkillTypes.DeveloperSkills.Art)} | Cost: {pay}";}
+            if (developerPosition == DeveloperPosition.Designer)
+            {
+                pastebin += $"Design - {developer.GetSkillLevel(SkillTypes.DeveloperSkills.Design)} | Cost: {pay}";
+            }
+
+            else if (developerPosition == DeveloperPosition.Developer)
+            {
+                pastebin += $"Develop - {developer.GetSkillLevel(SkillTypes.DeveloperSkills.Development)} | Cost: {pay}";
+            }
+
+            else if (developerPosition == DeveloperPosition.Artist)
+            {
+                pastebin += $"Art - {developer.GetSkillLevel(SkillTypes.DeveloperSkills.Art)} | Cost: {pay}";
+            }
+
             else
             {
                 Debug.Log("How the F did I get here?");
@@ -99,405 +123,25 @@ public class ProjectManager : MonoBehaviour
 
     public void SendWhisper(string id, string username, List<string> splitWhisper)
     {
-        string companyName;
-
-        if (string.Compare(splitWhisper[0], "start", true) == 0)
-        {
-            if (startProject)
-            {
-                client.SendWhisper(username, WhisperMessages.Project.alreadyUnderway);
-                return;
-            }
-
-            projectNameUI.text = "";
-            projectLeadUI.text = "";
-            costUI.text = "";
-            revenueUI.text = "";
-            profitUI.text = "";
-            reviewScoreUI.text = "";
-
-            foreach (Transform child in featuresUI.transform)
-            {
-                GameObject.Destroy(child.gameObject);
-            }
-
-            //Developer check
-            if (CommandController.developers.ContainsKey(id))
-            {
-
-            }
-
-            else
-            {
-                client.SendWhisper(username, WhisperMessages.Developer.notDeveloper);
-                return;
-            }
-
-            if (CommandController.developers[id].IsFounder)
-            {
-                companyName = CommandController.developers[id].companyName;
-            }
-
-            else
-            {
-                client.SendWhisper(username, WhisperMessages.Company.notFounder);
-                return;
-            }
-
-            if (CommandController.companies[companyName].HasEnoughMoney(1000)) //TODO - Make it more expensive if needed
-            {
-
-            }
-
-            else
-            {
-                client.SendWhisper(username, WhisperMessages.Project.Start.money(1000));
-                return;
-            }
-
-            splitWhisper.RemoveAt(0);
-
-            string projectName = String.Join(" ", splitWhisper);
-
-            if (projectName == String.Empty)
-            {
-                client.SendWhisper(username, WhisperMessages.Project.Start.syntax);
-                return;
-            }
-
-            //Project check
-            if (CommandController.projects.ContainsKey(projectName))
-            {
-                client.SendWhisper(username, WhisperMessages.Project.Start.alreadyExists);
-                return;
-            }
-
-            else
-            {
-                startProject = true;
-
-                //Create the project
-                project = new ProjectClass(projectName, username, companyName); //Reason we store name over ID is because project is saved in their profile anyway, means we can look back at it easier and see what they worked on
-                project.category = Categories.Games;
-
-                projectNameUI.text = $"Project Name: {projectName}";
-                projectLeadUI.text = $"Project Lead: {username}";
-
-                client.SendWhisper(username, WhisperMessages.Project.Start.success(projectName), Timers.ProjectApplication);
-                client.SendMessage(WhisperMessages.Project.Start.canApply(username));
-            }
-        }
-
-        if (string.Compare(splitWhisper[0], "apply", true) == 0) //Do they apply for specific roles?
-        {
-            if (startProject)
-            {
-
-            }
-
-            else
-            {
-                client.SendWhisper(username, WhisperMessages.Project.alreadyUnderway);
-                return;
-            }
-
-            if (project == null)
-            {
-                client.SendWhisper(Settings.channelToJoin, WhisperMessages.Project.fail);
-                return;
-            }
-
-            //Developer check
-            if (CommandController.developers.ContainsKey(id))
-            {
-
-            }
-
-            else
-            {
-                client.SendWhisper(username, WhisperMessages.Developer.notDeveloper);
-                return;
-            }
-
-            if (project.HasPendingApplication(username))
-            {
-                client.SendWhisper(username, WhisperMessages.Project.Apply.alreadyApplied);
-                return;
-            }
-
-            if (splitWhisper[1] == String.Empty)
-            {
-                client.SendWhisper(username, WhisperMessages.Project.Apply.specifyPosition);
-                return;
-            }
-
-            if (splitWhisper[1].ToLower() == DeveloperPosition.Designer.ToString().ToLower())
-            {
-                project.AddApplicant(username, DeveloperPosition.Designer);
-                client.SendWhisper(username, WhisperMessages.Project.Apply.success);
-                //Add them to the Pastebin
-            }
-
-            else if (splitWhisper[1].ToLower() == DeveloperPosition.Developer.ToString().ToLower())
-            {
-                project.AddApplicant(username, DeveloperPosition.Developer);
-                client.SendWhisper(username, WhisperMessages.Project.Apply.success);
-                //Add them to the Pastebin
-            }
-
-            else if (splitWhisper[1].ToLower() == DeveloperPosition.Artist.ToString().ToLower())
-            {
-                project.AddApplicant(username, DeveloperPosition.Artist);
-                client.SendWhisper(username, WhisperMessages.Project.Apply.success);
-                //Add them to the Pastebin
-            }
-
-            else
-            {
-
-                client.SendWhisper(username, WhisperMessages.Project.Apply.notPosition);
-                return;
-            }
-        }
-
-        if (string.Compare(splitWhisper[0], "accept", true) == 0)
-        {
-            if (startProject)
-            {
-
-            }
-
-            else
-            {
-                client.SendWhisper(username, WhisperMessages.Project.alreadyUnderway);
-                return;
-            }
-
-            if (project == null)
-            {
-                client.SendWhisper(username, WhisperMessages.Project.fail);
-                return;
-            }
-
-            //Check they are developer
-            //Developer check
-            if (CommandController.developers.ContainsKey(id))
-            {
-
-            }
-
-            else
-            {
-                client.SendWhisper(username, WhisperMessages.Developer.notDeveloper);
-                return;
-            }
-
-            //Check they are a founder
-            if (CommandController.developers[id].IsFounder)
-            {
-                companyName = CommandController.developers[id].companyName;
-            }
-
-            else
-            {
-                client.SendWhisper(username, WhisperMessages.Company.notFounder);
-                return;
-            }
-
-            //Check they are the ProjectLead
-            if (project.projectLead == username)
-            {
-
-            }
-
-            else
-            {
-                client.SendWhisper(username, WhisperMessages.Project.notProjectLead);
-                return;
-            }
-
-            string applicant = splitWhisper[1];
-
-            //Check the person they are accepting exists
-            if (CommandController.DoesUsernameExist(applicant))
-            {
-
-            }
-
-            else
-            {
-                client.SendWhisper(username, WhisperMessages.Project.Accept.notExist);
-                return;
-            }
-
-            string applicantID = CommandController.GetID(applicant);
-            int pay = CommandController.developers[applicantID].developerPay.pay;
-
-            //Check they've sent an application
-            if (project.HasPendingApplication(applicant))
-            {
-            }
-
-            else
-            {
-                client.SendWhisper(username, WhisperMessages.Project.Accept.notApplied);
-                return;
-            }
-
-            //Check whether they've already been added
-            if (project.developers.ContainsKey(applicant))
-            {
-                client.SendWhisper(username, WhisperMessages.Project.Accept.alreadyTeam);
-                return;
-            }
-
-            else
-            {
-                project.AcceptApplicant(applicant, project.applicants[applicant], pay);
-
-                project.cost += pay * 7;
-                costUI.text = $"Cost: £{project.cost}";
-
-                client.SendWhisper(applicant, WhisperMessages.Project.Accept.successApplicant(project.projectName));
-                client.SendWhisper(username, WhisperMessages.Project.Accept.successLead(applicant, project.projectName));
-            }
-        }
-
-        if (string.Compare(splitWhisper[0], "recruit", true) == 0)
-        {
-            splitWhisper.RemoveAt(0);
-
-            if (string.Join(" ", splitWhisper) == String.Empty)
-            {
-                Debug.Log("Nothing here");
-            }
-
-            if (startProject)
-            {
-
-            }
-
-            else
-            {
-                client.SendWhisper(username, WhisperMessages.Project.alreadyUnderway);
-                return;
-            }
-
-            if (project == null)
-            {
-                client.SendWhisper(username, WhisperMessages.Project.fail);
-                return;
-            }
-
-            //Check they are developer
-            //Developer check
-            if (CommandController.developers.ContainsKey(id))
-            {
-
-            }
-
-            else
-            {
-                client.SendWhisper(username, WhisperMessages.Developer.notDeveloper);
-                return;
-            }
-
-            //Check they are a founder
-            if (CommandController.developers[id].IsFounder)
-            {
-                companyName = CommandController.developers[id].companyName;
-            }
-
-            else
-            {
-                client.SendWhisper(username, WhisperMessages.Company.notFounder);
-                return;
-            }
-
-            //Check they are the ProjectLead
-            if (project.projectLead == username)
-            {
-
-            }
-
-            else
-            {
-                client.SendWhisper(username, WhisperMessages.Project.notProjectLead);
-                return;
-            }
-
-            int number = 0;
-
-            try
-            {
-                number = int.Parse(splitWhisper[1]);
-            }
-
-            catch
-            {
-                Debug.Log("Error!");
-                return;
-            }
-
-            int cost = (number * 20) * 7;
-
-            CompanyClass company = CommandController.companies[project.companyName];
-
-            if (company.HasEnoughMoney(cost))
-            {
-
-            }
-
-            else
-            {
-                return;
-            }
-
-            if (splitWhisper[0].ToLower() == DeveloperPosition.Designer.ToString().ToLower())
-            {
-                project.designAI += number;
-                project.cost += cost;
-                company.SpendMoney(cost);
-                Debug.Log("Design AI added.");
-                client.SendWhisper(username, WhisperMessages.Project.Apply.success);
-                //Add them to the Pastebin
-            }
-
-            else if (splitWhisper[0].ToLower() == DeveloperPosition.Developer.ToString().ToLower())
-            {
-                project.developAI += number;
-                project.cost += cost;
-                company.SpendMoney(cost);
-                Debug.Log("Develop AI added.");
-                client.SendWhisper(username, WhisperMessages.Project.Apply.success);
-                //Add them to the Pastebin
-            }
-
-            else if (splitWhisper[0].ToLower() == DeveloperPosition.Artist.ToString().ToLower())
-            {
-                project.artAI += number;
-                project.cost += cost;
-                company.SpendMoney(cost);
-                Debug.Log("Art AI added.");
-                client.SendWhisper(username, WhisperMessages.Project.Apply.success);
-                //Add them to the Pastebin
-            }
-
-            else
-            {
-
-                client.SendWhisper(username, WhisperMessages.Project.Apply.notPosition);
-                return;
-            }
-        }
-
         switch (splitWhisper[0].ToLower())
         {
+            case "start":
+                projectStart.ProjectStartMethod(id, username, splitWhisper);
+                break;
+            case "apply":
+                projectApply.ProjectApplyMethod(id, username, splitWhisper);
+                break;
+            case "accept":
+                projectAccept.ProjectAcceptMethod(id, username, splitWhisper);
+                break;
+            case "recruit":
+                projectRecruit.ProjectRecruitMethod(id, username, splitWhisper);
+                break;
             case "add":
-                projectDevelopment.Add(splitWhisper);
+                projectAdd.ProjectAddMethod(splitWhisper);
                 break;
             case "move":
-                projectDevelopment.Move(splitWhisper, username);
+                projectMove.ProjectMoveMethod(username, splitWhisper);
                 break;
             default:
                 Debug.Log("ProjectManager switch broken.");

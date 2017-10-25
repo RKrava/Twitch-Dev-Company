@@ -95,7 +95,7 @@ public class CommandController : MonoBehaviour
     private CompanyManager companyManager;
     private ProjectManager projectManager;
     private ModTools modTools;
-    private ProjectDevelopment projectDevelopment;
+    private ProjectQuestion projectQuestion;
 
     string id;
     string username;
@@ -107,7 +107,7 @@ public class CommandController : MonoBehaviour
         companyManager = FindObject.companyManager;
         projectManager = FindObject.projectManager;
         modTools = FindObject.modTools;
-        projectDevelopment = FindObject.projectDevelopment;
+        projectQuestion = FindObject.projectQuestion;
     }
 
     public void DelayedAwake()
@@ -254,7 +254,7 @@ public class CommandController : MonoBehaviour
                 projectManager.SendWhisper(id, username, splitWhisper);
                 break;
             case "answer":
-                projectDevelopment.Answer(username, splitWhisper);
+                projectQuestion.Answer(id, username, splitWhisper);
                 break;
             case "questions":
                 developers[id].questions = !developers[id].questions;
