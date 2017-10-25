@@ -425,6 +425,140 @@ public class ProjectDevelopment : MonoBehaviour
         yield return null;
     }
 
+    private void AIUpdate()
+    {
+        if (project.designAI != 0)
+        {
+            int points = 3 * project.designAI;
+
+            while (features[featureDesignIndex].designPoints >= features[featureDesignIndex].designPointsRequired)
+            {
+                Debug.Log($"Design Points complete: {features[featureDesignIndex].featureName} | {features[featureDesignIndex].designPoints}.");
+
+                if (features[featureDesignIndex].designQualityHit == features[featureDesignIndex].maxQuality)
+                {
+                    featureDesignIndex++;
+                    break;
+                }
+
+                else
+                {
+                    features[featureDesignIndex].designQualityHit++;
+
+                    features[featureDesignIndex].designPointsRequired = (int)(features[featureDesignIndex].designPointsRequired * 1.2f);
+                }
+            }
+
+            if (featureDesignIndex + 1 > features.Count)
+            {
+                featureDesignIndex--;
+            }
+
+            else
+            {
+                feature = features[featureDesignIndex];
+
+                feature.designPoints += points;
+
+                featureUI = featureUIList[featureDesignIndex];
+
+                featureUI.designPointsRequiredUI.text = $"Design Points Required: {feature.designPointsRequired}pts";
+                featureUI.designPointsUI.text = $"Design Points: {feature.designPoints}pts";
+
+                Debug.Log($"{feature.featureName} | {feature.designPoints}");
+            }
+        }
+
+
+        if (project.developAI != 0)
+        {
+            int points = 3 * project.developAI;
+
+            while (features[featureDevelopIndex].developmentPoints >= features[featureDevelopIndex].developmentPointsRequired)
+            {
+                Debug.Log($"Development Points complete: {features[featureDevelopIndex].featureName} | {features[featureDevelopIndex].developmentPoints}.");
+
+                if (features[featureDevelopIndex].developmentQualityHit >= features[featureDevelopIndex].maxQuality)
+                {
+                    featureDevelopIndex++;
+                    break;
+                }
+
+                else
+                {
+                    features[featureDevelopIndex].developmentQualityHit++;
+
+                    features[featureDevelopIndex].developmentPointsRequired = (int)(features[featureDevelopIndex].developmentPointsRequired * 1.2f);
+                }
+            }
+
+            if (featureDevelopIndex + 1 > features.Count)
+            {
+                featureDevelopIndex--;
+                Debug.Log("No more features to work on.");
+                return;
+            }
+
+            else
+            {
+                feature = features[featureDevelopIndex];
+
+                feature.developmentPoints += points;
+
+                featureUI = featureUIList[featureDevelopIndex];
+
+                featureUI.developmentPointsRequiredUI.text = $"Development Points Required: {feature.developmentPointsRequired}pts";
+                featureUI.developmentPointsUI.text = $"Development Points: {feature.developmentPoints}pts";
+
+                Debug.Log($"{feature.featureName} | {feature.developmentPoints}");
+            }
+        }
+
+
+        if (project.artAI != 0)
+        {
+            int points = 3 * project.artAI;
+
+            while (features[featureArtIndex].artPoints >= features[featureArtIndex].artPointsRequired)
+            {
+                Debug.Log($"Art Points complete: {features[featureArtIndex].featureName} | {features[featureArtIndex].artPoints}.");
+
+                if (features[featureArtIndex].artQualityHit >= features[featureArtIndex].maxQuality)
+                {
+                    featureArtIndex++;
+                    break;
+                }
+
+                else
+                {
+                    features[featureArtIndex].artQualityHit++;
+
+                    features[featureArtIndex].artPointsRequired = (int)(features[featureArtIndex].artPointsRequired * 1.2f);
+                }
+            }
+
+            if (featureArtIndex + 1 > features.Count)
+            {
+                featureArtIndex--;
+                return;
+            }
+
+            else
+            {
+                feature = features[featureArtIndex];
+
+                feature.artPoints += points;
+
+                featureUI = featureUIList[featureArtIndex];
+
+                featureUI.artPointsRequiredUI.text = $"Art Points Required: {feature.artPointsRequired}pts";
+                featureUI.artPointsUI.text = $"Art Points: {feature.artPoints}pts";
+
+                Debug.Log($"{feature.featureName} | {feature.artPoints}");
+            }
+        }
+    }
+
     private void ProjectUpdate()
     {
         DeveloperClass projectLead = CommandController.developers[CommandController.GetID(project.projectLead)];
@@ -602,6 +736,11 @@ public class ProjectDevelopment : MonoBehaviour
                     Debug.Log($"{feature.featureName} | {feature.artPoints}");
                 }
             }
+        }
+
+        if (project.designAI != 0 || project.developAI != 0 || project.artAI != 0)
+        {
+            AIUpdate();
         }
     }
 

@@ -363,6 +363,134 @@ public class ProjectManager : MonoBehaviour
             }
         }
 
+        if (string.Compare(splitWhisper[0], "recruit", true) == 0)
+        {
+            splitWhisper.RemoveAt(0);
+
+            if (string.Join(" ", splitWhisper) == String.Empty)
+            {
+                Debug.Log("Nothing here");
+            }
+
+            if (startProject)
+            {
+
+            }
+
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.Project.alreadyUnderway);
+                return;
+            }
+
+            if (project == null)
+            {
+                client.SendWhisper(username, WhisperMessages.Project.fail);
+                return;
+            }
+
+            //Check they are developer
+            //Developer check
+            if (CommandController.developers.ContainsKey(id))
+            {
+
+            }
+
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.Developer.notDeveloper);
+                return;
+            }
+
+            //Check they are a founder
+            if (CommandController.developers[id].IsFounder)
+            {
+                companyName = CommandController.developers[id].companyName;
+            }
+
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.Company.notFounder);
+                return;
+            }
+
+            //Check they are the ProjectLead
+            if (project.projectLead == username)
+            {
+
+            }
+
+            else
+            {
+                client.SendWhisper(username, WhisperMessages.Project.notProjectLead);
+                return;
+            }
+
+            int number = 0;
+
+            try
+            {
+                number = int.Parse(splitWhisper[1]);
+            }
+
+            catch
+            {
+                Debug.Log("Error!");
+                return;
+            }
+
+            int cost = (number * 20) * 7;
+
+            CompanyClass company = CommandController.companies[project.companyName];
+
+            if (company.HasEnoughMoney(cost))
+            {
+
+            }
+
+            else
+            {
+                return;
+            }
+
+            if (splitWhisper[0].ToLower() == DeveloperPosition.Designer.ToString().ToLower())
+            {
+                project.designAI += number;
+                project.cost += cost;
+                company.SpendMoney(cost);
+                Debug.Log("Design AI added.");
+                client.SendWhisper(username, WhisperMessages.Project.Apply.success);
+                //Add them to the Pastebin
+            }
+
+            else if (splitWhisper[0].ToLower() == DeveloperPosition.Developer.ToString().ToLower())
+            {
+                project.developAI += number;
+                project.cost += cost;
+                company.SpendMoney(cost);
+                Debug.Log("Develop AI added.");
+                client.SendWhisper(username, WhisperMessages.Project.Apply.success);
+                //Add them to the Pastebin
+            }
+
+            else if (splitWhisper[0].ToLower() == DeveloperPosition.Artist.ToString().ToLower())
+            {
+                project.artAI += number;
+                project.cost += cost;
+                company.SpendMoney(cost);
+                Debug.Log("Art AI added.");
+                client.SendWhisper(username, WhisperMessages.Project.Apply.success);
+                //Add them to the Pastebin
+            }
+
+            else
+            {
+
+                client.SendWhisper(username, WhisperMessages.Project.Apply.notPosition);
+                return;
+            }
+        }
+
         switch (splitWhisper[0].ToLower())
         {
             case "add":

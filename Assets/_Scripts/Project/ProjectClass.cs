@@ -11,6 +11,9 @@ public class ProjectClass
     public string companyName;
     public Dictionary<string, DeveloperPosition> developers = new Dictionary<string, DeveloperPosition>();
     public Dictionary<string, int> developerPay = new Dictionary<string, int>();
+    public int designAI;
+    public int developAI;
+    public int artAI;
 
     public Categories category;
 
