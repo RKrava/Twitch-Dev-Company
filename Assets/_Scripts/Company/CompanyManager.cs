@@ -10,7 +10,7 @@ public class CompanyManager : MonoBehaviour
     public void SendWhisper(string id, string username, List<string> splitWhisper)
     {
         developer = CommandController.developers[id];
-        string companyName = developer.companyName;
+        string companyName = developer.company;
 
         //Mark as true/false by default to avoid issues
         //TODO - Do we actually need these bools?
@@ -213,12 +213,12 @@ public class CompanyManager : MonoBehaviour
                 developer.SpendMoney(money);
                 company.AddMoney(money);
 
-                client.SendWhisper(username, WhisperMessages.Company.Deposit.success(money, companyName, company.money, developer.developerMoney));
+                client.SendWhisper(username, WhisperMessages.Company.Deposit.success(money, companyName, company.money, developer.money));
             }
 
             else
             {
-                client.SendWhisper(username, WhisperMessages.Company.Deposit.notEnough(developer.developerMoney));
+                client.SendWhisper(username, WhisperMessages.Company.Deposit.notEnough(developer.money));
             }
         }
 
@@ -245,7 +245,7 @@ public class CompanyManager : MonoBehaviour
                 company.SpendMoney(money);
                 developer.AddMoney(money);
 
-				client.SendWhisper(username, WhisperMessages.Company.Withdraw.success(money, companyName, developer.developerMoney, company.money));
+				client.SendWhisper(username, WhisperMessages.Company.Withdraw.success(money, companyName, developer.money, company.money));
             }
 
             else
@@ -263,7 +263,7 @@ public class CompanyManager : MonoBehaviour
 
                 foreach (string developer in company.founderIDs)
                 {
-                    CommandController.developers[developer].UpdateCompany(newName);
+                    CommandController.developers[developer].JoinCompany(newName);
                 }
 
                 //Remove the old company and add the new one to update the key

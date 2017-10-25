@@ -135,7 +135,7 @@ public class ProjectManager : MonoBehaviour
 
             if (CommandController.developers[id].IsFounder)
             {
-                companyName = CommandController.developers[id].companyName;
+                companyName = CommandController.developers[id].company;
             }
 
             else
@@ -295,7 +295,7 @@ public class ProjectManager : MonoBehaviour
             //Check they are a founder
             if (CommandController.developers[id].IsFounder)
             {
-                companyName = CommandController.developers[id].companyName;
+                companyName = CommandController.developers[id].company;
             }
 
             else

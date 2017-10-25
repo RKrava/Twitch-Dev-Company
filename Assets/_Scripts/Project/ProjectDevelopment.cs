@@ -147,7 +147,7 @@ public class ProjectDevelopment : MonoBehaviour
             }
 
             string projectLeadID = CommandController.GetID(project.projectLead);
-            string companyName = CommandController.developers[projectLeadID].companyName;
+            string companyName = CommandController.developers[projectLeadID].company;
             CompanyClass company = CommandController.companies[companyName];
 
             featureUIObject = Instantiate(projectManager.featureUI, projectManager.featuresUI);
@@ -397,7 +397,7 @@ public class ProjectDevelopment : MonoBehaviour
         {
             developerObject = CommandController.developers[CommandController.GetID(developer)];
 
-            if (!developerObject.questions)
+            if (!developerObject.isAcceptingQuestions)
             {
                 return;
             }

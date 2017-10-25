@@ -42,10 +42,10 @@ public class ModTools : MonoBehaviour
             commandController.AddDeveloper(username, id);
         }
 
-        if (!CommandController.developers[id].mod)
+        if (!CommandController.developers[id].isModerator)
         {
             Debug.Log("Marking channel as mod.");
-            CommandController.developers[id].mod = true;
+            CommandController.developers[id].isModerator = true;
         }
 
         else
@@ -79,10 +79,10 @@ public class ModTools : MonoBehaviour
 
             string id = CommandController.GetID(moderator);
 
-            if (!CommandController.developers[id].mod)
+            if (!CommandController.developers[id].isModerator)
             {
                 Debug.Log("Marking moderator as mod.");
-                CommandController.developers[id].mod = true;
+                CommandController.developers[id].isModerator = true;
             }
 
             else
@@ -115,7 +115,7 @@ public class ModTools : MonoBehaviour
         if (CommandController.DoesUsernameExist(username))
         {
             id = CommandController.GetID(username);
-            CommandController.developers[id].mod = true;
+            CommandController.developers[id].isModerator = true;
             return;
         }
 
@@ -125,7 +125,7 @@ public class ModTools : MonoBehaviour
         id = moderator.Id;
 
         commandController.AddDeveloper(username, id);
-        CommandController.developers[id].mod = true;
+        CommandController.developers[id].isModerator = true;
 
         if (moderatorUsername.Count <= 0)
         {

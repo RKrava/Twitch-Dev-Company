@@ -77,19 +77,19 @@ public class CommandController : MonoBehaviour
 
     #region Dictionaries
     /// <summary>
-    /// Developers
+    /// Dictionary containing all of the developers
     /// </summary>
-    public static Dictionary<string, DeveloperClass> developers { get; set; } = new Dictionary<string, DeveloperClass>();
+    public static Dictionary<string, DeveloperClass> developers = new Dictionary<string, DeveloperClass>();
 
     /// <summary>
-	/// Companies
+	///  Dictionary containing all of the companies
 	/// </summary>
-    public static SortedDictionary<string, CompanyClass> companies { get; set; } = new SortedDictionary<string, CompanyClass>();
+    public static Dictionary<string, CompanyClass> companies = new Dictionary<string, CompanyClass>();
 
     /// <summary>
-	/// Projects
+	/// Dictionary containing of all of the projects
 	/// </summary>
-    public static SortedDictionary<string, ProjectClass> projects { get; set; } = new SortedDictionary<string, ProjectClass>();
+    public static Dictionary<string, ProjectClass> projects = new Dictionary<string, ProjectClass>();
 #endregion
 
     private CompanyManager companyManager;
@@ -215,7 +215,7 @@ public class CommandController : MonoBehaviour
         }
 
         //Check if the viewer is a mod
-        if (developers[id].mod == true)
+        if (developers[id].isModerator == true)
         {
             if (string.Compare(e.Command, "mod", true) == 0)
             {
@@ -229,7 +229,7 @@ public class CommandController : MonoBehaviour
                 client.SendWhisper(username, WhisperMessages.help);
                 break;
             case "money":
-                client.SendWhisper(username, WhisperMessages.Developer.money(developers[id].developerMoney));
+                client.SendWhisper(username, WhisperMessages.Developer.money(developers[id].money));
                 break;
             case "skills":
                 Func<SkillTypes.DeveloperSkills, int> devLevel = type => developers[id].GetSkillLevel(type);
@@ -257,8 +257,8 @@ public class CommandController : MonoBehaviour
                 projectDevelopment.Answer(username, splitWhisper);
                 break;
             case "questions":
-                developers[id].questions = !developers[id].questions;
-                client.SendWhisper(username, WhisperMessages.Developer.questions(developers[id].questions));
+                developers[id].isAcceptingQuestions = !developers[id].isAcceptingQuestions;
+                client.SendWhisper(username, WhisperMessages.Developer.questions(developers[id].isAcceptingQuestions));
                 break;
             default:
                 Debug.Log("No options found in CommandController.");
