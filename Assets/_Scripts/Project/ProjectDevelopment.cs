@@ -648,7 +648,12 @@ public class ProjectDevelopment : MonoBehaviour
         }
 
         //17 references the FeatureQuality enum, and 10 brings it to an actual number
-        project.overallRating = (((totalPoints / features.Count) / 17) * 10);
+        float score = features.Count;
+        score = totalPoints / score;
+        score = score / 17f;
+        score = score * 10f;
+
+        project.overallRating = (int)score;
 
         projectManager.reviewScoreUI.text = $"Review Score: {project.overallRating} out of 10";
 
@@ -689,6 +694,7 @@ public class ProjectDevelopment : MonoBehaviour
         int revenue = project.overallRating * features.Count * 1000;
 
         project.revenue = revenue;
+        CommandController.companies[project.companyName].money += revenue;
         project.profit = project.revenue - project.cost;
 
         projectManager.revenueUI.text = $"Revenue: £{project.revenue}";
