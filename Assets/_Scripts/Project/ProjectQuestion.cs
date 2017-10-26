@@ -60,7 +60,7 @@ public class ProjectQuestion : MonoBehaviour
         {
             developer = CommandController.developers[CommandController.GetID(developerUsername)];
 
-            if (!developer.questions)
+            if (!developer.isAcceptingQuestions)
             {
                 return;
             }

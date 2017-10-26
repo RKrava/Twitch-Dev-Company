@@ -89,6 +89,90 @@ public class FindObject : MonoBehaviour
         }
     }
 
+    private static CompanyStart _companyStart;
+    public static CompanyStart companyStart
+    {
+        get
+        {
+            if (_companyStart == null)
+            {
+                _companyStart = FindObjectOfType<CompanyStart>();
+            }
+
+            return _companyStart;
+        }
+    }
+
+    private static CompanyInvite _companyInvite;
+    public static CompanyInvite companyInvite
+    {
+        get
+        {
+            if (_companyInvite == null)
+            {
+                _companyInvite = FindObjectOfType<CompanyInvite>();
+            }
+
+            return _companyInvite;
+        }
+    }
+
+    private static CompanyAccept _companyAccept;
+    public static CompanyAccept companyAccept
+    {
+        get
+        {
+            if (_companyAccept == null)
+            {
+                _companyAccept = FindObjectOfType<CompanyAccept>();
+            }
+
+            return _companyAccept;
+        }
+    }
+
+    private static CompanyMoney _companyMoney;
+    public static CompanyMoney companyMoney
+    {
+        get
+        {
+            if (_companyMoney == null)
+            {
+                _companyMoney = FindObjectOfType<CompanyMoney>();
+            }
+
+            return _companyMoney;
+        }
+    }
+
+    private static CompanyEdit _companyEdit;
+    public static CompanyEdit companyEdit
+    {
+        get
+        {
+            if (_companyEdit == null)
+            {
+                _companyEdit = FindObjectOfType<CompanyEdit>();
+            }
+
+            return _companyEdit;
+        }
+    }
+
+    private static CompanyLeave _companyLeave;
+    public static CompanyLeave companyLeave
+    {
+        get
+        {
+            if (_companyLeave == null)
+            {
+                _companyLeave = FindObjectOfType<CompanyLeave>();
+            }
+
+            return _companyLeave;
+        }
+    }
+
     private static ProjectManager _projectManager;
     public static ProjectManager projectManager
     {

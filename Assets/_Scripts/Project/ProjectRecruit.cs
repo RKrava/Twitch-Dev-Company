@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class ProjectRecruit : MonoBehaviour
 {
-    private ProjectClass project;
     private CompanyClass company;
+    private ProjectClass project;
 
     private string companyName;
 
@@ -24,6 +24,8 @@ public class ProjectRecruit : MonoBehaviour
             return;
         }
 
+        project = ProjectManager.project;
+
         splitWhisper.RemoveAt(0);
 
         if (string.Join(" ", splitWhisper) == String.Empty)
@@ -31,14 +33,12 @@ public class ProjectRecruit : MonoBehaviour
             Debug.Log("Nothing here");
         }
 
-        //Check they are developer
         if (!CommandController.developers.ContainsKey(id))
         {
             client.SendWhisper(username, WhisperMessages.Developer.notDeveloper);
             return;
         }
 
-        //Check they are a founder
         if (CommandController.developers[id].IsFounder)
         {
             companyName = CommandController.developers[id].companyName;
@@ -50,9 +50,6 @@ public class ProjectRecruit : MonoBehaviour
             return;
         }
 
-        project = ProjectManager.project;
-
-        //Check they are the ProjectLead
         if (project.projectLead != username)
         {
             client.SendWhisper(username, WhisperMessages.Project.notProjectLead);

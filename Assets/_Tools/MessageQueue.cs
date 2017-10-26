@@ -68,7 +68,7 @@ public class MessageQueue : MonoBehaviour
                     ProjectManager.project.projectApplication = Activator.CreateInstance<ProjectApplication>();
                 }
 
-                else if (message.timer == Timers.CompanyInvite)
+                else if (message.timer == Timers.CompanyApplication)
                 {
                     string invitedID = CommandController.GetID(message.username);
                     string[] splitMessage = message.message.Split(' ');
@@ -90,10 +90,10 @@ public class MessageQueue : MonoBehaviour
 
                     string id = CommandController.GetID(username);
 
-                    string companyName = CommandController.developers[id].company;
+                    string companyName = CommandController.developers[id].companyName;
                     CompanyClass company = CommandController.companies[companyName];
 
-                    company.AddInvite(new CompanyInvite(company, invitedID, message.username, username));
+                    company.AddInvite(new CompanyApplication(company, invitedID, message.username, username));
                 }
 
                 else if (message.timer == Timers.QuestionTimer)
@@ -150,7 +150,7 @@ public class Message
 public enum Timers
 {
     Null,
-    CompanyInvite,
+    CompanyApplication,
     ProjectApplication,
     QuestionTimer,
 }

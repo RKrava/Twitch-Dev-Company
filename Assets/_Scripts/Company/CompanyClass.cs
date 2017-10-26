@@ -43,9 +43,9 @@ public class CompanyClass
     public void RemoveFounder(string userID) => founderIDs.Remove(userID);
 	public int FounderCount => founderIDs.Count;
 
-	List<CompanyInvite> invites = new List<CompanyInvite>();
-	public void AddInvite(CompanyInvite invite) => invites.Add(invite);
-	public void RemoveInvite(CompanyInvite invite) => invites.Remove(invite);
+	List<CompanyApplication> invites = new List<CompanyApplication>();
+	public void AddInvite(CompanyApplication invite) => invites.Add(invite);
+	public void RemoveInvite(CompanyApplication invite) => invites.Remove(invite);
 	public bool HasPendingInvite(string userID) => invites.Where(i => i.invitedID == userID).ToList().Count > 0;
 
   //public List<int> projectIDs = new List<int>();

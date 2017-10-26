@@ -35,7 +35,6 @@ public class ProjectStart : MonoBehaviour
         }
         //End of Clear UI
 
-        //Developer check
         if (!CommandController.developers.ContainsKey(id))
         {
             client.SendWhisper(username, WhisperMessages.Developer.notDeveloper);
@@ -53,7 +52,7 @@ public class ProjectStart : MonoBehaviour
             return;
         }
 
-        if (!CommandController.companies[companyName].HasEnoughMoney(1000)) //TODO - Make it more expensive if needed
+        if (!CommandController.companies[companyName].HasEnoughMoney(1000))
         {
             client.SendWhisper(username, WhisperMessages.Project.Start.money(1000));
             return;
@@ -69,7 +68,6 @@ public class ProjectStart : MonoBehaviour
             return;
         }
 
-        //Project check
         if (CommandController.projects.ContainsKey(projectName))
         {
             client.SendWhisper(username, WhisperMessages.Project.Start.alreadyExists);

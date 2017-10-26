@@ -22,7 +22,6 @@ public class ProjectApply : MonoBehaviour
 
         project = ProjectManager.project;
 
-        //Developer check
         if (!CommandController.developers.ContainsKey(id))
         {
             client.SendWhisper(username, WhisperMessages.Developer.notDeveloper);

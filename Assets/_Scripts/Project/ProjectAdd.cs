@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -124,7 +123,7 @@ public class ProjectAdd : MonoBehaviour
                 project.cost += cost;
                 project.features.Add(feature);
                 projectManager.costUI.text = $"Cost: £{project.cost}";
-                Debug.Log(ProjectManager.project.features[0].featureName);
+                Debug.Log(project.features[0].featureName);
             }
         }
     }

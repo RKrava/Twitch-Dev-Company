@@ -12,7 +12,7 @@ public class DeveloperClass
     /// <summary>
     /// Name of company which this developer is currently working at
     /// </summary>
-    public string company { get; private set; } = string.Empty;
+    public string companyName { get; private set; } = string.Empty;
 
     /// <summary>
     /// Is this developer a moderator of the channel in which this game is playing?
@@ -22,18 +22,18 @@ public class DeveloperClass
     /// <summary>
     /// Is this developer a founder of a company?
     /// </summary>
-    public bool IsFounder => (company != string.Empty);
+    public bool IsFounder => (companyName != string.Empty);
 
     /// <summary>
     /// Join a new company
     /// </summary>
     /// <param name="name">Name of the new company</param>
-    public void JoinCompany(string name) => company = name;
+    public void JoinCompany(string name) => companyName = name;
 
     /// <summary>
     /// Leave the current company
     /// </summary>
-    public void LeaveCompany() => company = "";
+    public void LeaveCompany() => companyName = "";
 
     /// <summary>
     /// List of projects this developer has worked on
@@ -72,29 +72,22 @@ public class DeveloperClass
     /// <summary>
     /// Set of Developer skills which the developer has which helps with generating points towards features
     /// </summary>
-    public Dictionary<SkillTypes.DeveloperSkills, SkillClass> developerSkills;
+    public Dictionary<SkillTypes.DeveloperSkills, SkillClass> developerSkills = new Dictionary<SkillTypes.DeveloperSkills, SkillClass>()
+        {
+            { SkillTypes.DeveloperSkills.Art, new SkillClass() },
+            { SkillTypes.DeveloperSkills.Design, new SkillClass() },
+            { SkillTypes.DeveloperSkills.Development, new SkillClass() },
+            { SkillTypes.DeveloperSkills.Marketing, new SkillClass() }
+        };
 
     /// <summary>
     /// Set of Leader skills which this developer has which helps increase the efficiency of other developers
     /// </summary>
-    public Dictionary<SkillTypes.LeaderSkills, SkillClass> leaderSkills;
-
-    public DeveloperClass()
-    {
-        developerSkills = new Dictionary<SkillTypes.DeveloperSkills, SkillClass>()
+    public Dictionary<SkillTypes.LeaderSkills, SkillClass> leaderSkills = new Dictionary<SkillTypes.LeaderSkills, SkillClass>()
         {
-            { SkillTypes.DeveloperSkills.Art, new SkillClass(this, false) },
-            { SkillTypes.DeveloperSkills.Design, new SkillClass(this, false) },
-            { SkillTypes.DeveloperSkills.Development, new SkillClass(this, false) },
-            { SkillTypes.DeveloperSkills.Marketing, new SkillClass(this, false) }
+            { SkillTypes.LeaderSkills.Leadership, new SkillClass() },
+            { SkillTypes.LeaderSkills.Motivation, new SkillClass() }
         };
-
-        leaderSkills = new Dictionary<SkillTypes.LeaderSkills, SkillClass>()
-        {
-            { SkillTypes.LeaderSkills.Leadership, new SkillClass(this, true) },
-            { SkillTypes.LeaderSkills.Motivation, new SkillClass(this, true) }
-        };
-    }
 
     /// <summary>
     /// Add XP to a specific skills to this developer. Developer skills or Leader Skill

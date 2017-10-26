@@ -6,12 +6,6 @@ public class SkillClass
     private DeveloperClass developerClass;
     private bool leadershipSkill;
 
-    public SkillClass(DeveloperClass developerClass, bool leadershipSkill)
-    {
-        this.developerClass = developerClass;
-        this.leadershipSkill = leadershipSkill;
-    }
-
     public int skillLevel = 1;
     public int skillXP = 0;
 

@@ -1,39 +1,49 @@
-﻿using System;
-using System.Timers;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-public class CompanyInvite
+public class CompanyInvite : MonoBehaviour
 {
-	public CompanyClass company { get; private set; }
-	public string invitedID { get; private set; }
-	public string invitedUsername { get; private set; }
-	public string inviter { get; private set; }
+    public void CompanyInviteMethod(string id, string username, List<string> splitWhisper, CompanyClass company)
+    {
+        if (!company.IsOwner(id))
+        {
+            client.SendWhisper(username, WhisperMessages.Company.notOwner);
+            return;
+        }
 
-	Timer expiryCheck = new Timer(1000);
-    TimeSpan timeSpan = TimeSpan.FromMinutes(5);
+        if (company.FounderCount == 3)
+        {
+            client.SendWhisper(username, WhisperMessages.Company.Invite.maxFounders);
+            return;
+        }
 
-    DateTime expiry;
+        string invitedUsername = splitWhisper[1];
 
-	public CompanyInvite(CompanyClass company, string invitedID, string invitedUsername, string inviter)
-	{
-		this.company = company;
-		this.invitedID = invitedID;
-		this.invitedUsername = invitedUsername;
-		this.inviter = inviter;
+        if (!CommandController.DoesUsernameExist(invitedUsername))
+        {
+            client.SendWhisper(username, WhisperMessages.Company.Invite.notDeveloper(invitedUsername));
+            return;
+        }
 
-		expiry = DateTime.Now.Add(timeSpan);
-		expiryCheck.Elapsed += OnTimerElapsed;
-        expiryCheck.Enabled = true;
-	}
+        if (username.ToLower() == invitedUsername.ToLower())
+        {
+            client.SendWhisper(username, WhisperMessages.Company.Invite.self);
+            return;
+        }
 
-    //Every second it runs
-	private void OnTimerElapsed(object sender, ElapsedEventArgs e)
-	{
-		if (DateTime.Now >= expiry)
-		{
-            client.SendWhisper(invitedUsername, WhisperMessages.Company.Invite.timedOut);
-            client.SendWhisper(inviter, WhisperMessages.Company.Invite.notResponded(invitedUsername));
-			company.RemoveInvite(this);
-			expiryCheck.Dispose();
-		}
-	}
+        string invitedID = CommandController.GetID(invitedUsername);
+
+        if (CommandController.developers[invitedID].IsFounder == false)
+        {
+            client.SendWhisper(invitedUsername, WhisperMessages.Company.Invite.received(username, company.companyName), Timers.CompanyApplication);
+
+            client.SendWhisper(username, WhisperMessages.Company.Invite.sent(invitedUsername));
+        }
+
+        else
+        {
+            client.SendWhisper(username, WhisperMessages.Company.Invite.anotherCompany(invitedUsername));
+        }
+    }
 }
