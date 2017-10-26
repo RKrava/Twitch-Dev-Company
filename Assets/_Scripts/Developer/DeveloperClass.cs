@@ -4,6 +4,8 @@ using System.Collections.Generic;
 [Serializable]
 public class DeveloperClass
 {
+    /// DO NOT 'private set' as it prevents loading the information from the JSON file
+
     /// <summary>
     /// This ID the developer
     /// </summary>

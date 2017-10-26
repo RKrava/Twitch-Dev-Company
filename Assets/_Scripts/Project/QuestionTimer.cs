@@ -29,7 +29,6 @@ public class QuestionTimer
             if (ProjectQuestion.questionDictionary.ContainsKey(developerUsername))
             {
                 ProjectQuestion.questionDictionary.Remove(developerUsername);
-                Debug.Log("Out of time. RIP question.");
                 //Send a message the question has run out
                 expiryCheck.Dispose();
             }

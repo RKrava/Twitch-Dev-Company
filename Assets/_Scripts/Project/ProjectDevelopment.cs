@@ -91,6 +91,11 @@ public class ProjectDevelopment : MonoBehaviour
                     }
                 }
 
+                if (project.features[featureDesignIndex].designPointsRequired == 0)
+                {
+                    return;
+                }
+
                 if (featureDesignIndex + 1 > project.features.Count)
                 {
                     featureDesignIndex--;
@@ -141,6 +146,11 @@ public class ProjectDevelopment : MonoBehaviour
 
                         project.features[featureDevelopIndex].developmentPointsRequired = (int)(project.features[featureDevelopIndex].developmentPointsRequired * 1.2f);
                     }
+                }
+
+                if (project.features[featureDevelopIndex].developmentPointsRequired == 0)
+                {
+                    return;
                 }
 
                 if (featureDevelopIndex + 1 > project.features.Count)
@@ -195,6 +205,11 @@ public class ProjectDevelopment : MonoBehaviour
 
                         project.features[featureArtIndex].artPointsRequired = (int)(project.features[featureArtIndex].artPointsRequired * 1.2f);
                     }
+                }
+
+                if (project.features[featureArtIndex].artPointsRequired == 0)
+                {
+                    return;
                 }
 
                 if (featureArtIndex + 1 > project.features.Count)
