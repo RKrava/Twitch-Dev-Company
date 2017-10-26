@@ -28,6 +28,11 @@ public class ProjectAccept : MonoBehaviour
 
         project = ProjectManager.project;
 
+        if (!project.projectApplication.acceptApplications)
+        {
+            return;
+        }
+
         if (!CommandController.developers.ContainsKey(id))
         {
             client.SendWhisper(username, WhisperMessages.Developer.notDeveloper);
