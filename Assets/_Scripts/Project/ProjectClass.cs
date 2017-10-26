@@ -6,6 +6,8 @@ using UnityEngine;
 [Serializable]
 public class ProjectClass
 {
+    /// DO NOT 'private set' as it prevents loading the information from the JSON file
+
     public string projectName;
     public string projectLead;
     public string companyName;

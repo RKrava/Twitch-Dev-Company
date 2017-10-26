@@ -12,7 +12,7 @@ public class DeveloperClass
     /// <summary>
     /// Name of company which this developer is currently working at
     /// </summary>
-    public string companyName { get; private set; } = string.Empty;
+    public string companyName = string.Empty;
 
     /// <summary>
     /// Is this developer a moderator of the channel in which this game is playing?
@@ -43,7 +43,7 @@ public class DeveloperClass
     /// <summary>
     /// Developers current money
     /// </summary>
-    public int money { get; private set; } = 5000;
+    public int money = 5000;
 
     /// <summary>
     /// Add an amount of money to this developer

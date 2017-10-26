@@ -5,8 +5,10 @@ using System.Linq;
 [Serializable]
 public class CompanyClass
 {
-	//public uint companyID { get; private set; }
-	public string companyName { get; set; }
+    /// DO NOT 'private set' as it prevents loading the information from the JSON file
+
+    //public uint companyID { get; private set; }
+    public string companyName;
 
 	const int maxFounders = 3;
 	const int maxConcurrentProjects = 5;
