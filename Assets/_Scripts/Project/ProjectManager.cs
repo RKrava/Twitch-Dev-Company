@@ -26,6 +26,8 @@ public class ProjectManager : MonoBehaviour
     public RectTransform featuresUI;
     public GameObject featureUI;
 
+    public static Dictionary<int, string> applicantList = new Dictionary<int, string>();
+
     private void Start()
     {
         startProject = false;
@@ -50,6 +52,8 @@ public class ProjectManager : MonoBehaviour
     {
         Debug.Log("Sending applicants.");
 
+        applicantList.Clear();
+
         //Get the projectlead
         string projectLead = project.projectLead;
 
@@ -58,14 +62,17 @@ public class ProjectManager : MonoBehaviour
 
         List<string> pastebinList = new List<string>();
         string pastebin;
+        int numberOfApplicants = 0;
 
         //Add that to a pastebin
         foreach (string applicant in applicants.Keys)
         {
+            numberOfApplicants++;
+
             Debug.Log($"Adding {applicant}");
             string applicantID = CommandController.GetID(applicant);
             DeveloperClass developer = CommandController.developers[applicantID];
-            pastebin = $"{applicant}: ";
+            pastebin = $"{numberOfApplicants}. {applicant}: ";
 
             DeveloperPosition developerPosition = applicants[applicant];
             int pay = developer.developerPay.pay * 7;
@@ -91,6 +98,7 @@ public class ProjectManager : MonoBehaviour
             }
 
             pastebinList.Add(pastebin);
+            applicantList.Add(numberOfApplicants, applicant);
             Debug.Log(pastebin);
         }
 

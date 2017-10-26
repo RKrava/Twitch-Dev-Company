@@ -7,6 +7,10 @@ public class ProjectAccept : MonoBehaviour
 
     private ProjectClass project;
 
+    private int applicant;
+    private string applicantUsername;
+    private string applicantID;
+
     private void Awake()
     {
         projectManager = FindObject.projectManager;
@@ -51,24 +55,41 @@ public class ProjectAccept : MonoBehaviour
             return;
         }
 
-        string applicant = splitWhisper[1];
+        int applicant = 0;
 
-        if (!CommandController.DoesUsernameExist(applicant))
+        try
         {
-            client.SendWhisper(username, WhisperMessages.Project.Accept.notExist);
+            applicant = int.Parse(splitWhisper[1]);
+        }
+
+        catch
+        {
             return;
         }
 
-        string applicantID = CommandController.GetID(applicant);
+        if (applicant > ProjectManager.applicantList.Count)
+        {
+            return;
+        }
+
+        applicantUsername = ProjectManager.applicantList[applicant];
+
+        //if (!CommandController.DoesUsernameExist(applicant))
+        //{
+        //    client.SendWhisper(username, WhisperMessages.Project.Accept.notExist);
+        //    return;
+        //}
+
+        applicantID = CommandController.GetID(applicantUsername);
         int pay = CommandController.developers[applicantID].developerPay.pay;
 
-        if (!project.HasPendingApplication(applicant))
+        if (!project.HasPendingApplication(applicantUsername))
         {
             client.SendWhisper(username, WhisperMessages.Project.Accept.notApplied);
             return;
         }
 
-        if (project.developers.ContainsKey(applicant))
+        if (project.developers.ContainsKey(applicantUsername))
         {
             client.SendWhisper(username, WhisperMessages.Project.Accept.alreadyTeam);
             return;
@@ -76,13 +97,13 @@ public class ProjectAccept : MonoBehaviour
 
         else
         {
-            project.AcceptApplicant(applicant, project.applicants[applicant], pay);
+            project.AcceptApplicant(applicantUsername, project.applicants[applicantUsername], pay);
 
             project.cost += pay * 7;
             projectManager.costUI.text = $"Cost: £{project.cost}";
 
-            client.SendWhisper(applicant, WhisperMessages.Project.Accept.successApplicant(project.projectName));
-            client.SendWhisper(username, WhisperMessages.Project.Accept.successLead(applicant, project.projectName));
+            client.SendWhisper(applicantUsername, WhisperMessages.Project.Accept.successApplicant(project.projectName));
+            client.SendWhisper(username, WhisperMessages.Project.Accept.successLead(applicantUsername, project.projectName));
         }
     }
 }
