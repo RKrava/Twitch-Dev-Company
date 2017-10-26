@@ -144,7 +144,7 @@ public class ProjectQuestion : MonoBehaviour
                 client.SendWhisper(username, WhisperMessages.Project.Question.answerSyntax);
             }
 
-            if (answer == 0 || answer > answers)
+            if (answer > answers)
             {
                 client.SendWhisper(username, WhisperMessages.Project.Question.noOption);
                 return;
