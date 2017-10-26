@@ -59,7 +59,6 @@ public class ProjectDevelopment : MonoBehaviour
     }
 
     #region Project Development
-    
     private void ProjectUpdate()
     {
         projectLead = CommandController.developers[CommandController.GetID(project.projectLead)];

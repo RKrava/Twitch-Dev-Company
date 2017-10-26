@@ -90,7 +90,7 @@ public class MessageQueue : MonoBehaviour
 
                     string id = CommandController.GetID(username);
 
-                    string companyName = CommandController.developers[id].companyName;
+                    string companyName = CommandController.developers[id].company;
                     CompanyClass company = CommandController.companies[companyName];
 
                     company.AddInvite(new CompanyInvite(company, invitedID, message.username, username));
