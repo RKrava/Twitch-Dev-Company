@@ -71,8 +71,9 @@ public class WhisperMessages
             public static string notEnough(int companyMoney) => $"The company only has £{companyMoney}.";
             public static string syntax = "To withdraw money, you need to use !company withdraw 1000, etc.";
 
+            public static string project = "You cannot withdraw money when you are running a project.";
+
             public static string success(int money, string companyName, int developerMoney, int companyMoney) => $"You have withdrawn {money}. Now you have £{developerMoney}, and {companyName} has £{companyMoney} left.";
-            
         }
 
         public class Edit
@@ -132,6 +133,9 @@ public class WhisperMessages
         public class Add
         {
             public static string onlyOne(string featureName) => $"You already have {featureName} added.";
+            public static string cannotAfford(string featureName, int companyMoney, int featureCost) => $"You cannot afford {featureName}. You only have £{companyMoney} in the bank, and it costs £{featureCost}.";
+
+            public static string success(string featureName, int featureCost) => $"You have successfully added {featureName}. It cost you £{featureCost}.";
         }
 
         public class Move

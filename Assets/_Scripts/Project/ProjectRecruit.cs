@@ -82,7 +82,7 @@ public class ProjectRecruit : MonoBehaviour
         {
             project.designAI += number;
             project.cost += cost;
-            company.SpendMoney(cost);
+            //company.SpendMoney(cost);
             Debug.Log("Design AI added.");
             client.SendWhisper(username, WhisperMessages.Project.Apply.success);
         }
@@ -91,7 +91,7 @@ public class ProjectRecruit : MonoBehaviour
         {
             project.developAI += number;
             project.cost += cost;
-            company.SpendMoney(cost);
+            //company.SpendMoney(cost);
             Debug.Log("Develop AI added.");
             client.SendWhisper(username, WhisperMessages.Project.Apply.success);
         }
@@ -100,7 +100,7 @@ public class ProjectRecruit : MonoBehaviour
         {
             project.artAI += number;
             project.cost += cost;
-            company.SpendMoney(cost);
+            //company.SpendMoney(cost);
             Debug.Log("Art AI added.");
             client.SendWhisper(username, WhisperMessages.Project.Apply.success);
         }

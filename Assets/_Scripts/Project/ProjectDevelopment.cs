@@ -391,7 +391,7 @@ public class ProjectDevelopment : MonoBehaviour
             string id = CommandController.GetID(developerUsername);
             int pay = (7 * project.developerPay[developerUsername]);
             project.cost += pay;
-            CommandController.companies[project.companyName].SpendMoney(pay);
+            //CommandController.companies[project.companyName].SpendMoney(pay);
             CommandController.developers[id].AddMoney(pay);
         }
 
@@ -466,10 +466,12 @@ public class ProjectDevelopment : MonoBehaviour
     {
         Debug.Log("Sales");
 
+        CommandController.companies[project.companyName].SpendMoney(project.cost);
+
         int revenue = project.overallRating * project.features.Count * 1000;
 
         project.revenue = revenue;
-        CommandController.companies[project.companyName].money += revenue;
+        CommandController.companies[project.companyName].AddMoney(revenue);
         project.profit = project.revenue - project.cost;
 
         projectManager.revenueUI.text = $"Revenue: £{project.revenue}";

@@ -61,11 +61,20 @@ public class CompanyMoney : MonoBehaviour
             return;
         }
 
-        if (int.TryParse(splitWhisper[1], out money)) { }
+        if (int.TryParse(splitWhisper[1], out money))
+        {
+
+        }
 
         else
         {
             client.SendWhisper(username, WhisperMessages.Company.Withdraw.syntax);
+            return;
+        }
+
+        if (ProjectManager.startProject && ProjectManager.project.companyName == company.companyName)
+        {
+            client.SendWhisper(username, WhisperMessages.Company.Withdraw.project);
             return;
         }
 

@@ -108,22 +108,31 @@ public class ProjectAdd : MonoBehaviour
             string companyName = CommandController.developers[projectLeadID].companyName;
             CompanyClass company = CommandController.companies[companyName];
 
-            featureUIObject = Instantiate(projectManager.featureUI, projectManager.featuresUI);
-            featureUI = featureUIObject.GetComponent<FeatureUI>();
-            featureUIList.Add(featureUI);
-
-            featureUI.featureNameUI.text = feature.featureName;
-            featureUI.designPointsRequiredUI.text = $"Design Points Required: {feature.designPointsRequired}pts.";
-            featureUI.developmentPointsRequiredUI.text = $"Development Points Required: {feature.developmentPointsRequired}pts.";
-            featureUI.artPointsRequiredUI.text = $"Art Points Required: {feature.artPointsRequired}pts.";
-
             if (company.HasEnoughMoney(cost))
             {
-                company.SpendMoney(cost);
+                featureUIObject = Instantiate(projectManager.featureUI, projectManager.featuresUI);
+                featureUI = featureUIObject.GetComponent<FeatureUI>();
+                featureUIList.Add(featureUI);
+
+                featureUI.featureNameUI.text = feature.featureName;
+                featureUI.designPointsRequiredUI.text = $"Design Points Required: {feature.designPointsRequired}pts.";
+                featureUI.developmentPointsRequiredUI.text = $"Development Points Required: {feature.developmentPointsRequired}pts.";
+                featureUI.artPointsRequiredUI.text = $"Art Points Required: {feature.artPointsRequired}pts.";
+
+                //Not spending the money until the end, but stopping you from removing money from a company until the end
+                //company.SpendMoney(cost);
                 project.cost += cost;
                 project.features.Add(feature);
                 projectManager.costUI.text = $"Cost: £{project.cost}";
+
+                client.SendWhisper(project.projectLead, WhisperMessages.Project.Add.success(featureName, cost));
                 Debug.Log(project.features[0].featureName);
+            }
+
+            else
+            {
+                client.SendWhisper(project.projectLead, WhisperMessages.Project.Add.cannotAfford(featureName, company.money, cost));
+                return;
             }
         }
     }
