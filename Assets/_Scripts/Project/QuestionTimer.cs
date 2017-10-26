@@ -29,7 +29,7 @@ public class QuestionTimer
             if (ProjectQuestion.questionDictionary.ContainsKey(developerUsername))
             {
                 ProjectQuestion.questionDictionary.Remove(developerUsername);
-                //Send a message the question has run out
+                client.SendWhisper(developerUsername, WhisperMessages.Project.Question.timedOut);
                 expiryCheck.Dispose();
             }
 

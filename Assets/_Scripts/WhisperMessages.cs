@@ -152,6 +152,8 @@ public class WhisperMessages
 
             public static string answerSyntax = "To answer a question, type !answer 1, or whichever number you think is correct.";
             public static string noOption = "This answer isn't an option. Remember, type !answer 1, or whichever number you think is correct.";
+
+            public static string timedOut = "You took too long answering the questions. Time's up.";
         }
 
         public class Complete
