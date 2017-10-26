@@ -11,17 +11,21 @@ public class ProjectClass
     public string companyName;
     public Dictionary<string, DeveloperPosition> developers = new Dictionary<string, DeveloperPosition>();
     public Dictionary<string, int> developerPay = new Dictionary<string, int>();
+    public int designAI;
+    public int developAI;
+    public int artAI;
 
     public Categories category;
 
     public bool sequel = false;
     public List<string> prequels;
 
-    public ProjectClass(string projectName, string projectLead, string companyName)
+    public ProjectClass(string projectName, string projectLead, string companyName, Categories category)
     {
         this.projectLead = projectLead;
         this.projectName = projectName;
         this.companyName = companyName;
+        this.category = category;
     }
 
     //private ProjectApplication projectApplication = new ProjectApplication();

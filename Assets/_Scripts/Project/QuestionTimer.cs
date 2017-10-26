@@ -26,9 +26,9 @@ public class QuestionTimer
     {
         if (DateTime.Now >= expiryTime)
         {
-            if (ProjectDevelopment.questionDictionary.ContainsKey(developerUsername))
+            if (ProjectQuestion.questionDictionary.ContainsKey(developerUsername))
             {
-                ProjectDevelopment.questionDictionary.Remove(developerUsername);
+                ProjectQuestion.questionDictionary.Remove(developerUsername);
                 Debug.Log("Out of time. RIP question.");
                 //Send a message the question has run out
                 expiryCheck.Dispose();
