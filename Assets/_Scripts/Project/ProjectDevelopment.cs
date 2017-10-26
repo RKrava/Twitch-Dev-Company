@@ -464,6 +464,8 @@ public class ProjectDevelopment : MonoBehaviour
 
         CommandController.projects.Add(project.projectName, project);
         ProjectManager.startProject = false;
+
+        ProjectAdd.featureUIList.Clear();
     }
 #endregion
 }
