@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -26,7 +27,7 @@ public class CompanyInvite : MonoBehaviour
             return;
         }
 
-        if (username.ToLower() == invitedUsername.ToLower())
+        if (username.EqualsOrdinalIgnoreCase(invitedUsername))
         {
             client.SendWhisper(username, WhisperMessages.Company.Invite.self);
             return;

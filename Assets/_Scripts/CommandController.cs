@@ -34,7 +34,7 @@ public class CommandController : MonoBehaviour
     public static string GetID(string username)
     {
         return viewers
-            .Where(i => (username.ToLower() == i.username.ToLower()))
+            .Where(i => username.EqualsOrdinalIgnoreCase(i.username))
             .ToList()[0].id;
     }
 
@@ -45,7 +45,7 @@ public class CommandController : MonoBehaviour
     public static bool DoesUsernameExist(string username)
     {
         return viewers
-            .Where(i => (i.username.ToLower() == username.ToLower()))
+            .Where(i => username.EqualsOrdinalIgnoreCase(i.username))
             .ToList()
             .Count > 0;
     }

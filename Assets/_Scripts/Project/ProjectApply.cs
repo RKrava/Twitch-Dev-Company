@@ -42,19 +42,19 @@ public class ProjectApply : MonoBehaviour
 
         string position = splitWhisper[1];
 
-        if (position.ToLower() == DeveloperPosition.Designer.ToString().ToLower())
+        if (position.EqualsOrdinalIgnoreCase(DeveloperPosition.Designer))
         {
             project.AddApplicant(username, DeveloperPosition.Designer);
             client.SendWhisper(username, WhisperMessages.Project.Apply.success);
         }
 
-        else if (position.ToLower() == DeveloperPosition.Developer.ToString().ToLower())
+        else if (position.EqualsOrdinalIgnoreCase(DeveloperPosition.Developer))
         {
             project.AddApplicant(username, DeveloperPosition.Developer);
             client.SendWhisper(username, WhisperMessages.Project.Apply.success);
         }
 
-        else if (position.ToLower() == DeveloperPosition.Artist.ToString().ToLower())
+        else if (position.EqualsOrdinalIgnoreCase(DeveloperPosition.Artist))
         {
             project.AddApplicant(username, DeveloperPosition.Artist);
             client.SendWhisper(username, WhisperMessages.Project.Apply.success);

@@ -78,7 +78,7 @@ public class ProjectRecruit : MonoBehaviour
             return;
         }
 
-        if (splitWhisper[0].ToLower() == DeveloperPosition.Designer.ToString().ToLower())
+        if (splitWhisper[0].EqualsOrdinalIgnoreCase(DeveloperPosition.Designer))
         {
             project.designAI += number;
             project.cost += cost;
@@ -87,7 +87,7 @@ public class ProjectRecruit : MonoBehaviour
             client.SendWhisper(username, WhisperMessages.Project.Apply.success);
         }
 
-        else if (splitWhisper[0].ToLower() == DeveloperPosition.Developer.ToString().ToLower())
+        else if (splitWhisper[0].EqualsOrdinalIgnoreCase(DeveloperPosition.Developer))
         {
             project.developAI += number;
             project.cost += cost;
@@ -96,7 +96,7 @@ public class ProjectRecruit : MonoBehaviour
             client.SendWhisper(username, WhisperMessages.Project.Apply.success);
         }
 
-        else if (splitWhisper[0].ToLower() == DeveloperPosition.Artist.ToString().ToLower())
+        else if (splitWhisper[0].EqualsOrdinalIgnoreCase(DeveloperPosition.Artist))
         {
             project.artAI += number;
             project.cost += cost;
