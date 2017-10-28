@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Linq;
 
 public static class StringExtensions
@@ -28,5 +29,29 @@ public static class StringExtensions
     public static string CapitaliseAllWords(this string s)
     {
         return textInfo.ToTitleCase(s);
+    }
+
+    /// <summary>
+    /// This is shorthand syntax for comparing a string using the OrdinalIgnoreCase enum
+    /// </summary>
+    /// <param name="s"></param>
+    /// <param name="compare"></param>
+    /// <returns></returns>
+    public static bool EqualsOrdinalIgnoreCase(this string s, string compare)
+    {
+        return s.Equals(compare, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// This is shorthand syntax for comparing a string to a DeveloperPosition.
+    /// It means you dont have to keep casting it to a string as that occurs
+    /// within the method
+    /// </summary>
+    /// <param name="s"></param>
+    /// <param name="compare"></param>
+    /// <returns></returns>
+    public static bool EqualsOrdinalIgnoreCase(this string s, DeveloperPosition compare)
+    {
+        return s.Equals(compare.ToString(), StringComparison.OrdinalIgnoreCase);
     }
 }
