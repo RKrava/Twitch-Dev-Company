@@ -3,11 +3,13 @@ using UnityEngine;
 
 public class CompanyEdit : MonoBehaviour
 {
-    public void CompanyEditMethod(string id, string username, List<string> splitWhisper, string companyName, CompanyClass company)
+    public void CompanyEditMethod(string id, string username, List<string> splitWhisper, string companyName, CompanyClass company, bool companyOwner)
     {
-        if (company.IsOwner(id))
+        if (companyOwner)
         {
-            string newName = splitWhisper[1];
+            splitWhisper.RemoveAt(0);
+
+            string newName = string.Join(" ", splitWhisper);
             company.ChangeName(newName);
 
             foreach (string developer in company.founderIDs)

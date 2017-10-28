@@ -14,6 +14,7 @@ public class CompanyManager : MonoBehaviour
     private CompanyClass company;
 
     private string companyName;
+    private bool companyOwner;
     
     private void Awake()
     {
@@ -23,6 +24,8 @@ public class CompanyManager : MonoBehaviour
         companyMoney = FindObject.companyMoney;
         companyEdit = FindObject.companyEdit;
         companyLeave = FindObject.companyLeave;
+
+        companyOwner = false;
     }
 
     public void SendWhisper(string id, string username, List<string> splitWhisper)
@@ -34,6 +37,11 @@ public class CompanyManager : MonoBehaviour
         if (companyName != string.Empty)
         {
             company = CommandController.companies[companyName];
+
+            if (company.IsOwner(id))
+            {
+                companyOwner = true;
+            }
         }
 
         switch (splitWhisper[0].ToLower())
@@ -42,7 +50,7 @@ public class CompanyManager : MonoBehaviour
                 companyStart.CompanyStartMethod(id, username, splitWhisper, developer);
                 break;
             case "invite":
-                companyInvite.CompanyInviteMethod(id, username, splitWhisper, company);
+                companyInvite.CompanyInviteMethod(id, username, splitWhisper, company, companyOwner);
                 break;
             case "accept":
                 companyAccept.CompanyAcceptMethod(id, username, splitWhisper, developer);
@@ -57,7 +65,7 @@ public class CompanyManager : MonoBehaviour
                 companyMoney.CompanyWithdrawMethod(username, splitWhisper, developer, company);
                 break;
             case "edit":
-                companyEdit.CompanyEditMethod(id, username, splitWhisper, companyName, company);
+                companyEdit.CompanyEditMethod(id, username, splitWhisper, companyName, company, companyOwner);
                 break;
             case "leave":
                 companyLeave.CompanyLeaveMethod(id, username, developer, company);

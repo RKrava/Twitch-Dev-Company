@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class CompanyInvite : MonoBehaviour
 {
-    public void CompanyInviteMethod(string id, string username, List<string> splitWhisper, CompanyClass company)
+    public void CompanyInviteMethod(string id, string username, List<string> splitWhisper, CompanyClass company, bool companyOwner)
     {
-        if (!company.IsOwner(id))
+        if (!companyOwner)
         {
             client.SendWhisper(username, WhisperMessages.Company.notOwner);
             return;
