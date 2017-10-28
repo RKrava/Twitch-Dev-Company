@@ -73,7 +73,7 @@ public class WhisperMessages
 
             public static string project = "You cannot withdraw money when you are running a project.";
 
-            public static string success(int money, string companyName, int developerMoney, int companyMoney) => $"You have withdrawn {money}. Now you have £{developerMoney}, and {companyName} has £{companyMoney} left.";
+            public static string success(int money, string companyName, int developerMoney, int companyMoney) => $"You have withdrawn £{money}. Now you have £{developerMoney}, and {companyName} has £{companyMoney} left.";
         }
 
         public class Edit
