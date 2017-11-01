@@ -30,7 +30,8 @@ public class ProjectRecruit : MonoBehaviour
 
         if (string.Join(" ", splitWhisper) == String.Empty)
         {
-            Debug.Log("Nothing here");
+            client.SendWhisper(username, WhisperMessages.Project.Recruit.syntax);
+            return;
         }
 
         if (!CommandController.developers.ContainsKey(id))
@@ -65,7 +66,7 @@ public class ProjectRecruit : MonoBehaviour
 
         catch
         {
-            Debug.Log("Error!");
+            client.SendWhisper(username, WhisperMessages.Project.Recruit.syntax);
             return;
         }
 
@@ -75,6 +76,7 @@ public class ProjectRecruit : MonoBehaviour
 
         if (!company.HasEnoughMoney(cost))
         {
+            client.SendWhisper(username, WhisperMessages.Project.Recruit.money);
             return;
         }
 
@@ -84,7 +86,8 @@ public class ProjectRecruit : MonoBehaviour
             project.cost += cost;
             //company.SpendMoney(cost);
             Debug.Log("Design AI added.");
-            client.SendWhisper(username, WhisperMessages.Project.Apply.success);
+
+            client.SendWhisper(username, WhisperMessages.Project.Recruit.success(number, DeveloperPosition.Designer.ToString()));
         }
 
         else if (splitWhisper[0].EqualsOrdinalIgnoreCase(DeveloperPosition.Developer))
@@ -93,7 +96,7 @@ public class ProjectRecruit : MonoBehaviour
             project.cost += cost;
             //company.SpendMoney(cost);
             Debug.Log("Develop AI added.");
-            client.SendWhisper(username, WhisperMessages.Project.Apply.success);
+            client.SendWhisper(username, WhisperMessages.Project.Recruit.success(number, DeveloperPosition.Developer.ToString()));
         }
 
         else if (splitWhisper[0].EqualsOrdinalIgnoreCase(DeveloperPosition.Artist))
@@ -102,7 +105,7 @@ public class ProjectRecruit : MonoBehaviour
             project.cost += cost;
             //company.SpendMoney(cost);
             Debug.Log("Art AI added.");
-            client.SendWhisper(username, WhisperMessages.Project.Apply.success);
+            client.SendWhisper(username, WhisperMessages.Project.Recruit.success(number, DeveloperPosition.Artist.ToString()));
         }
 
         else

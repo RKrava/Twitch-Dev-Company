@@ -122,16 +122,26 @@ public class WhisperMessages
         {
             public static string applicantsList(string pasteURL) => $"Here are all the applicants: {pasteURL}";
 
-            public static string notExist = "This person does not exist. Have you typed their name our correctly?";
+            public static string notExist = "This isn't an option. Please refer to the numbers besides their name.";
             public static string notApplied = "This person hasn't applied for this project. You cannot accept an application that doesn't exist.";
             public static string alreadyTeam = "This person is already a member of the development team.";
+            public static string syntax = "To accept someone onto your team, use the follow !project accept [Number].";
 
             public static string successApplicant(string projectName) => $"Your application has been successful. You are now part of the development team for {projectName}";
             public static string successLead(string applicantUsername, string projectName) => $"{applicantUsername} is now part of the development team for {projectName}.";
         }
 
+        public class Recruit
+        {
+            public static string syntax = "To recruit someone to your team, use !project recruit (Designer | Developer | Artist) (Number).";
+            public static string money = "You cannot afford to do this action. It costs £140 per developer per project.";
+
+            public static string success(int number, string position) => $"You have successfully recruited {number} {position} onto your team.";
+        }
+
         public class Add
         {
+            public static string notExist = "This feature does not exist. Make sure you typed the name correctly.";
             public static string onlyOne(string featureName) => $"You already have {featureName} added.";
             public static string cannotAfford(string featureName, int companyMoney, int featureCost) => $"You cannot afford {featureName}. You only have £{companyMoney} in the bank, and it costs £{featureCost}.";
 

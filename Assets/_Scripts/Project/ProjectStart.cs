@@ -81,6 +81,7 @@ public class ProjectStart : MonoBehaviour
             //We store name over ID because the Project is saved in their profile anyway.
             ProjectManager.project = new ProjectClass(projectName, username, companyName, Categories.Games);
 
+
             projectManager.projectNameUI.text = $"Project Name: {projectName}";
             projectManager.projectLeadUI.text = $"Project Lead: {username}";
 

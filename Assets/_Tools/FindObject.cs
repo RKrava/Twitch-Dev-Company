@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 [Serializable]
 public class FindObject : MonoBehaviour
@@ -309,6 +310,21 @@ public class FindObject : MonoBehaviour
             }
 
             return _modTools;
+        }
+    }
+
+    private static Text _timer;
+    public static Text timer
+    {
+        get
+        {
+            if (_timer == null)
+            {
+                _timer = GameObject.Find("Timer").GetComponent<Text>();
+                Debug.Log("Timer found!");
+            }
+
+            return _timer;
         }
     }
 }

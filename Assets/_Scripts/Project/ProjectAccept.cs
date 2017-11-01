@@ -34,6 +34,7 @@ public class ProjectAccept : MonoBehaviour
 
         if (!project.projectApplication.acceptApplications)
         {
+            //TODO
             return;
         }
 
@@ -64,21 +65,17 @@ public class ProjectAccept : MonoBehaviour
 
         catch
         {
+            client.SendWhisper(username, WhisperMessages.Project.Accept.syntax);
             return;
         }
 
         if (applicant > ProjectManager.applicantList.Count)
         {
+            client.SendWhisper(username, WhisperMessages.Project.Accept.notExist);
             return;
         }
 
         applicantUsername = ProjectManager.applicantList[applicant];
-
-        //if (!CommandController.DoesUsernameExist(applicant))
-        //{
-        //    client.SendWhisper(username, WhisperMessages.Project.Accept.notExist);
-        //    return;
-        //}
 
         applicantID = CommandController.GetID(applicantUsername);
         int pay = CommandController.developers[applicantID].developerPay.pay;

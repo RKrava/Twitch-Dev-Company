@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Timers;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ProjectApplication
 {
@@ -10,17 +11,15 @@ public class ProjectApplication
     public bool acceptApplications = false;
     public bool warningSent = false;
 
-    private string pasteBin;
-
     Timer expiryCheck = new Timer(1000);
     DateTime applyWarningExpiry;
     DateTime applyExpiry;
     DateTime acceptExpiry;
 
-    string projectLead;
-
     public ProjectApplication()
     {
+        ProjectManager.countdown.timeLeft = 60;
+
         Debug.Log("Running ProjectApplication.");
         applicationsOpen = true;
 
@@ -32,6 +31,8 @@ public class ProjectApplication
 
     private void ApplicationsClosed()
     {
+        ProjectManager.countdown.timeLeft = 60;
+
         Debug.Log("Running ApplicationsClosed.");
         acceptExpiry = DateTime.Now.Add(TimeSpan.FromMinutes(1));
         expiryCheck.Elapsed += OnTimerElapsed;

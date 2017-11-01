@@ -7,7 +7,7 @@ public class ProjectDevelopment : MonoBehaviour
     private ProjectAdd projectAdd;
     private ProjectQuestion projectQuestion;
 
-    private ProjectClass project;
+    public ProjectClass project;
     private DeveloperClass developer;
     private DeveloperClass projectLead;
 
@@ -21,6 +21,10 @@ public class ProjectDevelopment : MonoBehaviour
     public int featureArtIndex;
     public int featureLeadIndex;
 
+    private bool designFinished;
+    private bool developFinished;
+    private bool artFinished;
+
     private System.Random rnd = new System.Random();
 
     private void Awake()
@@ -32,6 +36,8 @@ public class ProjectDevelopment : MonoBehaviour
 
     public void StartProject()
     {
+        ProjectManager.countdown.timeLeft = 420;
+
         project = ProjectManager.project;
         //features = project.features;
 
@@ -39,6 +45,10 @@ public class ProjectDevelopment : MonoBehaviour
         featureDevelopIndex = 0;
         featureArtIndex = 0;
         featureLeadIndex = 0;
+
+        designFinished = false;
+        developFinished = false;
+        artFinished = false;
 
         EnsureMainThread.executeOnMainThread.Enqueue(() => { InvokeRepeating("ProjectUpdate", 0, 30); });
         EnsureMainThread.executeOnMainThread.Enqueue(() => { projectQuestion.InvokeRepeating("SendQuestion", 0, 120); });
@@ -68,6 +78,11 @@ public class ProjectDevelopment : MonoBehaviour
 
             if (project.developers[developerUsername] == DeveloperPosition.Designer)
             {
+                if (designFinished)
+                {
+                    return;
+                }
+
                 int points = developer.GetSkillLevel(SkillTypes.DeveloperSkills.Design);
 
                 if (points < 3)
@@ -91,40 +106,44 @@ public class ProjectDevelopment : MonoBehaviour
                     }
                 }
 
-                if (project.features[featureDesignIndex].designPointsRequired == 0)
+                while (project.features[featureDesignIndex].designPointsRequired == 0)
                 {
-                    return;
-                }
+                    featureDesignIndex++;
+                    //return;
 
-                if (featureDesignIndex + 1 > project.features.Count)
-                {
-                    featureDesignIndex--;
-                }
-
-                else
-                {
-                    if (featureDesignIndex == featureLeadIndex)
+                    if (featureDesignIndex + 1 > project.features.Count)
                     {
-                        leadBonus = motivationBonus;
-                        projectLead.AwardXP(SkillTypes.LeaderSkills.Motivation, 5, projectLead);
+                        designFinished = true;
+                        return;
                     }
-
-                    feature = project.features[featureDesignIndex];
-
-                    feature.designPoints += points * bonus * leadBonus;
-                    developer.AwardXP(SkillTypes.DeveloperSkills.Design, 2 * bonus, developer);
-
-                    featureUI = ProjectAdd.featureUIList[featureDesignIndex];
-
-                    featureUI.designPointsRequiredUI.text = $"Design Points Required: {feature.designPointsRequired}pts";
-                    featureUI.designPointsUI.text = $"Design Points: {feature.designPoints}pts";
-
-                    Debug.Log($"{feature.featureName} | {feature.designPoints}");
                 }
+
+                if (featureDesignIndex == featureLeadIndex)
+                {
+                    leadBonus = motivationBonus;
+                    projectLead.AwardXP(SkillTypes.LeaderSkills.Motivation, 5, projectLead);
+                }
+
+                feature = project.features[featureDesignIndex];
+
+                feature.designPoints += points * bonus * leadBonus;
+                developer.AwardXP(SkillTypes.DeveloperSkills.Design, 2 * bonus, developer);
+
+                featureUI = ProjectAdd.featureUIList[featureDesignIndex];
+
+                featureUI.designPointsRequiredUI.text = $"Design Points Required: {feature.designPointsRequired}pts";
+                featureUI.designPointsUI.text = $"Design Points: {feature.designPoints}pts";
+
+                Debug.Log($"{feature.featureName} | {feature.designPoints}");
             }
 
             else if (project.developers[developerUsername] == DeveloperPosition.Developer)
             {
+                if (developFinished)
+                {
+                    return;
+                }
+
                 int points = developer.GetSkillLevel(SkillTypes.DeveloperSkills.Development);
 
                 if (points < 3)
@@ -148,42 +167,44 @@ public class ProjectDevelopment : MonoBehaviour
                     }
                 }
 
-                if (project.features[featureDevelopIndex].developmentPointsRequired == 0)
+                while (project.features[featureDevelopIndex].designPointsRequired == 0)
                 {
-                    return;
-                }
+                    featureDevelopIndex++;
+                    //return;
 
-                if (featureDevelopIndex + 1 > project.features.Count)
-                {
-                    featureDevelopIndex--;
-                    Debug.Log("No more features to work on.");
-                    return;
-                }
-
-                else
-                {
-                    if (featureDevelopIndex == featureLeadIndex)
+                    if (featureDevelopIndex + 1 > project.features.Count)
                     {
-                        leadBonus = motivationBonus;
-                        projectLead.AwardXP(SkillTypes.LeaderSkills.Motivation, 5, projectLead);
+                        developFinished = true;
+                        return;
                     }
-
-                    feature = project.features[featureDevelopIndex];
-
-                    feature.developmentPoints += points * bonus * leadBonus;
-                    developer.AwardXP(SkillTypes.DeveloperSkills.Development, 2 * bonus, developer);
-
-                    featureUI = ProjectAdd.featureUIList[featureDevelopIndex];
-
-                    featureUI.developmentPointsRequiredUI.text = $"Development Points Required: {feature.developmentPointsRequired}pts";
-                    featureUI.developmentPointsUI.text = $"Development Points: {feature.developmentPoints}pts";
-
-                    Debug.Log($"{feature.featureName} | {feature.developmentPoints}");
                 }
+
+                if (featureDevelopIndex == featureLeadIndex)
+                {
+                    leadBonus = motivationBonus;
+                    projectLead.AwardXP(SkillTypes.LeaderSkills.Motivation, 5, projectLead);
+                }
+
+                feature = project.features[featureDevelopIndex];
+
+                feature.developmentPoints += points * bonus * leadBonus;
+                developer.AwardXP(SkillTypes.DeveloperSkills.Development, 2 * bonus, developer);
+
+                featureUI = ProjectAdd.featureUIList[featureDevelopIndex];
+
+                featureUI.developmentPointsRequiredUI.text = $"Development Points Required: {feature.developmentPointsRequired}pts";
+                featureUI.developmentPointsUI.text = $"Development Points: {feature.developmentPoints}pts";
+
+                Debug.Log($"{feature.featureName} | {feature.developmentPoints}");
             }
 
             else if (project.developers[developerUsername] == DeveloperPosition.Artist)
             {
+                if (artFinished)
+                {
+                    return;
+                }
+
                 int points = developer.GetSkillLevel(SkillTypes.DeveloperSkills.Art);
 
                 if (points < 3)
@@ -207,37 +228,35 @@ public class ProjectDevelopment : MonoBehaviour
                     }
                 }
 
-                if (project.features[featureArtIndex].artPointsRequired == 0)
+                while (project.features[featureArtIndex].artPointsRequired == 0)
                 {
-                    return;
-                }
+                    featureArtIndex++;
+                    //return;
 
-                if (featureArtIndex + 1 > project.features.Count)
-                {
-                    featureArtIndex--;
-                    return;
-                }
-
-                else
-                {
-                    if (featureArtIndex == featureLeadIndex)
+                    if (featureArtIndex + 1 > project.features.Count)
                     {
-                        leadBonus = motivationBonus;
-                        projectLead.AwardXP(SkillTypes.LeaderSkills.Motivation, 5, projectLead);
+                        artFinished = true;
+                        return;
                     }
-
-                    feature = project.features[featureArtIndex];
-
-                    feature.artPoints += points * bonus * leadBonus;
-                    developer.AwardXP(SkillTypes.DeveloperSkills.Art, 2 * bonus, developer);
-
-                    featureUI = ProjectAdd.featureUIList[featureArtIndex];
-
-                    featureUI.artPointsRequiredUI.text = $"Art Points Required: {feature.artPointsRequired}pts";
-                    featureUI.artPointsUI.text = $"Art Points: {feature.artPoints}pts";
-
-                    Debug.Log($"{feature.featureName} | {feature.artPoints}");
                 }
+
+                if (featureArtIndex == featureLeadIndex)
+                {
+                    leadBonus = motivationBonus;
+                    projectLead.AwardXP(SkillTypes.LeaderSkills.Motivation, 5, projectLead);
+                }
+
+                feature = project.features[featureArtIndex];
+
+                feature.artPoints += points * bonus * leadBonus;
+                developer.AwardXP(SkillTypes.DeveloperSkills.Art, 2 * bonus, developer);
+
+                featureUI = ProjectAdd.featureUIList[featureArtIndex];
+
+                featureUI.artPointsRequiredUI.text = $"Art Points Required: {feature.artPointsRequired}pts";
+                featureUI.artPointsUI.text = $"Art Points: {feature.artPoints}pts";
+
+                Debug.Log($"{feature.featureName} | {feature.artPoints}");
             }
         }
 
@@ -251,6 +270,11 @@ public class ProjectDevelopment : MonoBehaviour
     {
         if (project.designAI != 0)
         {
+            if (designFinished)
+            {
+                return;
+            }
+
             int points = 3 * project.designAI;
 
             while (project.features[featureDesignIndex].designPoints >= project.features[featureDesignIndex].designPointsRequired)
@@ -269,29 +293,38 @@ public class ProjectDevelopment : MonoBehaviour
                 }
             }
 
-            if (featureDesignIndex + 1 > project.features.Count)
+            while (project.features[featureDesignIndex].designPointsRequired == 0)
             {
-                featureDesignIndex--;
+                featureDesignIndex++;
+                //return;
+
+                if (featureDesignIndex + 1 > project.features.Count)
+                {
+                    designFinished = true;
+                    return;
+                }
             }
 
-            else
-            {
-                feature = project.features[featureDesignIndex];
+            feature = project.features[featureDesignIndex];
 
-                feature.designPoints += points;
+            feature.designPoints += points;
 
-                featureUI = ProjectAdd.featureUIList[featureDesignIndex];
+            featureUI = ProjectAdd.featureUIList[featureDesignIndex];
 
-                featureUI.designPointsRequiredUI.text = $"Design Points Required: {feature.designPointsRequired}pts";
-                featureUI.designPointsUI.text = $"Design Points: {feature.designPoints}pts";
+            featureUI.designPointsRequiredUI.text = $"Design Points Required: {feature.designPointsRequired}pts";
+            featureUI.designPointsUI.text = $"Design Points: {feature.designPoints}pts";
 
-                Debug.Log($"{feature.featureName} | {feature.designPoints}");
-            }
+            Debug.Log($"{feature.featureName} | {feature.designPoints}");
         }
 
 
         if (project.developAI != 0)
         {
+            if (developFinished)
+            {
+                return;
+            }
+
             int points = 3 * project.developAI;
 
             while (project.features[featureDevelopIndex].developmentPoints >= project.features[featureDevelopIndex].developmentPointsRequired)
@@ -312,31 +345,38 @@ public class ProjectDevelopment : MonoBehaviour
                 }
             }
 
-            if (featureDevelopIndex + 1 > project.features.Count)
+            while (project.features[featureDevelopIndex].developmentPointsRequired == 0)
             {
-                featureDevelopIndex--;
-                Debug.Log("No more features to work on.");
-                return;
+                featureDevelopIndex++;
+                //return;
+
+                if (featureDevelopIndex + 1 > project.features.Count)
+                {
+                    developFinished = true;
+                    return;
+                }
             }
 
-            else
-            {
-                feature = project.features[featureDevelopIndex];
+            feature = project.features[featureDevelopIndex];
 
-                feature.developmentPoints += points;
+            feature.developmentPoints += points;
 
-                featureUI = ProjectAdd.featureUIList[featureDevelopIndex];
+            featureUI = ProjectAdd.featureUIList[featureDevelopIndex];
 
-                featureUI.developmentPointsRequiredUI.text = $"Development Points Required: {feature.developmentPointsRequired}pts";
-                featureUI.developmentPointsUI.text = $"Development Points: {feature.developmentPoints}pts";
+            featureUI.developmentPointsRequiredUI.text = $"Development Points Required: {feature.developmentPointsRequired}pts";
+            featureUI.developmentPointsUI.text = $"Development Points: {feature.developmentPoints}pts";
 
-                Debug.Log($"{feature.featureName} | {feature.developmentPoints}");
-            }
+            Debug.Log($"{feature.featureName} | {feature.developmentPoints}");
         }
 
 
         if (project.artAI != 0)
         {
+            if (artFinished)
+            {
+                return;
+            }
+
             int points = 3 * project.artAI;
 
             while (project.features[featureArtIndex].artPoints >= project.features[featureArtIndex].artPointsRequired)
@@ -357,25 +397,28 @@ public class ProjectDevelopment : MonoBehaviour
                 }
             }
 
-            if (featureArtIndex + 1 > project.features.Count)
+            while (project.features[featureArtIndex].artPointsRequired == 0)
             {
-                featureArtIndex--;
-                return;
+                featureArtIndex++;
+                //return;
+
+                if (featureArtIndex + 1 > project.features.Count)
+                {
+                    artFinished = true;
+                    return;
+                }
             }
 
-            else
-            {
-                feature = project.features[featureArtIndex];
+            feature = project.features[featureArtIndex];
 
-                feature.artPoints += points;
+            feature.artPoints += points;
 
-                featureUI = ProjectAdd.featureUIList[featureArtIndex];
+            featureUI = ProjectAdd.featureUIList[featureArtIndex];
 
-                featureUI.artPointsRequiredUI.text = $"Art Points Required: {feature.artPointsRequired}pts";
-                featureUI.artPointsUI.text = $"Art Points: {feature.artPoints}pts";
+            featureUI.artPointsRequiredUI.text = $"Art Points Required: {feature.artPointsRequired}pts";
+            featureUI.artPointsUI.text = $"Art Points: {feature.artPoints}pts";
 
-                Debug.Log($"{feature.featureName} | {feature.artPoints}");
-            }
+            Debug.Log($"{feature.featureName} | {feature.artPoints}");
         }
     }
     #endregion
@@ -407,6 +450,8 @@ public class ProjectDevelopment : MonoBehaviour
             featureUI.qualityUI.text = $"Quality: {feature.featureQuality}";
         }
 
+        ProjectManager.countdown.timeLeft = 60;
+
         EnsureMainThread.executeOnMainThread.Enqueue(() => { Invoke("ReviewScore", 60); });
         EnsureMainThread.executeOnMainThread.Enqueue(() => { Invoke("Sales", 120); });
     }
@@ -414,6 +459,8 @@ public class ProjectDevelopment : MonoBehaviour
     private void ReviewScore()
     {
         Debug.Log("Review Score");
+
+        ProjectManager.countdown.timeLeft = 60;
 
         int totalPoints = 0;
 

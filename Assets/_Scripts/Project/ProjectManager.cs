@@ -26,6 +26,10 @@ public class ProjectManager : MonoBehaviour
     public RectTransform featuresUI;
     public GameObject featureUI;
 
+    public GameObject countdownObject;
+    public static Countdown countdown;
+    public Text timer;
+
     public static Dictionary<int, string> applicantList = new Dictionary<int, string>();
 
     private void Start()
@@ -46,6 +50,9 @@ public class ProjectManager : MonoBehaviour
         revenueUI.text = "";
         profitUI.text = "";
         reviewScoreUI.text = "";
+
+        countdown = countdownObject.GetComponent<Countdown>();
+        countdown.timer = timer;
     }
 
     public static void SendApplicants()

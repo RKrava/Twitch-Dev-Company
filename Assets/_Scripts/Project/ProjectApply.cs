@@ -63,7 +63,6 @@ public class ProjectApply : MonoBehaviour
         else
         {
             client.SendWhisper(username, WhisperMessages.Project.Apply.notPosition);
-            return;
         }
     }
 }

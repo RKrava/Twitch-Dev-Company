@@ -56,6 +56,7 @@ public class ProjectAdd : MonoBehaviour
 
             else
             {
+                client.SendWhisper(project.projectLead, WhisperMessages.Project.Add.notExist);
                 return;
             }
 
@@ -132,7 +133,6 @@ public class ProjectAdd : MonoBehaviour
             else
             {
                 client.SendWhisper(project.projectLead, WhisperMessages.Project.Add.cannotAfford(featureName, company.money, cost));
-                return;
             }
         }
     }
