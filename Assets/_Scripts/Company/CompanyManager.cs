@@ -9,12 +9,6 @@ public class CompanyManager : MonoBehaviour
     private CompanyMoney companyMoney;
     private CompanyEdit companyEdit;
     private CompanyLeave companyLeave;
-
-    private DeveloperClass developer;
-    private CompanyClass company;
-
-    private string companyName;
-    private bool companyOwner;
     
     private void Awake()
     {
@@ -24,26 +18,10 @@ public class CompanyManager : MonoBehaviour
         companyMoney = FindObject.companyMoney;
         companyEdit = FindObject.companyEdit;
         companyLeave = FindObject.companyLeave;
-
-        companyOwner = false;
     }
 
-    public void SendWhisper(string id, string username, List<string> splitWhisper)
+    public void SendWhisper(string id, string username, List<string> splitWhisper, DeveloperClass developer, string companyName, CompanyClass company, bool companyOwner)
     {
-        developer = CommandController.developers[id];
-
-        companyName = developer.companyName;
-
-        if (companyName != string.Empty)
-        {
-            company = CommandController.companies[companyName];
-
-            if (company.IsOwner(id))
-            {
-                companyOwner = true;
-            }
-        }
-
         switch (splitWhisper[0].ToLower())
         {
             case "start":

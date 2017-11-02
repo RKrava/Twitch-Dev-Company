@@ -10,58 +10,27 @@ public class ProjectRecruit : MonoBehaviour
 
     private string companyName;
 
-    public void ProjectRecruitMethod(string id, string username, List<string> splitWhisper)
+    public void ProjectRecruitMethod(string id, string username, List<string> splitWhisper, CompanyClass company, ProjectClass project)
     {
-        if (!ProjectManager.startProject)
-        {
-            client.SendWhisper(username, WhisperMessages.Project.alreadyUnderway);
-            return;
-        }
-
-        if (ProjectManager.project == null)
-        {
-            client.SendWhisper(username, WhisperMessages.Project.fail);
-            return;
-        }
-
-        project = ProjectManager.project;
-
         splitWhisper.RemoveAt(0);
 
-        if (string.Join(" ", splitWhisper) == String.Empty)
+        if (splitWhisper.Count == 0)
         {
             client.SendWhisper(username, WhisperMessages.Project.Recruit.syntax);
             return;
         }
 
-        if (!CommandController.developers.ContainsKey(id))
+        if (!project.projectApplication.applicationsOpen && !project.projectApplication.acceptApplications)
         {
-            client.SendWhisper(username, WhisperMessages.Developer.notDeveloper);
+            client.SendWhisper(username, WhisperMessages.Project.Recruit.closed);
             return;
         }
 
-        if (CommandController.developers[id].IsFounder)
-        {
-            companyName = CommandController.developers[id].companyName;
-        }
-
-        else
-        {
-            client.SendWhisper(username, WhisperMessages.Company.notFounder);
-            return;
-        }
-
-        if (project.projectLead != username)
-        {
-            client.SendWhisper(username, WhisperMessages.Project.notProjectLead);
-            return;
-        }
-
-        int number = 0;
+        int number = 1;
 
         try
         {
-            number = int.Parse(splitWhisper[1]);
+            number = int.Parse(splitWhisper[0]);
         }
 
         catch
@@ -72,11 +41,9 @@ public class ProjectRecruit : MonoBehaviour
 
         int cost = (number * 20) * 7;
 
-        company = CommandController.companies[project.companyName];
-
         if (!company.HasEnoughMoney(cost))
         {
-            client.SendWhisper(username, WhisperMessages.Project.Recruit.money);
+            client.SendWhisper(username, WhisperMessages.Company.notEnough(company.money, cost));
             return;
         }
 
@@ -84,7 +51,6 @@ public class ProjectRecruit : MonoBehaviour
         {
             project.designAI += number;
             project.cost += cost;
-            //company.SpendMoney(cost);
             Debug.Log("Design AI added.");
 
             client.SendWhisper(username, WhisperMessages.Project.Recruit.success(number, DeveloperPosition.Designer.ToString()));
@@ -94,7 +60,6 @@ public class ProjectRecruit : MonoBehaviour
         {
             project.developAI += number;
             project.cost += cost;
-            //company.SpendMoney(cost);
             Debug.Log("Develop AI added.");
             client.SendWhisper(username, WhisperMessages.Project.Recruit.success(number, DeveloperPosition.Developer.ToString()));
         }
@@ -103,7 +68,6 @@ public class ProjectRecruit : MonoBehaviour
         {
             project.artAI += number;
             project.cost += cost;
-            //company.SpendMoney(cost);
             Debug.Log("Art AI added.");
             client.SendWhisper(username, WhisperMessages.Project.Recruit.success(number, DeveloperPosition.Artist.ToString()));
         }

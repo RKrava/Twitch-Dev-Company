@@ -21,9 +21,9 @@ public class ProjectDevelopment : MonoBehaviour
     public int featureArtIndex;
     public int featureLeadIndex;
 
-    private bool designFinished;
-    private bool developFinished;
-    private bool artFinished;
+    public bool designFinished;
+    public bool developFinished;
+    public bool artFinished;
 
     private System.Random rnd = new System.Random();
 

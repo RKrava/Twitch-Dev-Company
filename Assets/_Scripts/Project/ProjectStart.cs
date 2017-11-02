@@ -6,18 +6,47 @@ public class ProjectStart : MonoBehaviour
 {
     private ProjectManager projectManager;
 
-    private string companyName;
-
     private void Awake()
     {
         projectManager = FindObject.projectManager;
     }
 
-    public void ProjectStartMethod(string id, string username, List<string> splitWhisper)
+    public void ProjectStartMethod(string id, string username, List<string> splitWhisper, DeveloperClass developer, string companyName, CompanyClass company)
     {
+        splitWhisper.RemoveAt(0);
+
+        if (splitWhisper.Count == 0)
+        {
+            client.SendWhisper(username, WhisperMessages.Project.Start.syntax);
+            return;
+        }
+
+        //Cannot be another project underway
         if (ProjectManager.startProject)
         {
             client.SendWhisper(username, WhisperMessages.Project.alreadyUnderway);
+            return;
+        }
+
+        //Have to be a founder
+        if (!developer.IsFounder)
+        {
+            client.SendWhisper(username, WhisperMessages.Company.notFounder);
+            return;
+        }
+
+        //Have to have enough money
+        if (!company.HasEnoughMoney(1000))
+        {
+            client.SendWhisper(username, WhisperMessages.Company.notEnough(company.money, 1000));
+            return;
+        }
+
+        string projectName = String.Join(" ", splitWhisper);
+
+        if (CommandController.projects.ContainsKey(projectName))
+        {
+            client.SendWhisper(username, WhisperMessages.Project.Start.alreadyExists);
             return;
         }
 
@@ -35,59 +64,16 @@ public class ProjectStart : MonoBehaviour
         }
         //End of Clear UI
 
-        if (!CommandController.developers.ContainsKey(id))
-        {
-            client.SendWhisper(username, WhisperMessages.Developer.notDeveloper);
-            return;
-        }
+        ProjectManager.startProject = true;
 
-        if (CommandController.developers[id].IsFounder)
-        {
-            companyName = CommandController.developers[id].companyName;
-        }
+        //We store name over ID because the Project is saved in their profile anyway.
+        ProjectManager.project = new ProjectClass(projectName, username, companyName, Categories.Games);
 
-        else
-        {
-            client.SendWhisper(username, WhisperMessages.Company.notFounder);
-            return;
-        }
+        projectManager.projectNameUI.text = $"Project Name: {projectName}";
+        projectManager.projectLeadUI.text = $"Project Lead: {username}";
 
-        if (!CommandController.companies[companyName].HasEnoughMoney(1000))
-        {
-            client.SendWhisper(username, WhisperMessages.Project.Start.money(1000));
-            return;
-        }
-
-        splitWhisper.RemoveAt(0);
-
-        string projectName = String.Join(" ", splitWhisper);
-
-        if (projectName == String.Empty)
-        {
-            client.SendWhisper(username, WhisperMessages.Project.Start.syntax);
-            return;
-        }
-
-        if (CommandController.projects.ContainsKey(projectName))
-        {
-            client.SendWhisper(username, WhisperMessages.Project.Start.alreadyExists);
-            return;
-        }
-
-        else
-        {
-            ProjectManager.startProject = true;
-
-            //We store name over ID because the Project is saved in their profile anyway.
-            ProjectManager.project = new ProjectClass(projectName, username, companyName, Categories.Games);
-
-
-            projectManager.projectNameUI.text = $"Project Name: {projectName}";
-            projectManager.projectLeadUI.text = $"Project Lead: {username}";
-
-            client.SendWhisper(username, WhisperMessages.Project.Start.success(projectName), Timers.ProjectApplication);
-            client.SendMessage(WhisperMessages.Project.Start.canApply(username));
-        }
+        client.SendWhisper(username, WhisperMessages.Project.Start.success(projectName), Timers.ProjectApplication);
+        client.SendMessage(WhisperMessages.Project.Start.canApply(username));
     }
-	
+
 }

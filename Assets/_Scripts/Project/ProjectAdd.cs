@@ -5,8 +5,8 @@ using UnityEngine;
 public class ProjectAdd : MonoBehaviour
 {
     private ProjectManager projectManager;
+    private ProjectDevelopment projectDevelopment;
 
-    private ProjectClass project;
     private Feature feature;
 
     public FeatureList featureList;
@@ -39,101 +39,101 @@ public class ProjectAdd : MonoBehaviour
     private void Awake()
     {
         projectManager = FindObject.projectManager;
+        projectDevelopment = FindObject.projectDevelopment;
     }
 
-    public void ProjectAddMethod(List<string> splitWhisper)
+    public void ProjectAddMethod(List<string> splitWhisper, CompanyClass company, ProjectClass project)
     {
+        splitWhisper.RemoveAt(0);
+
+        if (splitWhisper.Count == 0)
+        {
+            client.SendWhisper(project.projectLead, WhisperMessages.Project.Add.syntax);
+            return;
+        }
+
+        if (projectDevelopment.designFinished || projectDevelopment.developFinished || projectDevelopment.artFinished)
+        {
+            client.SendWhisper(project.projectLead, WhisperMessages.Project.Add.fail);
+            return;
+        }
+
+        //Get the list of feature SOs
         featuresSO = featureList.features;
 
-        if (string.Compare(splitWhisper[1], "feature", true) == 0)
+        if (!FeatureSOExists(splitWhisper[0]))
         {
-            string featureName;
-
-            if (FeatureSOExists(splitWhisper[2]))
-            {
-                featureName = splitWhisper[2];
-            }
-
-            else
-            {
-                client.SendWhisper(project.projectLead, WhisperMessages.Project.Add.notExist);
-                return;
-            }
-
-            project = ProjectManager.project;
-
-            if (FeatureExists(featureName, project.features))
-            {
-                client.SendWhisper(project.projectLead, WhisperMessages.Project.Add.onlyOne(featureName));
-                return;
-            }
-
-            FeatureSO featureSO = FeatureSOFromName(featureName);
-
-            feature = new Feature();
-            feature.featureName = featureSO.name;
-            int cost = featureSO.featureCost;
-
-            if (!featureSO.designRequired)
-            {
-                feature.designQualityHit = FeatureQuality.Perfect;
-            }
-
-            else
-            {
-                feature.designPointsRequired = (int)(featureSO.featureDesign * Mathf.Pow(0.8f, 8));
-            }
-
-            if (!featureSO.developRequired)
-            {
-                feature.developmentQualityHit = FeatureQuality.Perfect;
-            }
-
-            else
-            {
-                feature.developmentPointsRequired = (int)(featureSO.featureDevelop * Mathf.Pow(0.8f, 8));
-            }
-
-            if (!featureSO.artRequired)
-            {
-                feature.artQualityHit = FeatureQuality.Perfect;
-                Debug.Log($"{feature.featureName} | {feature.artQualityHit}");
-            }
-
-            else
-            {
-                feature.artPointsRequired = (int)(featureSO.featureArt * Mathf.Pow(0.8f, 8));
-            }
-
-            string projectLeadID = CommandController.GetID(project.projectLead);
-            string companyName = CommandController.developers[projectLeadID].companyName;
-            CompanyClass company = CommandController.companies[companyName];
-
-            if (company.HasEnoughMoney(cost))
-            {
-                featureUIObject = Instantiate(projectManager.featureUI, projectManager.featuresUI);
-                featureUI = featureUIObject.GetComponent<FeatureUI>();
-                featureUIList.Add(featureUI);
-
-                featureUI.featureNameUI.text = feature.featureName;
-                featureUI.designPointsRequiredUI.text = $"Design Points Required: {feature.designPointsRequired}pts.";
-                featureUI.developmentPointsRequiredUI.text = $"Development Points Required: {feature.developmentPointsRequired}pts.";
-                featureUI.artPointsRequiredUI.text = $"Art Points Required: {feature.artPointsRequired}pts.";
-
-                //Not spending the money until the end, but stopping you from removing money from a company until the end
-                //company.SpendMoney(cost);
-                project.cost += cost;
-                project.features.Add(feature);
-                projectManager.costUI.text = $"Cost: £{project.cost}";
-
-                client.SendWhisper(project.projectLead, WhisperMessages.Project.Add.success(featureName, cost));
-                Debug.Log(project.features[0].featureName);
-            }
-
-            else
-            {
-                client.SendWhisper(project.projectLead, WhisperMessages.Project.Add.cannotAfford(featureName, company.money, cost));
-            }
+            client.SendWhisper(project.projectLead, WhisperMessages.Project.Add.notExist);
+            return;
         }
+
+        string featureName = splitWhisper[0];
+
+        if (FeatureExists(featureName, project.features))
+        {
+            client.SendWhisper(project.projectLead, WhisperMessages.Project.Add.onlyOne(featureName));
+            return;
+        }
+
+        FeatureSO featureSO = FeatureSOFromName(featureName);
+
+        feature = new Feature();
+        feature.featureName = featureSO.name;
+        int cost = featureSO.featureCost;
+
+        if (!company.HasEnoughMoney(cost))
+        {
+            client.SendWhisper(project.projectLead, WhisperMessages.Company.notEnough(company.money, cost));
+            return;
+        }
+
+        //
+
+        if (!featureSO.designRequired)
+        {
+            feature.designQualityHit = FeatureQuality.Perfect;
+        }
+
+        else
+        {
+            feature.designPointsRequired = (int)(featureSO.featureDesign * Mathf.Pow(0.8f, 8));
+        }
+
+        if (!featureSO.developRequired)
+        {
+            feature.developmentQualityHit = FeatureQuality.Perfect;
+        }
+
+        else
+        {
+            feature.developmentPointsRequired = (int)(featureSO.featureDevelop * Mathf.Pow(0.8f, 8));
+        }
+
+        if (!featureSO.artRequired)
+        {
+            feature.artQualityHit = FeatureQuality.Perfect;
+            Debug.Log($"{feature.featureName} | {feature.artQualityHit}");
+        }
+
+        else
+        {
+            feature.artPointsRequired = (int)(featureSO.featureArt * Mathf.Pow(0.8f, 8));
+        }
+
+        featureUIObject = Instantiate(projectManager.featureUI, projectManager.featuresUI);
+        featureUI = featureUIObject.GetComponent<FeatureUI>();
+        featureUIList.Add(featureUI);
+
+        featureUI.featureNameUI.text = feature.featureName;
+        featureUI.designPointsRequiredUI.text = $"Design Points Required: {feature.designPointsRequired}pts.";
+        featureUI.developmentPointsRequiredUI.text = $"Development Points Required: {feature.developmentPointsRequired}pts.";
+        featureUI.artPointsRequiredUI.text = $"Art Points Required: {feature.artPointsRequired}pts.";
+
+        project.cost += cost;
+        projectManager.costUI.text = $"Cost: £{project.cost}";
+
+        project.features.Add(feature);
+
+        client.SendWhisper(project.projectLead, WhisperMessages.Project.Add.success(featureName, cost));
     }
 }

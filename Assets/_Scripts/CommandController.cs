@@ -97,8 +97,13 @@ public class CommandController : MonoBehaviour
     private ModTools modTools;
     private ProjectQuestion projectQuestion;
 
-    string id;
-    string username;
+    private string id;
+    private string username;
+
+    private DeveloperClass developer;
+    private CompanyClass company;
+    private string companyName;
+    private bool companyOwner;
 
     private void Awake()
     {
@@ -223,6 +228,22 @@ public class CommandController : MonoBehaviour
             }
         }
 
+        developer = developers[id];
+
+        companyName = developer.companyName;
+
+        companyOwner = false;
+
+        if (companyName != string.Empty)
+        {
+            company = companies[companyName];
+
+            if (company.IsOwner(id))
+            {
+                companyOwner = true;
+            }
+        }
+
         switch (e.Command.ToLower())
         {
             case "help":
@@ -248,10 +269,10 @@ public class CommandController : MonoBehaviour
                     devXP(SkillTypes.DeveloperSkills.Art), devXP(SkillTypes.DeveloperSkills.Marketing)));
                 break;
             case "company":
-                companyManager.SendWhisper(id, username, splitWhisper);
+                companyManager.SendWhisper(id, username, splitWhisper, developer, companyName, company, companyOwner);
                 break;
             case "project":
-                projectManager.SendWhisper(id, username, splitWhisper);
+                projectManager.SendWhisper(id, username, splitWhisper, developer, companyName, company);
                 break;
             case "answer":
                 projectQuestion.Answer(id, username, splitWhisper);

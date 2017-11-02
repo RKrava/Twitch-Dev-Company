@@ -136,31 +136,63 @@ public class ProjectManager : MonoBehaviour
         //client.SendWhisper(projectLead, $"Here are all the applicants: {pasteUrl}");
     }
 
-    public void SendWhisper(string id, string username, List<string> splitWhisper)
+    public void SendWhisper(string id, string username, List<string> splitWhisper, DeveloperClass developer, string companyName, CompanyClass company)
     {
         switch (splitWhisper[0].ToLower())
         {
             case "start":
-                projectStart.ProjectStartMethod(id, username, splitWhisper);
-                break;
+                projectStart.ProjectStartMethod(id, username, splitWhisper, developer, companyName, company);
+                return;
+        }
+
+        if (!startProject)
+        {
+            client.SendWhisper(username, WhisperMessages.Project.noProject);
+            return;
+        }
+
+        if (project == null)
+        {
+            client.SendWhisper(Settings.channelToJoin, WhisperMessages.Project.fail);
+            return;
+        }
+
+        switch (splitWhisper[0].ToLower())
+        {
             case "apply":
-                projectApply.ProjectApplyMethod(id, username, splitWhisper);
-                break;
+                projectApply.ProjectApplyMethod(id, username, splitWhisper, project);
+                return;
+        }
+
+        if (!CommandController.developers[id].IsFounder)
+        {
+            client.SendWhisper(username, WhisperMessages.Company.notFounder);
+            return;
+        }
+
+        if (project.projectLead != username)
+        {
+            client.SendWhisper(username, WhisperMessages.Project.notProjectLead);
+            return;
+        }
+
+        switch (splitWhisper[0].ToLower())
+        {
             case "accept":
-                projectAccept.ProjectAcceptMethod(id, username, splitWhisper);
-                break;
+                projectAccept.ProjectAcceptMethod(id, username, splitWhisper, company, project);
+                return;
             case "recruit":
-                projectRecruit.ProjectRecruitMethod(id, username, splitWhisper);
-                break;
+                projectRecruit.ProjectRecruitMethod(id, username, splitWhisper, company, project);
+                return;
             case "add":
-                projectAdd.ProjectAddMethod(splitWhisper);
-                break;
+                projectAdd.ProjectAddMethod(splitWhisper, company, project);
+                return;
             case "move":
-                projectMove.ProjectMoveMethod(username, splitWhisper);
-                break;
+                projectMove.ProjectMoveMethod(splitWhisper, project);
+                return;
             default:
                 Debug.Log("ProjectManager switch broken.");
-                break;
+                return;
         }
     }
 }

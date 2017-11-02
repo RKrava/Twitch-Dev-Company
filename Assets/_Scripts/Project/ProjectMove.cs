@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class ProjectMove : MonoBehaviour
@@ -7,40 +6,30 @@ public class ProjectMove : MonoBehaviour
     private ProjectDevelopment projectDevelopment;
     private ProjectAdd projectAdd;
 
-    private ProjectClass project;
-
     private void Awake()
     {
         projectDevelopment = FindObject.projectDevelopment;
         projectAdd = FindObject.projectAdd;
     }
 
-    public void ProjectMoveMethod(string username, List<string> splitWhisper)
+    public void ProjectMoveMethod(List<string> splitWhisper, ProjectClass project)
     {
-        if (ProjectManager.project == null)
+        splitWhisper.RemoveAt(0);
+
+        if (splitWhisper.Count == 0)
         {
-            client.SendWhisper(Settings.channelToJoin, WhisperMessages.Project.fail);
+            client.SendWhisper(project.projectLead, WhisperMessages.Project.Move.syntax);
             return;
         }
 
-        project = ProjectManager.project;
-
-        if (username != project.projectLead)
+        if (!projectAdd.FeatureExists(splitWhisper[0], project.features))
         {
-            client.SendWhisper(username, WhisperMessages.Project.notProjectLead);
+            client.SendWhisper(project.projectLead, WhisperMessages.Project.Move.fail(splitWhisper[0]));
             return;
         }
 
-        if (projectAdd.FeatureExists(splitWhisper[1], project.features))
-        {
-            projectDevelopment.featureLeadIndex = projectAdd.FeatureFromName(splitWhisper[1], project.features);
+        projectDevelopment.featureLeadIndex = projectAdd.FeatureFromName(splitWhisper[0], project.features);
 
-            client.SendWhisper(username, WhisperMessages.Project.Move.success(splitWhisper[1]));
-        }
-
-        else
-        {
-            client.SendWhisper(username, WhisperMessages.Project.Move.fail(splitWhisper[1]));
-        }
+        client.SendWhisper(project.projectLead, WhisperMessages.Project.Move.success(splitWhisper[0]));
     }
 }

@@ -20,6 +20,7 @@ public class WhisperMessages
         public static string notFounder = "You need to be a founder of company to do this.";
         public static string notOwner = "You need to be the owner of the company to do this.";
         public static string alreadyFounder(string companyName) => $"You are already part of a company called {companyName}.";
+        public static string notEnough(int money, int cost) => $"The company does not have enough money to complete this action. It has £{money}, and you need £{cost}.";
 
         public class Start
         {
@@ -97,7 +98,7 @@ public class WhisperMessages
     public class Project
     {
         public static string noProject = "There is no project going on at the moment.";
-        public static string fail = "Project is returning null. Should this be happening?";
+        public static string fail = "Project is returning null. This shouldn't be happening.";
         public static string notProjectLead = "You need to be the Project Lead to be able to do this.";
         public static string alreadyUnderway = "A project is underway. Please wait until it is finished.";
 
@@ -115,7 +116,7 @@ public class WhisperMessages
         {
             public static string alreadyApplied = "You've already applied for this project. You can only send in one application.";
             public static string notPosition = "You cannot apply for that position, only Designer, Developer, or Artist.";
-            public static string specifyPosition = "You have to specify the position you are applying for: !project apply (Designer | Developer | Artist).";
+            public static string syntax = "!project apply (Designer | Developer | Artist), without the brackets.";
 
             public static string success = "Your application has been sent.";
 
@@ -130,7 +131,9 @@ public class WhisperMessages
             public static string notExist = "This isn't an option. Please refer to the numbers besides their name.";
             public static string notApplied = "This person hasn't applied for this project. You cannot accept an application that doesn't exist.";
             public static string alreadyTeam = "This person is already a member of the development team.";
-            public static string syntax = "To accept someone onto your team, use the follow !project accept [Number].";
+            public static string syntax = "!project accept (Number), without the brackets.";
+
+            public static string closed = "You can no longer accept applications.";
 
             public static string successApplicant(string projectName) => $"Your application has been successful. You are now part of the development team for {projectName}";
             public static string successLead(string applicantUsername, string projectName) => $"{applicantUsername} is now part of the development team for {projectName}.";
@@ -138,8 +141,10 @@ public class WhisperMessages
 
         public class Recruit
         {
-            public static string syntax = "To recruit someone to your team, use !project recruit (Designer | Developer | Artist) (Number).";
+            public static string syntax = "!project recruit (Designer | Developer | Artist) (Amount), without the brackets.";
             public static string money = "You cannot afford to do this action. It costs £140 per developer per project.";
+
+            public static string closed = "Recruiting has closed.";
 
             public static string success(int number, string position) => $"You have successfully recruited {number} {position} onto your team.";
         }
@@ -150,6 +155,9 @@ public class WhisperMessages
             public static string onlyOne(string featureName) => $"You already have {featureName} added.";
             public static string cannotAfford(string featureName, int companyMoney, int featureCost) => $"You cannot afford {featureName}. You only have £{companyMoney} in the bank, and it costs £{featureCost}.";
 
+            public static string syntax = "!project add (Name), without the brackets.";
+            public static string fail = "You cannot add a feature at this time.";
+
             public static string success(string featureName, int featureCost) => $"You have successfully added {featureName}. It cost you £{featureCost}.";
         }
 
@@ -157,6 +165,8 @@ public class WhisperMessages
         {
             public static string success(string featureName) => $"You have moved to {featureName}. Anyone working on this will receive a bonus.";
             public static string fail(string featureName) => $"{featureName} doesn't exist, or isn't part of this project.";
+
+            public static string syntax = "!project move (Name), wihout the brackets.";
         }
 
         public class Question

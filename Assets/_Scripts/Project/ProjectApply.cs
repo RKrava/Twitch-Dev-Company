@@ -6,25 +6,19 @@ public class ProjectApply : MonoBehaviour
 {
     private ProjectClass project;
 
-    public void ProjectApplyMethod(string id, string username, List<string> splitWhisper)
+    public void ProjectApplyMethod(string id, string username, List<string> splitWhisper, ProjectClass project)
     {
-        if (!ProjectManager.startProject)
+        splitWhisper.RemoveAt(0);
+
+        if (splitWhisper.Count == 0)
         {
-            client.SendWhisper(username, WhisperMessages.Project.alreadyUnderway);
+            client.SendWhisper(username, WhisperMessages.Project.Apply.syntax);
             return;
         }
 
-        if (ProjectManager.project == null)
+        if (!project.projectApplication.applicationsOpen)
         {
-            client.SendWhisper(Settings.channelToJoin, WhisperMessages.Project.fail);
-            return;
-        }
-
-        project = ProjectManager.project;
-
-        if (!CommandController.developers.ContainsKey(id))
-        {
-            client.SendWhisper(username, WhisperMessages.Developer.notDeveloper);
+            client.SendWhisper(username, WhisperMessages.Project.Apply.closed);
             return;
         }
 
@@ -34,13 +28,7 @@ public class ProjectApply : MonoBehaviour
             return;
         }
 
-        if (splitWhisper[1] == String.Empty)
-        {
-            client.SendWhisper(username, WhisperMessages.Project.Apply.specifyPosition);
-            return;
-        }
-
-        string position = splitWhisper[1];
+        string position = splitWhisper[0];
 
         if (position.EqualsOrdinalIgnoreCase(DeveloperPosition.Designer))
         {

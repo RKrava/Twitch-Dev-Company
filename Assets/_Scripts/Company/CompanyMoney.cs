@@ -20,7 +20,7 @@ public class CompanyMoney : MonoBehaviour
             return;
         }
 
-        if (!int.TryParse(splitWhisper[1], out money))
+        if (!int.TryParse(splitWhisper[0], out money))
         {
             client.SendWhisper(username, WhisperMessages.Company.Deposit.syntax);
             return;
@@ -49,7 +49,7 @@ public class CompanyMoney : MonoBehaviour
             return;
         }
 
-        if (!int.TryParse(splitWhisper[1], out money))
+        if (!int.TryParse(splitWhisper[0], out money))
         {
             client.SendWhisper(username, WhisperMessages.Company.Withdraw.syntax);
             return;
