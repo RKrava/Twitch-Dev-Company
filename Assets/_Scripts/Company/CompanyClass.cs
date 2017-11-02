@@ -35,7 +35,6 @@ public class CompanyClass
             return _GetOwner;
         }
     }
-
 	
     //public List<string> GetFounders => founderIDs;
     public bool IsOwner(string userID) => (founderIDs[0] == userID);

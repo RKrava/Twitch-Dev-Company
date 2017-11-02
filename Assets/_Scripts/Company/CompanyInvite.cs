@@ -3,46 +3,43 @@ using UnityEngine;
 
 public class CompanyInvite : MonoBehaviour
 {
-    public void CompanyInviteMethod(string id, string username, List<string> splitWhisper, CompanyClass company, bool companyOwner)
+    public void CompanyInviteMethod(string username, List<string> splitWhisper, CompanyClass company)
     {
-        if (!companyOwner)
+        splitWhisper.RemoveAt(0);
+
+        if (splitWhisper.Count == 0)
         {
-            client.SendWhisper(username, WhisperMessages.Company.notOwner);
+            client.SendWhisper(username, WhisperMessages.Company.Invite.syntax);
             return;
         }
 
+        //Company cannot have more than 3 founders
         if (company.FounderCount == 3)
         {
             client.SendWhisper(username, WhisperMessages.Company.Invite.maxFounders);
             return;
         }
 
-        string invitedUsername = splitWhisper[1];
+        string invitedUsername = splitWhisper[0];
 
+        //Invited viewer has to exist in the system
         if (!CommandController.DoesUsernameExist(invitedUsername))
         {
             client.SendWhisper(username, WhisperMessages.Company.Invite.notDeveloper(invitedUsername));
             return;
         }
 
-        if (username.EqualsOrdinalIgnoreCase(invitedUsername))
+        string invitedID = CommandController.GetID(invitedUsername);
+
+        //Invited viewer cannot already be a founder
+        if (CommandController.developers[invitedID].IsFounder)
         {
-            client.SendWhisper(username, WhisperMessages.Company.Invite.self);
+            client.SendWhisper(username, WhisperMessages.Company.Invite.anotherCompany(invitedUsername));
             return;
         }
 
-        string invitedID = CommandController.GetID(invitedUsername);
+        client.SendWhisper(invitedUsername, WhisperMessages.Company.Invite.received(username, company.companyName), Timers.CompanyApplication);
 
-        if (CommandController.developers[invitedID].IsFounder == false)
-        {
-            client.SendWhisper(invitedUsername, WhisperMessages.Company.Invite.received(username, company.companyName), Timers.CompanyApplication);
-
-            client.SendWhisper(username, WhisperMessages.Company.Invite.sent(invitedUsername));
-        }
-
-        else
-        {
-            client.SendWhisper(username, WhisperMessages.Company.Invite.anotherCompany(invitedUsername));
-        }
+        client.SendWhisper(username, WhisperMessages.Company.Invite.sent(invitedUsername));
     }
 }

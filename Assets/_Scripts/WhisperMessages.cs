@@ -9,6 +9,7 @@ public class WhisperMessages
     {
         public static string notDeveloper = "You are not a developer yet. Please send a message or whisper first.";
         public static string money(int money) => $"You have £{money}.";
+        public static string notEnough(int money, int cost) => $"You do not have enough money to complete this action. You have £{money}, and it costs £{cost}.";
         public static string skills(int lead, int motivation, int design, int develop, int art, int marketing) => $"Lead: {lead} | Motivation {motivation} | Design: {design} | Develop: {develop} | Art: {art} | Marketing: {marketing}.";
         public static string xp(int lead, int motivation, int design, int develop, int art, int marketing) => $"Lead: {lead} | Motivation {motivation} | Design: {design} | Develop: {develop} | Art: {art} | Marketing: {marketing}.";
         public static string questions(bool questions) => $"You have set questions to {questions}.";
@@ -33,6 +34,7 @@ public class WhisperMessages
             public static string notDeveloper(string invitedUsername) => $"{invitedUsername} is not a developer. Wait for them to send a message in chat.";
             public static string self = "You can't invite yourself to your company, silly.";
             public static string anotherCompany(string invitedUsername) => $"{invitedUsername} is already part of another company.";
+            public static string syntax = "!company invite (Username), without the brackets.";
 
 
             public static string received(string username, string companyName) => $"You have been invited by {username} to join their company, {companyName}. Type !company accept {companyName} in the next 5 minutes to join.";
@@ -48,6 +50,8 @@ public class WhisperMessages
             public static string maxFounders(string companyName) => $"{companyName} already has three founders.";
             public static string noExist(string companyName) => $"{companyName} doesn't exist. Check you typed the name correctly.";
             public static string anotherCompany(string companyName) => $"You are already part of another company, {companyName}.";
+            public static string notInvited(string companyName) => $"You have not received an invite from {companyName}, or it has run out.";
+            public static string syntax = $"! company accept (Company Name), without the brackets.";
 
             public static string joined(string companyName) => $"You are now a founder of {companyName}. You can add funds with !company deposit 1000, etc. to fund projects, and !project start [NAME] to start projects.";
             public static string accepted(string username) => $"{username} has become a founder of your company.";
@@ -61,7 +65,7 @@ public class WhisperMessages
         public class Deposit
         {
             public static string notEnough(int developerMoney) => $"You only have £{developerMoney}.";
-            public static string syntax = "To deposit money, you need to use !company deposit 1000, etc.";
+            public static string syntax = "!company deposit (Amount), without the brackets.";
 
             public static string success(int money, string companyName, int companyMoney, int developerMoney) => $"You have deposited £{money}. Now {companyName} has £{companyMoney}, and you have £{developerMoney} left.";
         }
@@ -69,7 +73,7 @@ public class WhisperMessages
         public class Withdraw
         {
             public static string notEnough(int companyMoney) => $"The company only has £{companyMoney}.";
-            public static string syntax = "To withdraw money, you need to use !company withdraw 1000, etc.";
+            public static string syntax = "!company withdraw (Amount), without the brackets.";
 
             public static string project = "You cannot withdraw money when you are running a project.";
 
@@ -80,6 +84,7 @@ public class WhisperMessages
         {
             public static string success(string newName) => $"You have changed the name of the company to {newName}";
             public static string fail = "You have to be the company owner to change the name.";
+            public static string syntax = "!company edit (New Name), without the brackets.";
         }
 
         public class Leave
@@ -103,7 +108,7 @@ public class WhisperMessages
             public static string syntax = "!project start (Project Name), without the brackets.";
 
             public static string success(string projectName) => $"You have started {projectName}. People can now apply to join.";
-            public static string canApply(string projectLead) => $"A project has been started by {projectLead}. You can join by sending !project apply (Designer | Developer | Artist) to me.";
+            public static string canApply(string projectLead) => $"A project has been started by {projectLead}. You can join by whispering !project apply (Designer | Developer | Artist) to me.";
         }
 
         public class Apply

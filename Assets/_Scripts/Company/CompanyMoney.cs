@@ -5,25 +5,18 @@ public class CompanyMoney : MonoBehaviour
 {
     private int money;
 
-    public void CompanyMoneyMethod(string username, string companyName, DeveloperClass developer)
+    public void CompanyMoneyMethod(string username, string companyName)
     {
-        if (developer.IsFounder)
-        {
-            client.SendWhisper(username, WhisperMessages.Company.Money.success(companyName, CommandController.companies[companyName].money));
-        }
-
-        else
-        {
-            client.SendWhisper(username, WhisperMessages.Company.notFounder);
-            return;
-        }
+        client.SendWhisper(username, WhisperMessages.Company.Money.success(companyName, CommandController.companies[companyName].money));
     }
 
     public void CompanyDepositMethod(string username, List<string> splitWhisper, DeveloperClass developer, CompanyClass company)
     {
-        if (!developer.IsFounder)
+        splitWhisper.RemoveAt(0);
+
+        if (splitWhisper.Count == 0)
         {
-            client.SendWhisper(username, WhisperMessages.Company.notFounder);
+            client.SendWhisper(username, WhisperMessages.Company.Deposit.syntax);
             return;
         }
 
@@ -33,26 +26,26 @@ public class CompanyMoney : MonoBehaviour
             return;
         }
 
-        if (developer.HasEnoughMoney(money))
-        {
-            //TODO - Make a function that transfers money between two accounts
-            developer.SpendMoney(money);
-            company.AddMoney(money);
-
-            client.SendWhisper(username, WhisperMessages.Company.Deposit.success(money, company.companyName, company.money, developer.money));
-        }
-
-        else
+        if (!developer.HasEnoughMoney(money))
         {
             client.SendWhisper(username, WhisperMessages.Company.Deposit.notEnough(developer.money));
+            return;
         }
+
+        //TODO - Make a function that transfers money between two accounts
+        developer.SpendMoney(money);
+        company.AddMoney(money);
+
+        client.SendWhisper(username, WhisperMessages.Company.Deposit.success(money, company.companyName, company.money, developer.money));
     }
 
     public void CompanyWithdrawMethod(string username, List<string> splitWhisper, DeveloperClass developer, CompanyClass company)
     {
-        if (!developer.IsFounder)
+        splitWhisper.RemoveAt(0);
+
+        if (splitWhisper.Count == 0)
         {
-            client.SendWhisper(username, WhisperMessages.Company.notFounder);
+            client.SendWhisper(username, WhisperMessages.Company.Withdraw.syntax);
             return;
         }
 
@@ -68,17 +61,15 @@ public class CompanyMoney : MonoBehaviour
             return;
         }
 
-        if (company.HasEnoughMoney(money))
-        {
-            company.SpendMoney(money);
-            developer.AddMoney(money);
-
-            client.SendWhisper(username, WhisperMessages.Company.Withdraw.success(money, company.companyName, developer.money, company.money));
-        }
-
-        else
+        if (!company.HasEnoughMoney(money))
         {
             client.SendWhisper(username, WhisperMessages.Company.Withdraw.notEnough(company.money));
+            return;
         }
+
+        company.SpendMoney(money);
+        developer.AddMoney(money);
+
+        client.SendWhisper(username, WhisperMessages.Company.Withdraw.success(money, company.companyName, developer.money, company.money));
     }
 }

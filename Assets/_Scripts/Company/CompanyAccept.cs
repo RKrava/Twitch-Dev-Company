@@ -12,44 +12,48 @@ public class CompanyAccept : MonoBehaviour
     {
         splitWhisper.RemoveAt(0);
 
+        if (splitWhisper.Count == 0)
+        {
+            client.SendWhisper(username, WhisperMessages.Company.Accept.syntax);
+        }
+
+        //Cannot be a founder of another company
         if (developer.IsFounder)
         {
             client.SendWhisper(username, WhisperMessages.Company.Accept.anotherCompany(companyName));
             return;
         }
 
-        else
-        {
-            companyName = String.Join(" ", splitWhisper);
-        }
+        companyName = String.Join(" ", splitWhisper);
 
-        if (CommandController.companies.ContainsKey(companyName))
-        {
-            company = CommandController.companies[companyName];
-        }
-
-        else
+        //Company has to exist in the system
+        if (!CommandController.companies.ContainsKey(companyName))
         {
             client.SendWhisper(username, WhisperMessages.Company.Accept.noExist(companyName));
             return;
         }
 
-        if (company.FounderCount < 3)
+        company = CommandController.companies[companyName];
+
+        //Have to have received an invite from the company
+        if (!company.HasPendingInvite(id))
         {
-            company.AddFounder(id);
-
-            developer.JoinCompany(companyName);
-
-            client.SendWhisper(username, WhisperMessages.Company.Accept.joined(companyName));
-
-            string ownerUsername = CommandController.GetUsername(company.GetOwner);
-
-            client.SendWhisper(ownerUsername, WhisperMessages.Company.Accept.accepted(username));
+            client.SendWhisper(username, WhisperMessages.Company.Accept.notInvited(companyName));
         }
 
-        else
+        //Company cannot have more than 3 founders
+        if (company.FounderCount == 3)
         {
             client.SendWhisper(username, WhisperMessages.Company.Accept.maxFounders(companyName));
+            return;
         }
+
+        company.AddFounder(id);
+        developer.JoinCompany(companyName);
+
+        client.SendWhisper(username, WhisperMessages.Company.Accept.joined(companyName));
+
+        string ownerUsername = CommandController.GetUsername(company.GetOwner);
+        client.SendWhisper(ownerUsername, WhisperMessages.Company.Accept.accepted(username));
     }
 }

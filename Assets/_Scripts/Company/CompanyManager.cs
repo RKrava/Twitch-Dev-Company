@@ -48,31 +48,53 @@ public class CompanyManager : MonoBehaviour
         {
             case "start":
                 companyStart.CompanyStartMethod(id, username, splitWhisper, developer);
-                break;
-            case "invite":
-                companyInvite.CompanyInviteMethod(id, username, splitWhisper, company, companyOwner);
-                break;
+                return;
             case "accept":
                 companyAccept.CompanyAcceptMethod(id, username, splitWhisper, developer);
-                break;
+                return;
+        }
+
+        //Have to be a founder to do any of the below
+        if (!developer.IsFounder)
+        {
+            client.SendWhisper(username, WhisperMessages.Company.notFounder);
+            return;
+        }
+
+        switch (splitWhisper[0].ToLower())
+        {
             case "money":
-                companyMoney.CompanyMoneyMethod(username, companyName, developer);
-                break;
+                companyMoney.CompanyMoneyMethod(username, companyName);
+                return;
             case "deposit":
                 companyMoney.CompanyDepositMethod(username, splitWhisper, developer, company);
-                break;
+                return;
             case "withdraw":
                 companyMoney.CompanyWithdrawMethod(username, splitWhisper, developer, company);
-                break;
-            case "edit":
-                companyEdit.CompanyEditMethod(id, username, splitWhisper, companyName, company, companyOwner);
-                break;
+                return;
             case "leave":
                 companyLeave.CompanyLeaveMethod(id, username, developer, company);
-                break;
+                return;
+        }
+
+        //Have to be a company owner to do any of the below
+        if (!companyOwner)
+        {
+            client.SendWhisper(username, WhisperMessages.Company.notOwner);
+            return;
+        }
+
+        switch (splitWhisper[0].ToLower())
+        {
+            case "invite":
+                companyInvite.CompanyInviteMethod(username, splitWhisper, company);
+                return;
+            case "edit":
+                companyEdit.CompanyEditMethod(username, splitWhisper, companyName, company);
+                return;
             default:
-                Debug.Log("CompanyManager switch broken.");
-                break;
+                Debug.Log("No options in CompanyManager.");
+                return;
         }
     }
 }
