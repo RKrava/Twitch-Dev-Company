@@ -33,7 +33,6 @@ public class WhisperMessages
         {
             public static string maxFounders = "You are not allowed more than 3 founders in a company.";
             public static string notDeveloper(string invitedUsername) => $"{invitedUsername} is not a developer. Wait for them to send a message in chat.";
-            public static string self = "You can't invite yourself to your company, silly.";
             public static string anotherCompany(string invitedUsername) => $"{invitedUsername} is already part of another company.";
             public static string syntax = "!company invite (Username), without the brackets.";
 
@@ -84,14 +83,12 @@ public class WhisperMessages
         public class Edit
         {
             public static string success(string newName) => $"You have changed the name of the company to {newName}";
-            public static string fail = "You have to be the company owner to change the name.";
             public static string syntax = "!company edit (New Name), without the brackets.";
         }
 
         public class Leave
         {
             public static string success(string companyName) => $"You have left {companyName}.";
-            public static string fail = "You cannot leave a company if you are not part of a company. FailFish";
         }        
     }
 
@@ -104,7 +101,6 @@ public class WhisperMessages
 
         public class Start
         {
-            public static string money(int money) => $"You need at least £{money} in your company funds to start a project. This is to pay Developers, and buy features.";
             public static string alreadyExists = "A project with the name already exists. Please come up with a new one.";
             public static string syntax = "!project start (Project Name), without the brackets.";
 
@@ -142,7 +138,6 @@ public class WhisperMessages
         public class Recruit
         {
             public static string syntax = "!project recruit (Designer | Developer | Artist) (Amount), without the brackets.";
-            public static string money = "You cannot afford to do this action. It costs £140 per developer per project.";
 
             public static string closed = "Recruiting has closed.";
 
@@ -153,7 +148,6 @@ public class WhisperMessages
         {
             public static string notExist = "This feature does not exist. Make sure you typed the name correctly.";
             public static string onlyOne(string featureName) => $"You already have {featureName} added.";
-            public static string cannotAfford(string featureName, int companyMoney, int featureCost) => $"You cannot afford {featureName}. You only have £{companyMoney} in the bank, and it costs £{featureCost}.";
 
             public static string syntax = "!project add (Name), without the brackets.";
             public static string fail = "You cannot add a feature at this time.";
@@ -207,11 +201,6 @@ public class WhisperMessages
             public static string xpSuccess(int amount, string username, string skill) => $"You have successfully remove {amount}xp from {username}'s {skill} skill.";
             public static string levelSuccess(int amount, string username, string skill) => $"You have successfully removed {amount} levels from {username}'s {skill} skill.";
             public static string modSuccess(string username) => $"You have successfully removed {username} as a mod of the game.";
-        }
-
-        public class Force
-        {
-
         }
     }
 }
