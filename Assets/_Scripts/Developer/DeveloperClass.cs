@@ -129,7 +129,7 @@ public class DeveloperClass
         motherboard = new Gear("Basic Motherboard", GearType.Motherboard);
         cpu = new Gear("Basic CPU", GearType.CPU);
         gpu = new Gear("Basic GPU", GearType.GPU);
-        //RAM
+        ram = new Gear("Basic RAM", GearType.RAM);
         mouse = new Gear("Basic Mouse", GearType.Mouse);
         keyboard = new Gear("Basic Keyboard", GearType.Keyboard);
         monitors.Add(new Gear("Basic Monitor", GearType.Monitor));

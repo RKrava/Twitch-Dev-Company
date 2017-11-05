@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [Serializable]
-public class Gear : MonoBehaviour
+public class Gear
 {
     public string gearName;
     public GearType gearType;
