@@ -25,7 +25,7 @@ public class CompanyManager : MonoBehaviour
         switch (splitWhisper[0].ToLower())
         {
             case "start":
-                companyStart.CompanyStartMethod(id, username, splitWhisper, developer);
+                companyStart.CompanyStartMethod(id, username, splitWhisper, developer, companyName);
                 return;
             case "accept":
                 companyAccept.CompanyAcceptMethod(id, username, splitWhisper, developer);
