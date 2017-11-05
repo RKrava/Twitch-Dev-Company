@@ -30,7 +30,7 @@ public class ProjectRecruit : MonoBehaviour
 
         try
         {
-            number = int.Parse(splitWhisper[0]);
+            number = int.Parse(splitWhisper[1]);
         }
 
         catch

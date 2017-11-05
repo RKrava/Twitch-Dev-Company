@@ -116,10 +116,57 @@ public class DeveloperClass
     public int GetXP(SkillTypes.DeveloperSkills skill) => developerSkills[skill].skillXP;
     public int GetXP(SkillTypes.LeaderSkills skill) => leaderSkills[skill].skillXP;
 
-    public int bonus = 1;
-
     /// <summary>
     /// Is this developer accepting questions?
     /// </summary>
     public bool isAcceptingQuestions = true;
+
+    public int bonus = 1;
+    public int featureIndex = 0;
+
+    public DeveloperClass()
+    {
+        motherboard = new Gear("Basic Motherboard", GearType.Motherboard);
+        cpu = new Gear("Basic CPU", GearType.CPU);
+        gpu = new Gear("Basic GPU", GearType.GPU);
+        //RAM
+        mouse = new Gear("Basic Mouse", GearType.Mouse);
+        keyboard = new Gear("Basic Keyboard", GearType.Keyboard);
+        monitors.Add(new Gear("Basic Monitor", GearType.Monitor));
+    }
+
+    public int OverallDurability()
+    {
+        int durability = 0;
+        int amount = 6;
+
+        durability += motherboard.durability;
+        durability += cpu.durability;
+        durability += gpu.durability;
+        durability += ram.durability;
+        durability += mouse.durability;
+        durability += keyboard.durability;
+
+        foreach (Gear monitor in monitors)
+        {
+            durability += monitor.durability;
+            amount++;
+        }
+
+        durability = durability / amount;
+
+        return durability;
+    }
+
+    /// <summary>
+    /// Gear
+    /// </summary>
+    public Gear motherboard;
+    public Gear cpu;
+    public Gear gpu;
+    public Gear ram;
+    public Gear mouse;
+    public Gear keyboard;
+    //Limit to 3
+    public List<Gear> monitors = new List<Gear>();
 }

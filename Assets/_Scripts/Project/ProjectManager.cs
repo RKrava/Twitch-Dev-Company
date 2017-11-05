@@ -13,6 +13,7 @@ public class ProjectManager : MonoBehaviour
     private ProjectRecruit projectRecruit;
     private ProjectAdd projectAdd;
     private ProjectMove projectMove;
+    private ProjectRelease projectRelease;
 
     public static ProjectClass project;
     public static bool startProject;
@@ -43,6 +44,7 @@ public class ProjectManager : MonoBehaviour
         projectRecruit = FindObject.projectRecruit;
         projectAdd = FindObject.projectAdd;
         projectMove = FindObject.projectMove;
+        projectRelease = FindObject.projectRelease;
 
         projectNameUI.text = "";
         projectLeadUI.text = "";
@@ -142,6 +144,9 @@ public class ProjectManager : MonoBehaviour
         {
             case "start":
                 projectStart.ProjectStartMethod(id, username, splitWhisper, developer, companyName, company);
+                return;
+            case "release":
+                projectRelease.ProjectReleaseMethod(username, splitWhisper);
                 return;
         }
 

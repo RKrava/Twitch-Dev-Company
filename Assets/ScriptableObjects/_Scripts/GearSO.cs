@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Create/Item/Gear")]
-public class Gear : ScriptableObject
+public class GearSO : ScriptableObject
 {
     public string gearName;
     public int gearCost;
@@ -11,14 +11,12 @@ public class Gear : ScriptableObject
 
 public enum GearType
 {
+    Monitor,
     Mouse,
     Keyboard,
-    Monitor,
-    CPU,
     Motherboard,
-    Memory,
-    Storage,
-    VideoCard,
+    CPU,
+    RAM,
+    GPU,
     Case,
-    PSU
 }

@@ -181,9 +181,27 @@ public class WhisperMessages
 
         public class Complete
         {
+            public static string finished(string projectName) => $"{projectName} has been finished, and thus the bug fixing process begins.";
+
             public static string reviewScore(string projectName, int reviewScore) => $"{projectName} was awarded {reviewScore} out of 10.";
             public static string reviewBonus(int bonus, int reviewScore) => $"Thanks to a review score of {reviewScore}, you were awarded a bonus of {bonus} XP.";
             public static string sales(string projectName, int cost, int revenue, int profit) => $"Your project, {projectName}, made an overall profit of £{profit}. You spent £{cost}, and made £{revenue} from sales.";
+        }
+
+        public class Release
+        {
+            public static string syntax = "!project release (Project Name), without the brackets.";
+            public static string noExist = "This project doesn't exist. Double check the spelling.";
+            public static string alreadyReleased(string projectName) => $"{projectName} has already been released.";
+            public static string released(string projectName) => $"{projectName} has now been released.";
+        }
+
+        public class Debug
+        {
+            public static string noMoney(int number) => $"You do not have enough money to pay the Developers in your team. This is your {number} warning. Please resolve this before the 3rd warning, otherwise your project will be marked as finished.";
+            public static string noMoneyFinal => "You failed to resolve the money situation after 3 warnings. Project has been finished, and the Developers have been let go to work on other projects.";
+
+            public static string bugFixed(string type) => $"You have fixed a {type} bug.";
         }
     }
 

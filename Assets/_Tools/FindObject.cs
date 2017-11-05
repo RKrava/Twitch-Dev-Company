@@ -271,6 +271,20 @@ public class FindObject : MonoBehaviour
         }
     }
 
+    private static ProjectRelease _projectRelease;
+    public static ProjectRelease projectRelease
+    {
+        get
+        {
+            if (_projectRelease == null)
+            {
+                _projectRelease = FindObjectOfType<ProjectRelease>();
+            }
+
+            return _projectRelease;
+        }
+    }
+
     private static ProjectQuestion _projectQuestion;
     public static ProjectQuestion projectQuestion
     {

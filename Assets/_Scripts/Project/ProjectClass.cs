@@ -17,6 +17,12 @@ public class ProjectClass
     public int developAI;
     public int artAI;
 
+    public int minorBugs;
+    public int majorBugs;
+    public int breakingBugs;
+
+    public int moneyWarning = 0;
+
     public Categories category;
 
     public bool sequel = false;

@@ -4,6 +4,7 @@ using System.IO;
 using System.Timers;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEditor;
 
 public class ProjectApplication
 {
@@ -25,6 +26,9 @@ public class ProjectApplication
 
         applyWarningExpiry = DateTime.Now.Add(TimeSpan.FromSeconds(30));
         applyExpiry = DateTime.Now.Add(TimeSpan.FromMinutes(1));
+#if UNITY_EDITOR
+        applyExpiry = DateTime.Now.Add(TimeSpan.FromSeconds(30));
+#endif
         expiryCheck.Elapsed += OnTimerElapsed;
         expiryCheck.Enabled = true;
     }
@@ -35,6 +39,9 @@ public class ProjectApplication
 
         Debug.Log("Running ApplicationsClosed.");
         acceptExpiry = DateTime.Now.Add(TimeSpan.FromMinutes(1));
+#if UNITY_EDITOR
+        acceptExpiry = DateTime.Now.Add(TimeSpan.FromSeconds(30));
+#endif
         expiryCheck.Elapsed += OnTimerElapsed;
     }
 
