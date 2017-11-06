@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Name: Basic Mouse
   m_EditorClassIdentifier: 
   gearName: Basic Mouse
-  gearCost: 0
+  gearCost: 30
   gearType: 1

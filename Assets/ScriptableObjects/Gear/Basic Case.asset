@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Name: Basic Case
   m_EditorClassIdentifier: 
   gearName: Basic Case
-  gearCost: 0
+  gearCost: 30
   gearType: 7

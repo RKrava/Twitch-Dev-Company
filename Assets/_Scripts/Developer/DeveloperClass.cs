@@ -126,47 +126,32 @@ public class DeveloperClass
 
     public DeveloperClass()
     {
-        motherboard = new Gear("Basic Motherboard", GearType.Motherboard);
-        cpu = new Gear("Basic CPU", GearType.CPU);
-        gpu = new Gear("Basic GPU", GearType.GPU);
-        ram = new Gear("Basic RAM", GearType.RAM);
-        mouse = new Gear("Basic Mouse", GearType.Mouse);
-        keyboard = new Gear("Basic Keyboard", GearType.Keyboard);
-        monitors.Add(new Gear("Basic Monitor", GearType.Monitor));
-    }
-
-    public int OverallDurability()
-    {
-        int durability = 0;
-        int amount = 6;
-
-        durability += motherboard.durability;
-        durability += cpu.durability;
-        durability += gpu.durability;
-        durability += ram.durability;
-        durability += mouse.durability;
-        durability += keyboard.durability;
-
-        foreach (Gear monitor in monitors)
-        {
-            durability += monitor.durability;
-            amount++;
-        }
-
-        durability = durability / amount;
-
-        return durability;
+        developerGear.Add(GearType.Motherboard, new Gear("Basic Motherboard", GearType.Motherboard));
+        developerGear.Add(GearType.CPU, new Gear("Basic CPU", GearType.CPU));
+        developerGear.Add(GearType.GPU, new Gear("Basic GPU", GearType.GPU));
+        developerGear.Add(GearType.RAM, new Gear("Basic RAM", GearType.RAM));
+        developerGear.Add(GearType.Mouse, new Gear("Basic Mouse", GearType.Mouse));
+        developerGear.Add(GearType.Keyboard, new Gear("Basic Keyboard", GearType.Keyboard));
+        developerGear.Add(GearType.Monitor, new Gear("Basic Monitor", GearType.Monitor));
     }
 
     /// <summary>
     /// Gear
     /// </summary>
-    public Gear motherboard;
-    public Gear cpu;
-    public Gear gpu;
-    public Gear ram;
-    public Gear mouse;
-    public Gear keyboard;
-    //Limit to 3
-    public List<Gear> monitors = new List<Gear>();
+    public Dictionary<GearType, Gear> developerGear = new Dictionary<GearType, Gear>();
+
+    public int OverallDurability()
+    {
+        int durability = 0;
+
+        foreach (Gear gear in developerGear.Values)
+        {
+            durability += gear.durability;
+        }
+
+        durability = durability / developerGear.Values.Count;
+
+        return durability;
+    }
+
 }

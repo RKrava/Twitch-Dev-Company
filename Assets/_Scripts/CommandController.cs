@@ -96,6 +96,7 @@ public class CommandController : MonoBehaviour
     private ProjectManager projectManager;
     private ModTools modTools;
     private ProjectQuestion projectQuestion;
+    private Buy buy;
 
     private string id;
     private string username;
@@ -113,6 +114,7 @@ public class CommandController : MonoBehaviour
         projectManager = FindObject.projectManager;
         modTools = FindObject.modTools;
         projectQuestion = FindObject.projectQuestion;
+        buy = FindObject.buy;
     }
 
     public void DelayedAwake()
@@ -273,6 +275,9 @@ public class CommandController : MonoBehaviour
                 break;
             case "project":
                 projectManager.SendWhisper(id, username, splitWhisper, developer, companyName, company);
+                break;
+            case "buy":
+                buy.BuyMethod(username, developer, splitWhisper);
                 break;
             case "answer":
                 projectQuestion.Answer(id, username, splitWhisper);

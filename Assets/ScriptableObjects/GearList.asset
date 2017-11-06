@@ -12,4 +12,12 @@ MonoBehaviour:
   m_Name: GearList
   m_EditorClassIdentifier: 
   gearFolderPath: Gear
-  gear: []
+  gear:
+  - {fileID: 11400000, guid: f95c4168363a91f4182ea367ef3942c6, type: 2}
+  - {fileID: 11400000, guid: 9d2e4dc3fa6cd024097028a5b47359c2, type: 2}
+  - {fileID: 11400000, guid: ea9f880edad6f854db33bff77f25e2d0, type: 2}
+  - {fileID: 11400000, guid: 67d7377c34e7ac049b35bb768d9645b6, type: 2}
+  - {fileID: 11400000, guid: 1bb52079d15bd6b488c2a054dcdabfe1, type: 2}
+  - {fileID: 11400000, guid: e176a4895aad57247ab9aa8345731e0a, type: 2}
+  - {fileID: 11400000, guid: 65db5bcf6b6e5fb4880be3da85b07edf, type: 2}
+  - {fileID: 11400000, guid: 7eb8867d378ddc747b32a75fafd522a0, type: 2}

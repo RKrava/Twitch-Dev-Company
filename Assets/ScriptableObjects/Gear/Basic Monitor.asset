@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Name: Basic Monitor
   m_EditorClassIdentifier: 
   gearName: Basic Monitor
-  gearCost: 0
+  gearCost: 80
   gearType: 0

@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Name: Basic Motherboard
   m_EditorClassIdentifier: 
   gearName: Basic Motherboard
-  gearCost: 0
+  gearCost: 80
   gearType: 3

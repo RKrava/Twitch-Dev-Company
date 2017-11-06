@@ -327,6 +327,20 @@ public class FindObject : MonoBehaviour
         }
     }
 
+    private static Buy _buy;
+    public static Buy buy
+    {
+        get
+        {
+            if (_buy == null)
+            {
+                _buy = FindObjectOfType<Buy>();
+            }
+
+            return _buy;
+        }
+    }
+
     private static Text _timer;
     public static Text timer
     {

@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Name: Basic CPU
   m_EditorClassIdentifier: 
   gearName: Basic CPU
-  gearCost: 0
+  gearCost: 100
   gearType: 4

@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Name: Basic Keyboard
   m_EditorClassIdentifier: 
   gearName: Basic Keyboard
-  gearCost: 0
+  gearCost: 30
   gearType: 2

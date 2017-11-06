@@ -13,6 +13,12 @@ public class WhisperMessages
         public static string skills(int lead, int motivation, int design, int develop, int art, int marketing) => $"Lead: {lead} | Motivation {motivation} | Design: {design} | Develop: {develop} | Art: {art} | Marketing: {marketing}.";
         public static string xp(int lead, int motivation, int design, int develop, int art, int marketing) => $"Lead: {lead} | Motivation {motivation} | Design: {design} | Develop: {develop} | Art: {art} | Marketing: {marketing}.";
         public static string questions(bool questions) => $"You have set questions to {questions}.";
+
+        public class Buy
+        {
+            public static string noExist(string gearName) => $"{gearName} doesn't exist. Make sure you spelt it correctly";
+            public static string success(string gearName, GearType gearType, int cost) => $"You've successfully purchased a new {gearType.ToString()}, {gearName}, for £{cost}.";
+        }
     }
 
     public class Company

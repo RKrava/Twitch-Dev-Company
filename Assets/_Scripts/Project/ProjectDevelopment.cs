@@ -333,34 +333,26 @@ public class ProjectDevelopment : MonoBehaviour
             }
         }
 
-        GearWear(developer.motherboard);
-        GearWear(developer.cpu);
-        GearWear(developer.gpu);
-        GearWear(developer.ram);
-        GearWear(developer.mouse);
-        GearWear(developer.keyboard);
-
-        foreach (Gear monitor in developer.monitors)
-        {
-            GearWear(monitor);
-        }
+        GearWear(developer);
 
         return currentPoints;
     }
 
-    private void GearWear(Gear gear)
+    private void GearWear(DeveloperClass developer)
     {
-        //Gear Durability
-        int number = rnd.Next(1, 101);
-
-        if (number > 75)
+        foreach (Gear gear in developer.developerGear.Values)
         {
-            int amount = rnd.Next(1, 6);
+            int number = rnd.Next(1, 101);
 
-            gear.Wear(amount);
+            if (number > 75)
+            {
+                int amount = rnd.Next(1, 6);
 
-            Debug.Log($"Gear: {gear.gearName} | Durablity: {gear.durability}");
-        }
+                gear.Wear(amount);
+
+                Debug.Log($"Gear: {gear.gearName} | Durablity: {gear.durability}");
+            }
+        }        
     }
 
     private void AIUpdate()
