@@ -63,7 +63,7 @@ public class ProjectClass
     public int cost = 0;
     public int revenue;
     public int profit;
-    public int sales;
+    public int sales; //Only for when we charge more than £1 per product
 
     public DateTime releaseDate;
 

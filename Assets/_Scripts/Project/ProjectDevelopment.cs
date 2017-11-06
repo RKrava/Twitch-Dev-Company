@@ -606,6 +606,8 @@ public class ProjectDevelopment : MonoBehaviour
 
                 company.SpendMoney(developer.developerPay.pay);
                 developer.AddMoney(developer.developerPay.pay);
+
+                project.cost += developer.developerPay.pay;
             }
         }
     }
@@ -638,17 +640,34 @@ public class ProjectDevelopment : MonoBehaviour
             featureUI.qualityUI.text = $"Quality: {feature.featureQuality}";
         }
 
-        //TODO - Move money spending here
+        string companyName = project.companyName;
+        CompanyClass company = CommandController.companies[companyName];
+
+        company.SpendMoney(project.cost);
+
         client.SendWhisper(project.projectLead, WhisperMessages.Project.Complete.finished(project.projectName));
         CommandController.projects.Add(project.projectName, project);
         bugFixing.Add(project);
 
         ProjectManager.startProject = false;
+        ProjectAdd.featureUIList.Clear();
     }
 
     public void ReleaseProject(ProjectClass finishedProject)
     {
         Debug.Log($"Releasing {finishedProject.projectName}.");
+
+        //Remove from bugFixing
+
+        if (bugFixing.Contains(finishedProject))
+        {
+            bugFixing.Remove(finishedProject);
+        }
+
+        else if (finishedProjects.Contains(finishedProject))
+        {
+            finishedProjects.Remove(finishedProject);
+        }
 
         EnsureMainThread.executeOnMainThread.Enqueue(() => { StartCoroutine(ReviewScore(finishedProject)); });
         EnsureMainThread.executeOnMainThread.Enqueue(() => { StartCoroutine(Sales(finishedProject)); });
@@ -661,39 +680,52 @@ public class ProjectDevelopment : MonoBehaviour
         Debug.Log($"Review Score {finishedProject.projectName}.");
 
         //Review Score
-    }
+        //Overall quality of the features (Should equal between 0 and 1)
+        float q = 0;
 
-    public IEnumerator Sales(ProjectClass finishedProject)
-    {
-        yield return new WaitForSeconds(120);
-
-        Debug.Log($"Sales {finishedProject.projectName}.");
-
-        //Sales
-    }
-
-    private void ReviewScore()
-    {
-        Debug.Log("Review Score");
-
-        ProjectManager.countdown.timeLeft = 60;
-
-        int totalPoints = 0;
+        float featurePoints = 0;
+        int featureCount = project.features.Count;
 
         foreach (Feature feature in project.features)
         {
-            totalPoints += (int)feature.featureQuality;
+            featurePoints += (int)feature.featureQuality;
         }
 
-        //17 references the FeatureQuality enum, and 10 brings it to an actual number
-        float score = project.features.Count;
-        score = totalPoints / score;
-        score = score / 17f;
-        score = score * 10f;
+        featurePoints = featurePoints / featureCount;
+        q = (featurePoints / 17f);
 
-        project.overallRating = (int)score;
+        //Bugs (Should equal between (0 and 1)
+        float b = 0;
 
-        projectManager.reviewScoreUI.text = $"Review Score: {project.overallRating} out of 10";
+        int bugCount = project.breakingBugs + project.majorBugs + project.minorBugs;
+
+        //Severity of the bugs
+        float bugPoints = 0;
+        bugPoints += (project.breakingBugs * 5);
+        bugPoints += (project.majorBugs * 3);
+        bugPoints += (project.minorBugs * 1);
+
+        //Need to do something with bugPoints that punishes you for more breaking bugs than for more minor bugs (Example: 24 bug points, and 8 bugs: 3 Breaking, 2 Major, 3 Minor)
+
+        bugPoints = bugPoints / (featureCount * 210);
+        bugPoints = 1 - bugPoints;
+
+        //How bug ridden a project is
+        float bugRidden = bugCount / (featureCount * 42);
+        bugRidden = 1 - bugRidden;
+
+        b = bugRidden * bugPoints;
+
+        Debug.Log($"Score Float: {(q * b) * 10}");
+
+        //Review Score = q * b
+        int score = (int)(Mathf.Ceil((q * b) * 10));
+
+        Debug.Log($"Score: {score}");
+
+        client.SendMessage(WhisperMessages.Project.Complete.reviewScore(project.projectName, score));
+
+        project.overallRating = score;
 
         if (project.overallRating > 5)
         {
@@ -721,31 +753,69 @@ public class ProjectDevelopment : MonoBehaviour
                 client.SendWhisper(developer, WhisperMessages.Project.Complete.reviewBonus(project.overallRating, bonus));
             }
         }
-
-        client.SendMessage(WhisperMessages.Project.Complete.reviewScore(project.projectName, project.overallRating));
     }
 
-    private void Sales()
+    public IEnumerator Sales(ProjectClass finishedProject)
     {
-        Debug.Log("Sales");
+        yield return new WaitForSeconds(120);
 
-        CommandController.companies[project.companyName].SpendMoney(project.cost);
+        string companyName = project.companyName;
+        CompanyClass company = CommandController.companies[companyName];
 
-        int revenue = project.overallRating * project.features.Count * 1000;
+        float r = company.GetReputation();
 
-        project.revenue = revenue;
-        CommandController.companies[project.companyName].AddMoney(revenue);
+        r = r / 100;
+
+        int sales = (int)((r * project.overallRating) * 1000);
+
+        project.revenue = sales;
         project.profit = project.revenue - project.cost;
-
-        projectManager.revenueUI.text = $"Revenue: £{project.revenue}";
-        projectManager.profitUI.text = $"Revenue: £{project.profit}";
 
         client.SendWhisper(project.projectLead, WhisperMessages.Project.Complete.sales(project.projectName, project.cost, project.revenue, project.profit));
 
-        CommandController.projects.Add(project.projectName, project);
-        ProjectManager.startProject = false;
+        int rep = project.overallRating - 5;
 
-        ProjectAdd.featureUIList.Clear();
+        if (rep > 0)
+        {
+            company.AddReputation(rep);
+        }
+
+        else if (rep < 0)
+        {
+            company.MinusReputation(rep);
+        }
+
+        Debug.Log($"Sales {finishedProject.projectName}.");
+
+        
+    }
+
+    private void ReviewScore()
+    {
+        Debug.Log("Review Score");
+
+        ProjectManager.countdown.timeLeft = 60;
+
+        int totalPoints = 0;
+
+        foreach (Feature feature in project.features)
+        {
+            totalPoints += (int)feature.featureQuality;
+        }
+
+        //17 references the FeatureQuality enum, and 10 brings it to an actual number
+        float score = project.features.Count;
+        score = totalPoints / score;
+        score = score / 17f;
+        score = score * 10f;
+
+        project.overallRating = (int)score;
+
+        projectManager.reviewScoreUI.text = $"Review Score: {project.overallRating} out of 10";
+
+        
+
+        client.SendMessage(WhisperMessages.Project.Complete.reviewScore(project.projectName, project.overallRating));
     }
     #endregion
 }
