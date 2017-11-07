@@ -17,6 +17,12 @@ public class ProjectClass
     public int developAI;
     public int artAI;
 
+    public int minorBugs;
+    public int majorBugs;
+    public int breakingBugs;
+
+    public int moneyWarning = 0;
+
     public Categories category;
 
     public bool sequel = false;
@@ -57,7 +63,7 @@ public class ProjectClass
     public int cost = 0;
     public int revenue;
     public int profit;
-    public int sales;
+    public int sales; //Only for when we charge more than £1 per product
 
     public DateTime releaseDate;
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 [Serializable]
 public class CompanyClass
@@ -12,6 +13,27 @@ public class CompanyClass
 
 	const int maxFounders = 3;
 	const int maxConcurrentProjects = 5;
+
+    private int reputation = 50;
+    const int maxReputation = 100;
+    const int minReputation = 0;
+
+    public void AddReputation(int amount)
+    {
+        reputation += amount;
+        reputation = Mathf.Clamp(reputation, minReputation, maxReputation);
+    }
+
+    public void MinusReputation(int amount)
+    {
+        reputation -= amount;
+        reputation = Mathf.Clamp(reputation, minReputation, maxReputation);
+    }
+
+    public int GetReputation()
+    {
+        return reputation;
+    }
 
 	/// <summary>
 	/// A bunch of simple and concise methods instead of messing around with the list

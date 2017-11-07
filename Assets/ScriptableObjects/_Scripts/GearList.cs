@@ -11,7 +11,7 @@ using UnityEngine;
 public class GearList : ScriptableObject
 {
     public string gearFolderPath = "Gear";
-    public List<Gear> gear = new List<Gear>();
+    public List<GearSO> gear = new List<GearSO>();
 
     #if UNITY_EDITOR
     /// <summary>
@@ -36,7 +36,7 @@ public class GearList : ScriptableObject
         foreach (string file in Directory.GetFiles(absolutePath, "*.asset"))
         {
             string relativeFilePath = Path.Combine(featuresFolder, Path.GetFileName(file));
-            Gear gear = (Gear)AssetDatabase.LoadAssetAtPath(relativeFilePath, typeof(Gear));
+            GearSO gear = (GearSO)AssetDatabase.LoadAssetAtPath(relativeFilePath, typeof(GearSO));
             this.gear.Add(gear);
         }
     }

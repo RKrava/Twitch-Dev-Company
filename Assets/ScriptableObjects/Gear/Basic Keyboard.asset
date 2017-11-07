@@ -11,6 +11,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d581e7b18609b024a968b1301d031fbd, type: 3}
   m_Name: Basic Keyboard
   m_EditorClassIdentifier: 
-  gearName: 
-  gearCost: 0
-  gearType: 0
+  gearName: Basic Keyboard
+  gearCost: 30
+  gearType: 2

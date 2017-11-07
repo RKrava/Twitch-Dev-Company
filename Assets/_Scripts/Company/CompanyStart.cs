@@ -6,9 +6,7 @@ public class CompanyStart : MonoBehaviour
 {
     private CompanyClass company;
 
-    private string companyName;
-
-    public void CompanyStartMethod(string id, string username, List<string> splitWhisper, DeveloperClass developer)
+    public void CompanyStartMethod(string id, string username, List<string> splitWhisper, DeveloperClass developer, string companyName)
     {
         splitWhisper.RemoveAt(0);
 
