@@ -129,6 +129,8 @@ public class FeatureSOEditor : Editor
             SetSkills(target, -1, -1, -1);
         }
 
+        base.OnInspectorGUI();
+
         EditorUtility.SetDirty(target);
     }
 

@@ -14,3 +14,5 @@ MonoBehaviour:
   gearName: Basic Monitor
   gearCost: 80
   gearType: 0
+  pointBonus: 0.15
+  durablityBonus: 1

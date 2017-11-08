@@ -141,6 +141,11 @@ public class CommandController : MonoBehaviour
 
         DeveloperClass developer = new DeveloperClass();
         developer.developerID = id;
+        for (int x = 0; x <= 7; x++)
+        {
+            GearSO gearSO = buy.gearList.gear[x];
+            developer.developerGear.Add(gearSO.gearType, new Gear(gearSO));
+        }
         developers.Add(id, developer);
 
         Debug.Log(username + " has been added as a developer.");
@@ -269,6 +274,15 @@ public class CommandController : MonoBehaviour
                     leadXP(SkillTypes.LeaderSkills.Leadership), leadXP(SkillTypes.LeaderSkills.Motivation),
                     devXP(SkillTypes.DeveloperSkills.Design), devXP(SkillTypes.DeveloperSkills.Development),
                     devXP(SkillTypes.DeveloperSkills.Art), devXP(SkillTypes.DeveloperSkills.Marketing)));
+                break;
+            case "gear":
+                List<string> gearDurability = new List<string>();
+                foreach (Gear gear in developer.developerGear.Values)
+                {
+                    gearDurability.Add($"{gear.gearName} - {gear.durability}%");
+                }
+                string gearMessage = string.Join(" | ", gearDurability);
+                client.SendWhisper(username, WhisperMessages.Developer.durablity(gearMessage));
                 break;
             case "company":
                 companyManager.SendWhisper(id, username, splitWhisper, developer, companyName, company, companyOwner);

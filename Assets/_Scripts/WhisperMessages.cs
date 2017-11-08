@@ -19,6 +19,8 @@ public class WhisperMessages
             public static string noExist(string gearName) => $"{gearName} doesn't exist. Make sure you spelt it correctly";
             public static string success(string gearName, GearType gearType, int cost) => $"You've successfully purchased a new {gearType.ToString()}, {gearName}, for £{cost}.";
         }
+
+        public static string durablity(string message) => $"{message}";
     }
 
     public class Company
@@ -157,6 +159,10 @@ public class WhisperMessages
 
             public static string syntax = "!project add (Name), without the brackets.";
             public static string fail = "You cannot add a feature at this time.";
+
+            public static string conflict(string newFeature, string conflictingFeature) => $"{newFeature} conflicts with {conflictingFeature}.";
+
+            public static string requirements = "You don't have all the requirements for this feature.";
 
             public static string success(string featureName, int featureCost) => $"You have successfully added {featureName}. It cost you £{featureCost}.";
         }

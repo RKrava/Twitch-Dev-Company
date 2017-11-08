@@ -14,3 +14,5 @@ MonoBehaviour:
   gearName: Basic RAM
   gearCost: 60
   gearType: 5
+  pointBonus: 0.15
+  durablityBonus: 1

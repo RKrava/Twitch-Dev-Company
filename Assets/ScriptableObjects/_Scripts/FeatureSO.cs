@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 [CreateAssetMenu(menuName = "Create/Item/Feature")]
 public class FeatureSO : ScriptableObject
@@ -19,4 +20,11 @@ public class FeatureSO : ScriptableObject
 
     public int featureArt = 0;
     public bool artRequired = false;
+
+    private List<List<FeatureSO>> requirements = new List<List<FeatureSO>>();
+
+    public List<FeatureSO> requirementsA = new List<FeatureSO>();
+    public List<FeatureSO> requirementsB = new List<FeatureSO>();
+    public List<FeatureSO> requirementsC = new List<FeatureSO>();
+    public List<FeatureSO> blockers = new List<FeatureSO>();
 }

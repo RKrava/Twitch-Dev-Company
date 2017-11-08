@@ -14,3 +14,5 @@ MonoBehaviour:
   gearName: Basic Keyboard
   gearCost: 30
   gearType: 2
+  pointBonus: 0.05
+  durablityBonus: 1

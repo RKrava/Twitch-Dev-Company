@@ -77,6 +77,79 @@ public class ProjectAdd : MonoBehaviour
 
         FeatureSO featureSO = FeatureSOFromName(featureName);
 
+        foreach (FeatureSO feature in featureSO.blockers)
+        {
+            if (FeatureExists(feature.featureName, project.features))
+            {
+                Debug.Log("Blocker");
+                client.SendWhisper(project.projectLead, WhisperMessages.Project.Add.conflict(feature.featureName, featureName));
+                return;
+            }
+        }
+
+        if (featureSO.requirementsA.Count > 0)
+        {
+            int countA = featureSO.requirementsA.Count;
+
+            foreach (FeatureSO feature in featureSO.requirementsA)
+            {
+                if (FeatureExists(feature.featureName, project.features))
+                {
+                    break;
+                }
+
+                countA--;
+            }
+
+            if (countA == 0)
+            {
+                client.SendWhisper(project.projectLead, WhisperMessages.Project.Add.requirements);
+                return;
+            }
+        }
+
+        if (featureSO.requirementsB.Count > 0)
+        {
+            int countB = featureSO.requirementsB.Count;
+
+            foreach (FeatureSO feature in featureSO.requirementsB)
+            {
+                if (FeatureExists(feature.featureName, project.features))
+                {
+                    break;
+                }
+
+                countB--;
+            }
+
+            if (countB == 0)
+            {
+                client.SendWhisper(project.projectLead, WhisperMessages.Project.Add.requirements);
+                return;
+            }
+        }
+
+        if (featureSO.requirementsC.Count > 0)
+        {
+            int countC = featureSO.requirementsC.Count;
+
+            foreach (FeatureSO feature in featureSO.requirementsC)
+            {
+                if (FeatureExists(feature.featureName, project.features))
+                {
+                    break;
+                }
+
+                countC--;
+            }
+
+            if (countC == 0)
+            {
+                client.SendWhisper(project.projectLead, WhisperMessages.Project.Add.requirements);
+                return;
+            }
+        }
+        
         feature = new Feature();
         feature.featureName = featureSO.name;
         int cost = featureSO.featureCost;
@@ -86,8 +159,6 @@ public class ProjectAdd : MonoBehaviour
             client.SendWhisper(project.projectLead, WhisperMessages.Company.notEnough(company.money, cost));
             return;
         }
-
-        //
 
         if (!featureSO.designRequired)
         {

@@ -122,18 +122,19 @@ public class DeveloperClass
     public bool isAcceptingQuestions = true;
 
     public int bonus = 1;
-    public int featureIndex = 0;
-
-    public DeveloperClass()
+    public float GearBonus()
     {
-        developerGear.Add(GearType.Motherboard, new Gear("Basic Motherboard", GearType.Motherboard));
-        developerGear.Add(GearType.CPU, new Gear("Basic CPU", GearType.CPU));
-        developerGear.Add(GearType.GPU, new Gear("Basic GPU", GearType.GPU));
-        developerGear.Add(GearType.RAM, new Gear("Basic RAM", GearType.RAM));
-        developerGear.Add(GearType.Mouse, new Gear("Basic Mouse", GearType.Mouse));
-        developerGear.Add(GearType.Keyboard, new Gear("Basic Keyboard", GearType.Keyboard));
-        developerGear.Add(GearType.Monitor, new Gear("Basic Monitor", GearType.Monitor));
+        float bonus = 0;
+
+        foreach (Gear gear in developerGear.Values)
+        {
+            bonus += gear.pointsBonus;
+        }
+
+        return bonus;
     }
+
+    public int featureIndex = 0;
 
     /// <summary>
     /// Gear

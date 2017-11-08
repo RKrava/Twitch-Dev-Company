@@ -11,6 +11,7 @@ public class ProjectApplication
     public bool applicationsOpen = false;
     public bool acceptApplications = false;
     public bool warningSent = false;
+    public bool closed = false;
 
     Timer expiryCheck = new Timer(1000);
     DateTime applyWarningExpiry;
@@ -26,9 +27,9 @@ public class ProjectApplication
 
         applyWarningExpiry = DateTime.Now.Add(TimeSpan.FromSeconds(30));
         applyExpiry = DateTime.Now.Add(TimeSpan.FromMinutes(1));
-#if UNITY_EDITOR
-        applyExpiry = DateTime.Now.Add(TimeSpan.FromSeconds(30));
-#endif
+//#if UNITY_EDITOR
+//        applyExpiry = DateTime.Now.Add(TimeSpan.FromSeconds(30));
+//#endif
         expiryCheck.Elapsed += OnTimerElapsed;
         expiryCheck.Enabled = true;
     }
@@ -47,6 +48,12 @@ public class ProjectApplication
 
     private void OnTimerElapsed(object sender, ElapsedEventArgs e)
     {
+        if (closed)
+        {
+            expiryCheck.Dispose();
+            return;
+        }
+
         if (applicationsOpen && DateTime.Now >= applyExpiry)
         {
             Debug.Log("Applications Closed. Accepting Open.");
