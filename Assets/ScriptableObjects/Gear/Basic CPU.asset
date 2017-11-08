@@ -14,3 +14,5 @@ MonoBehaviour:
   gearName: Basic CPU
   gearCost: 100
   gearType: 4
+  pointBonus: 0.2
+  durablityBonus: 1

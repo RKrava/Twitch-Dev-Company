@@ -44,7 +44,7 @@ public class Buy : MonoBehaviour
         }
 
         developer.SpendMoney(gearSO.gearCost);
-        developer.developerGear[gearSO.gearType] = new Gear(gearSO.gearName, gearSO.gearType);
+        developer.developerGear[gearSO.gearType] = new Gear(gearSO);
 
         client.SendWhisper(username, WhisperMessages.Developer.Buy.success(gearName, gearSO.gearType, gearSO.gearCost));
     }

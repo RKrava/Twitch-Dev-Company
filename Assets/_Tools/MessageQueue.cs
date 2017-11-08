@@ -104,7 +104,7 @@ public class MessageQueue : MonoBehaviour
 
             else
             {
-                //client.SendMessageQueued(message.message);
+                client.SendMessageQueued(message.message);
             }
         }
     }

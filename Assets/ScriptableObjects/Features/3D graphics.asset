@@ -11,11 +11,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29aba230cb9966645b12d87181cdbe98, type: 3}
   m_Name: 3D graphics
   m_EditorClassIdentifier: 
-  featureName: 
-  featureCost: 0
+  featureName: 3d graphics
+  featureCost: 500
   featureDesign: -1
   designRequired: 0
-  featureDevelop: -1
-  developRequired: 0
-  featureArt: -1
-  artRequired: 0
+  featureDevelop: 188
+  developRequired: 1
+  featureArt: 142
+  artRequired: 1
+  requirementsA: []
+  requirementsB: []
+  requirementsC: []
+  blockers:
+  - {fileID: 11400000, guid: da3c33fefe225ef4baa041887c3d3805, type: 2}
+  - {fileID: 11400000, guid: 9655d0d948631874c9b2cdbda0963e87, type: 2}

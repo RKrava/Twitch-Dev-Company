@@ -14,3 +14,5 @@ MonoBehaviour:
   gearName: Basic Motherboard
   gearCost: 80
   gearType: 3
+  pointBonus: 0.15
+  durablityBonus: 1

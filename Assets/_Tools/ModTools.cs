@@ -138,6 +138,26 @@ public class ModTools : MonoBehaviour
     {
         Debug.Log("ModWhisper");
 
+        //Need to combine all of the project references.
+
+        if (string.Compare(splitWhisper[0], "force", true) == 0)
+        {
+            if (ProjectManager.project == null)
+            {
+                //TODO Whisper - There is no project going on
+                Debug.Log("Project don't exist.");
+                return;
+            }
+
+            ProjectManager.project.projectApplication.closed = true;
+            ProjectManager.project = null;
+            ProjectManager.startProject = false;
+
+            //TODO Whisper - Project has been ended. You can start one now.
+            Debug.Log("Project has been ended.");
+            return;
+        }
+
         string targetUsername = splitWhisper[2];
         string targetID;
         SkillTypes.DeveloperSkills skill;
@@ -249,12 +269,6 @@ public class ModTools : MonoBehaviour
             {
                 client.SendModWhisper(username, WhisperMessages.Mod.Remove.modSuccess(username));
             }
-        }
-
-        else if (string.Compare(splitWhisper[0], "force", true) == 0)
-        {
-            //Finish
-            //Whisper
         }
     }
 

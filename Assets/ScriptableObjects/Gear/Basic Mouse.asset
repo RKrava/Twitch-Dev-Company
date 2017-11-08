@@ -14,3 +14,5 @@ MonoBehaviour:
   gearName: Basic Mouse
   gearCost: 30
   gearType: 1
+  pointBonus: 0.05
+  durablityBonus: 1

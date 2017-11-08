@@ -19,3 +19,11 @@ MonoBehaviour:
   developRequired: 0
   featureArt: -1
   artRequired: 0
+  requirementsA:
+  - {fileID: 11400000, guid: da3c33fefe225ef4baa041887c3d3805, type: 2}
+  - {fileID: 11400000, guid: 9655d0d948631874c9b2cdbda0963e87, type: 2}
+  - {fileID: 11400000, guid: 5ccf7b81ac62f4d4bbb77cc58d81aa32, type: 2}
+  requirementsB:
+  - {fileID: 11400000, guid: 86d02aef92c46534abeba704f04c86ea, type: 2}
+  requirementsC: []
+  blockers: []

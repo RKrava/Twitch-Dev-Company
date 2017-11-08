@@ -99,7 +99,7 @@ public class ProjectDevelopment : MonoBehaviour
                 //Makes sure the designIndex is in the right place
                 while (project.features[featureDesignIndex].designPoints >= project.features[featureDesignIndex].designPointsRequired)
                 {
-                    if (project.features[featureDesignIndex].designQualityHit == project.features[featureDesignIndex].maxQuality)
+                    if (project.features[featureDesignIndex].designQualityHit >= project.features[featureDesignIndex].maxQuality)
                     {
                         featureDesignIndex++;
                     }
@@ -158,7 +158,7 @@ public class ProjectDevelopment : MonoBehaviour
                 //Makes sure the developIndex is in the right place
                 while (project.features[featureDevelopIndex].developmentPoints >= project.features[featureDevelopIndex].developmentPointsRequired)
                 {
-                    if (project.features[featureDevelopIndex].developmentQualityHit == project.features[featureDevelopIndex].maxQuality)
+                    if (project.features[featureDevelopIndex].developmentQualityHit >= project.features[featureDevelopIndex].maxQuality)
                     {
                         featureDevelopIndex++;
                     }
@@ -217,7 +217,7 @@ public class ProjectDevelopment : MonoBehaviour
                 //Makes sure the artIndex is in the right place
                 while (project.features[featureArtIndex].artPoints >= project.features[featureArtIndex].artPointsRequired)
                 {
-                    if (project.features[featureArtIndex].artQualityHit == project.features[featureArtIndex].maxQuality)
+                    if (project.features[featureArtIndex].artQualityHit >= project.features[featureArtIndex].maxQuality)
                     {
                         featureArtIndex++;
                     }
@@ -295,6 +295,7 @@ public class ProjectDevelopment : MonoBehaviour
         }
 
         int bonus = developer.bonus;
+        float gearBonus = developer.GearBonus();
         int leadBonus = 1;
 
         if (index == featureLeadIndex)
@@ -303,7 +304,7 @@ public class ProjectDevelopment : MonoBehaviour
             projectLead.AwardXP(SkillTypes.LeaderSkills.Motivation, 5, projectLead);
         }
 
-        currentPoints += points * bonus * leadBonus;
+        currentPoints += Mathf.RoundToInt(points * bonus * gearBonus * leadBonus);
 
         int bugChance = rnd.Next(0, 101);
 
@@ -344,7 +345,9 @@ public class ProjectDevelopment : MonoBehaviour
         {
             int number = rnd.Next(1, 101);
 
-            if (number > 75)
+            int chance = 50;
+
+            if (number > chance * gear.durabilityBonus)
             {
                 int amount = rnd.Next(1, 6);
 
@@ -667,7 +670,7 @@ public class ProjectDevelopment : MonoBehaviour
 
     public IEnumerator ReviewScore(ProjectClass finishedProject)
     {
-        yield return new WaitForSeconds(60);
+        yield return new WaitForSeconds(30);
 
         Debug.Log($"Review Score {finishedProject.projectName}.");
 
@@ -749,7 +752,7 @@ public class ProjectDevelopment : MonoBehaviour
 
     public IEnumerator Sales(ProjectClass finishedProject)
     {
-        yield return new WaitForSeconds(120);
+        yield return new WaitForSeconds(60);
 
         string companyName = project.companyName;
         CompanyClass company = CommandController.companies[companyName];
