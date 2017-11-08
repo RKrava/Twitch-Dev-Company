@@ -39,7 +39,7 @@ public class ProjectRecruit : MonoBehaviour
             return;
         }
 
-        int cost = (number * 20) * 7;
+        int cost = (number * 20) * 14;
 
         if (!company.HasEnoughMoney(cost))
         {

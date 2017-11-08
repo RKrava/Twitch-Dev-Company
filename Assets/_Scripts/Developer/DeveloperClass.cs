@@ -45,7 +45,7 @@ public class DeveloperClass
     /// <summary>
     /// Developers current money
     /// </summary>
-    public int money = 5000;
+    public int money = 500;
 
     /// <summary>
     /// Add an amount of money to this developer

@@ -11,13 +11,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29aba230cb9966645b12d87181cdbe98, type: 3}
   m_Name: 3D graphics
   m_EditorClassIdentifier: 
-  featureName: 3d graphics
-  featureCost: 500
-  featureDesign: -1
-  designRequired: 0
-  featureDevelop: 188
+  featureName: 3D graphics
+  featureCost: 5000
+  featureDesign: 150
+  designRequired: 1
+  featureDevelop: 150
   developRequired: 1
-  featureArt: 142
+  featureArt: 200
   artRequired: 1
   requirementsA: []
   requirementsB: []

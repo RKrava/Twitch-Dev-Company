@@ -617,7 +617,7 @@ public class ProjectDevelopment : MonoBehaviour
         foreach (string developerUsername in project.developerPay.Keys)
         {
             string id = CommandController.GetID(developerUsername);
-            int pay = (7 * project.developerPay[developerUsername]);
+            int pay = (project.developerPay[developerUsername]);
             project.cost += pay;
             //CommandController.companies[project.companyName].SpendMoney(pay);
             CommandController.developers[id].AddMoney(pay);
@@ -761,7 +761,7 @@ public class ProjectDevelopment : MonoBehaviour
 
         r = r / 100;
 
-        int sales = (int)((r * project.overallRating) * 1000);
+        int sales = (int)((r * project.overallRating * project.features.Count) * 1000); //Potentially divide feature count by 2/3 if the benefit is too great
 
         project.revenue = sales;
         project.profit = project.revenue - project.cost;
@@ -780,37 +780,7 @@ public class ProjectDevelopment : MonoBehaviour
             company.MinusReputation(rep);
         }
 
-        Debug.Log($"Sales {finishedProject.projectName}.");
-
-        
-    }
-
-    private void ReviewScore()
-    {
-        Debug.Log("Review Score");
-
-        ProjectManager.countdown.timeLeft = 60;
-
-        int totalPoints = 0;
-
-        foreach (Feature feature in project.features)
-        {
-            totalPoints += (int)feature.featureQuality;
-        }
-
-        //17 references the FeatureQuality enum, and 10 brings it to an actual number
-        float score = project.features.Count;
-        score = totalPoints / score;
-        score = score / 17f;
-        score = score * 10f;
-
-        project.overallRating = (int)score;
-
-        projectManager.reviewScoreUI.text = $"Review Score: {project.overallRating} out of 10";
-
-        
-
-        client.SendMessage(WhisperMessages.Project.Complete.reviewScore(project.projectName, project.overallRating));
+        Debug.Log($"Sales {finishedProject.projectName}.");  
     }
     #endregion
 }

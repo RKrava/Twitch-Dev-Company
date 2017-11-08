@@ -69,6 +69,7 @@ public class ProjectAccept : MonoBehaviour
 
         applicantID = CommandController.GetID(applicantUsername);
         int pay = CommandController.developers[applicantID].developerPay.pay;
+        pay = pay * 14;
 
         //Must be able to afford them
         if (!company.HasEnoughMoney(pay))
@@ -79,7 +80,7 @@ public class ProjectAccept : MonoBehaviour
 
         project.AcceptApplicant(applicantUsername, project.applicants[applicantUsername], pay);
 
-        project.cost += pay * 7;
+        project.cost += pay;
         projectManager.costUI.text = $"Cost: £{project.cost}";
 
         client.SendWhisper(applicantUsername, WhisperMessages.Project.Accept.successApplicant(project.projectName));

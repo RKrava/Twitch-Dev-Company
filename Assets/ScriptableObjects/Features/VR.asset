@@ -11,14 +11,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29aba230cb9966645b12d87181cdbe98, type: 3}
   m_Name: VR
   m_EditorClassIdentifier: 
-  featureName: 
-  featureCost: 0
-  featureDesign: -1
-  designRequired: 0
-  featureDevelop: -1
-  developRequired: 0
-  featureArt: -1
-  artRequired: 0
+  featureName: VR
+  featureCost: 7000
+  featureDesign: 300
+  designRequired: 1
+  featureDevelop: 250
+  developRequired: 1
+  featureArt: 150
+  artRequired: 1
   requirementsA:
   - {fileID: 11400000, guid: 5ccf7b81ac62f4d4bbb77cc58d81aa32, type: 2}
   requirementsB:

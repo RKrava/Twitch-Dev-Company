@@ -12,15 +12,14 @@ MonoBehaviour:
   m_Name: Advanced cutscenes
   m_EditorClassIdentifier: 
   featureName: Advanced cutscenes
-  featureCost: 5000
-  featureDesign: -1
-  designRequired: 0
-  featureDevelop: -1
-  developRequired: 0
-  featureArt: -1
-  artRequired: 0
+  featureCost: 6000
+  featureDesign: 150
+  designRequired: 1
+  featureDevelop: 150
+  developRequired: 1
+  featureArt: 300
+  artRequired: 1
   requirementsA:
-  - {fileID: 11400000, guid: 9655d0d948631874c9b2cdbda0963e87, type: 2}
   - {fileID: 11400000, guid: 5ccf7b81ac62f4d4bbb77cc58d81aa32, type: 2}
   requirementsB:
   - {fileID: 11400000, guid: e5a4c2fce08a19d45bf676fe5f074a7a, type: 2}
@@ -28,3 +27,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8763dfe2611bd18468a6687ed928a6bc, type: 2}
   blockers:
   - {fileID: 11400000, guid: da3c33fefe225ef4baa041887c3d3805, type: 2}
+  - {fileID: 11400000, guid: 9655d0d948631874c9b2cdbda0963e87, type: 2}

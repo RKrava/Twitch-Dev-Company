@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Name: Touch support
   m_EditorClassIdentifier: 
   featureName: Touch support
-  featureCost: 5000
-  featureDesign: 100
+  featureCost: 3250
+  featureDesign: 150
   designRequired: 1
   featureDevelop: 100
   developRequired: 1
-  featureArt: -1
-  artRequired: 0
+  featureArt: 75
+  artRequired: 1
   requirementsA:
   - {fileID: 11400000, guid: 9655d0d948631874c9b2cdbda0963e87, type: 2}
   - {fileID: 11400000, guid: 5ccf7b81ac62f4d4bbb77cc58d81aa32, type: 2}

@@ -12,17 +12,17 @@ MonoBehaviour:
   m_Name: Local multiplayer
   m_EditorClassIdentifier: 
   featureName: Local multiplayer
-  featureCost: 2500
-  featureDesign: 50
+  featureCost: 1750
+  featureDesign: 75
   designRequired: 1
-  featureDevelop: 75
+  featureDevelop: 100
   developRequired: 1
   featureArt: -1
   artRequired: 0
   requirementsA:
-  - {fileID: 11400000, guid: da3c33fefe225ef4baa041887c3d3805, type: 2}
   - {fileID: 11400000, guid: 9655d0d948631874c9b2cdbda0963e87, type: 2}
   - {fileID: 11400000, guid: 5ccf7b81ac62f4d4bbb77cc58d81aa32, type: 2}
   requirementsB: []
   requirementsC: []
-  blockers: []
+  blockers:
+  - {fileID: 11400000, guid: da3c33fefe225ef4baa041887c3d3805, type: 2}

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Name: AI
   m_EditorClassIdentifier: 
   featureName: AI
-  featureCost: 2000
-  featureDesign: 30
+  featureCost: 1250
+  featureDesign: 50
   designRequired: 1
   featureDevelop: 75
   developRequired: 1

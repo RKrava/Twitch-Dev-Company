@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Name: Dialog
   m_EditorClassIdentifier: 
   featureName: Dialog
-  featureCost: 1000
-  featureDesign: 50
+  featureCost: 1200
+  featureDesign: 40
   designRequired: 1
-  featureDevelop: 50
+  featureDevelop: 30
   developRequired: 1
-  featureArt: 30
+  featureArt: 50
   artRequired: 1
   requirementsA:
   - {fileID: 11400000, guid: da3c33fefe225ef4baa041887c3d3805, type: 2}

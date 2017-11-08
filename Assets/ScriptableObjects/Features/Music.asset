@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Name: Music
   m_EditorClassIdentifier: 
   featureName: Music
-  featureCost: 500
+  featureCost: 750
   featureDesign: -1
   designRequired: 0
   featureDevelop: -1
   developRequired: 0
-  featureArt: 40
+  featureArt: 75
   artRequired: 1
   requirementsA:
   - {fileID: 11400000, guid: da3c33fefe225ef4baa041887c3d3805, type: 2}
